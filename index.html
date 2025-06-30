@@ -51,5 +51,29 @@
   <footer>
     <p>&copy; 2025 FIA Consultancy Services. All rights reserved.</p>
   </footer>
+  <script>
+  // Scroll Reveal - fade and slide up elements with class 'reveal'
+  const reveals = document.querySelectorAll('.reveal');
+
+  function revealOnScroll() {
+    const windowHeight = window.innerHeight;
+    const revealPoint = 150; // How far from bottom to trigger
+
+    reveals.forEach(el => {
+      const elementTop = el.getBoundingClientRect().top;
+
+      if (elementTop < windowHeight - revealPoint) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', revealOnScroll);
+  // Trigger on page load in case elements are already in view
+  revealOnScroll();
+</script>
+
 </body>
 </html>
