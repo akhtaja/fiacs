@@ -37,6 +37,78 @@ header p {
   color: #cce7ff;
 }
 
+#banner {
+  width: 100%;
+  padding: 3rem 1.5rem;
+  margin: 1rem 0 2rem 0;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(270deg, #00d2ff, #3a7bd5, #00d2ff);
+  background-size: 600% 600%;
+  animation: gradientShift 15s ease infinite;
+  box-shadow: 0 8px 30px rgba(0, 210, 255, 0.4);
+  color: #fff;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.banner-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+  animation: fadeInUp 1.5s ease forwards;
+  opacity: 0;
+}
+
+.banner-content .tagline {
+  font-size: 1.5rem;
+  font-style: italic;
+  color: #cce7ffcc;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  animation: fadeInUp 2.5s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive banner font size */
+@media (max-width: 600px) {
+  #banner {
+    padding: 2rem 1rem;
+  }
+
+  .banner-content h2 {
+    font-size: 1.8rem;
+  }
+
+  .banner-content .tagline {
+    font-size: 1.1rem;
+  }
+}
+
 nav {
   display: flex;
   justify-content: center;
