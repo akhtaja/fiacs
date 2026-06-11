@@ -1,51 +1,242 @@
 <!DOCTYPE html>
-<html><head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Daily Report Kids</title>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adventure Quest</title>
+
 <style>
-body{font-family:Arial;background:#eef7ff;padding:10px}
-.card{background:#fff;border-radius:16px;padding:15px;margin:10px 0}
-.map{font-size:32px;line-height:1.8}
-button{padding:10px;border:none;border-radius:10px;margin:4px}
-.badge{font-size:22px}
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom,#d9f0ff,#fdf7d4);
+    margin:0;
+    padding:15px;
+}
+
+h2{
+    text-align:center;
+    color:#333;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    margin:15px 0;
+    box-shadow:0 6px 20px rgba(0,0,0,.12);
+    animation: fadeIn .5s ease;
+}
+
+.name{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.badge{
+    font-size:22px;
+    margin:10px 0;
+}
+
+.points{
+    font-size:22px;
+    font-weight:bold;
+    color:#2d6a4f;
+}
+
+.map{
+    font-size:34px;
+    line-height:1.7;
+    text-align:center;
+    margin:15px 0;
+}
+
+.progress-wrap{
+    background:#eee;
+    border-radius:20px;
+    overflow:hidden;
+    height:22px;
+    margin:10px 0 20px;
+}
+
+.progress{
+    height:100%;
+    background:linear-gradient(90deg,#00c853,#69f0ae);
+    transition:width .5s ease;
+}
+
+button{
+    border:none;
+    border-radius:14px;
+    padding:12px;
+    margin:6px;
+    font-size:15px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.good{
+    background:#4caf50;
+    color:white;
+}
+
+.bad{
+    background:#ff5252;
+    color:white;
+}
+
+.team{
+    background:#2196f3;
+    color:white;
+    width:100%;
+}
+
+.boom{
+    animation: pop .4s ease;
+}
+
+@keyframes pop{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.12)}
+    100%{transform:scale(1)}
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:translateY(0)}
+}
 </style>
 </head>
+
 <body>
+
 <h2>🏝️ Hamzah & Yahya Adventure Quest</h2>
 <div id="app"></div>
-<script>
-let db=JSON.parse(localStorage.getItem('questv2')||'{"hamza":0,"yahya":0}');
 
-const tasks=["🪥 Teeth","📚 Reading","🧸 Tidy Toys","🤝 Help Brother","🕌 Prayer"];
+<script>
+
+let db = JSON.parse(
+    localStorage.getItem('questv3') ||
+    '{"hamzah":0,"yahya":0}'
+);
+
+const tasks = [
+    "🪥 Teeth",
+    "📚 Reading",
+    "🧸 Tidy Toys",
+    "🤝 Help Brother",
+    "🕌 Prayer"
+];
 
 function level(p){
- if(p>=50) return "👑 Hero";
- if(p>=30) return "🐉 Dragon Rider";
- if(p>=15) return "🦸 Super Helper";
- return "🚀 Explorer";
+    if(p >= 50) return "👑 Hero";
+    if(p >= 30) return "🐉 Dragon Rider";
+    if(p >= 15) return "🦸 Super Helper";
+    return "🚀 Explorer";
 }
 
-function add(k){db[k]++;render();}
-function render(){
- let out="";
- ["hamza","yahya"].forEach(k=>{
-  let p=db[k];
-  out+=`
-  <div class="card">
-   <h3>${k=="hamzah"?"👦 Hamzah":"👶 Yahya"}</h3>
-   <div class="badge">${level(p)}</div>
-   <div class="map">🚀 ${"⭐".repeat(Math.min(p,10))} 🏝️ 🐉 🏰 👑</div>
-   <p>Points: ${p}</p>
-   <h4>Daily Missions</h4>
-   ${tasks.map(t=>`<button onclick="add('${k}')">${t}</button>`).join("")}
-  </div>`;
- });
- out+=`<div class="card"><h3>🤝 Team Quest</h3>
- <button onclick="db.hamza+=2;db.yahya+=2;render()">Both Worked Together</button>
- </div>`;
- document.getElementById("app").innerHTML=out;
- localStorage.setItem('questv2',JSON.stringify(db));
+function nextGoal(p){
+    if(p < 15) return 15;
+    if(p < 30) return 30;
+    if(p < 50) return 50;
+    return 100;
 }
+
+function add(k){
+    db[k]++;
+    render(k);
+}
+
+function remove(k){
+    db[k] = Math.max(0, db[k]-1);
+    render(k);
+}
+
+function teamWork(){
+    db.hamzah += 2;
+    db.yahya += 2;
+    render();
+}
+
+function render(animatedKid=""){
+
+    let out = "";
+
+    ["hamzah","yahya"].forEach(k=>{
+
+        const p = db[k];
+        const goal = nextGoal(p);
+        const progress = (p / goal) * 100;
+
+        out += `
+        <div class="card ${animatedKid===k ? 'boom' : ''}">
+            
+            <div class="name">
+                <h3>${k==="hamzah" ? "👦 Hamzah" : "👶 Yahya"}</h3>
+                <div class="points">⭐ ${p}</div>
+            </div>
+
+            <div class="badge">${level(p)}</div>
+
+            <div class="progress-wrap">
+                <div class="progress" style="width:${progress}%"></div>
+            </div>
+
+            <div>
+                Next Goal: ${goal} points
+            </div>
+
+            <div class="map">
+                🚀 ${"⭐".repeat(Math.min(p,8))}
+                🏝️ 🐉 🏰 👑
+            </div>
+
+            <h4>✅ Good Deeds</h4>
+
+            ${tasks.map(t=>`
+                <button class="good"
+                    onclick="add('${k}')">
+                    + ${t}
+                </button>
+            `).join("")}
+
+            <h4>😈 Oops / Bad Deeds</h4>
+
+            ${tasks.map(t=>`
+                <button class="bad"
+                    onclick="remove('${k}')">
+                    − ${t}
+                </button>
+            `).join("")}
+
+        </div>
+        `;
+    });
+
+    out += `
+    <div class="card">
+        <h3>🤝 Team Quest</h3>
+        <button class="team"
+            onclick="teamWork()">
+            +2 Both Worked Together
+        </button>
+    </div>
+    `;
+
+    document.getElementById("app").innerHTML = out;
+
+    localStorage.setItem(
+        'questv3',
+        JSON.stringify(db)
+    );
+}
+
 render();
+
 </script>
-</body></html>
+
+</body>
+</html>
