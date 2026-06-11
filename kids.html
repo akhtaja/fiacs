@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Adventure Quest</title>
 
@@ -10,6 +11,8 @@ body{
     background: linear-gradient(to bottom,#d9f0ff,#fdf7d4);
     margin:0;
     padding:15px;
+    min-height:100vh;
+    overflow-x:hidden;
 }
 
 h2{
@@ -17,14 +20,45 @@ h2{
     color:#333;
 }
 
+/* Task 6: Floating background */
+.floaters{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    pointer-events:none;
+    z-index:0;
+    overflow:hidden;
+}
+
+.floater{
+    position:absolute;
+    font-size:28px;
+    opacity:.25;
+    animation: floatAcross linear infinite;
+}
+
+@keyframes floatAcross{
+    from{transform:translateX(-60px)}
+    to{transform:translateX(calc(100vw + 60px))}
+}
+
+/* Task 5: Staggered card entrance */
 .card{
+    position:relative;
     background:white;
     border-radius:20px;
     padding:20px;
     margin:15px 0;
     box-shadow:0 6px 20px rgba(0,0,0,.12);
-    animation: fadeIn .5s ease;
+    opacity:0;
+    animation: fadeIn .5s ease forwards;
+    z-index:1;
 }
+
+.card:nth-child(1){animation-delay:0s}
+.card:nth-child(2){animation-delay:.2s}
+.card:nth-child(3){animation-delay:.4s}
+.card:nth-child(4){animation-delay:.6s}
 
 .name{
     display:flex;
@@ -32,36 +66,51 @@ h2{
     align-items:center;
 }
 
-.badge{
-    font-size:22px;
-    margin:10px 0;
-}
-
+/* Task 3: Points pulse */
 .points{
     font-size:22px;
     font-weight:bold;
     color:#2d6a4f;
+    transition: transform .2s;
 }
 
-.map{
-    font-size:34px;
-    line-height:1.7;
-    text-align:center;
-    margin:15px 0;
+.points-pulse{
+    animation: pointsPop .4s ease;
 }
 
-.progress-wrap{
-    background:#eee;
-    border-radius:20px;
-    overflow:hidden;
-    height:22px;
-    margin:10px 0 20px;
+.points-bad{
+    animation: pointsBad .4s ease;
 }
 
-.progress{
-    height:100%;
-    background:linear-gradient(90deg,#00c853,#69f0ae);
-    transition:width .5s ease;
+@keyframes pointsPop{
+    0%{transform:scale(1);color:#2d6a4f}
+    50%{transform:scale(1.4);color:#ffd700}
+    100%{transform:scale(1);color:#2d6a4f}
+}
+
+@keyframes pointsBad{
+    0%{transform:scale(1);color:#2d6a4f}
+    50%{transform:scale(1.4);color:#ff5252}
+    100%{transform:scale(1);color:#2d6a4f}
+}
+
+/* Task 8: Level-up glow */
+.badge{
+    font-size:22px;
+    margin:10px 0;
+    display:inline-block;
+    padding:4px 12px;
+    border-radius:12px;
+}
+
+.glow{
+    animation: glowPulse 1.5s ease;
+}
+
+@keyframes glowPulse{
+    0%{box-shadow:0 0 0 rgba(255,215,0,0)}
+    30%{box-shadow:0 0 20px rgba(255,215,0,.8), 0 0 40px rgba(255,215,0,.4)}
+    100%{box-shadow:0 0 0 rgba(255,215,0,0)}
 }
 
 .milestone-container{
@@ -70,47 +119,52 @@ h2{
 
 .track{
     position:relative;
-    height:70px;
+    height:90px;
     border-radius:40px;
-    background:linear-gradient(
-        to right,
-        #dcedc8,
-        #fff9c4
-    );
+    background:linear-gradient(to right,#dcedc8,#fff9c4);
     border:4px solid #ddd;
     overflow:visible;
 }
 
-/* running path */
 .track::before{
     content:"";
     position:absolute;
-    top:50%;
-    left:0;
-    width:100%;
-    height:8px;
+    top:50%;left:0;
+    width:100%;height:8px;
     background:#bbb;
     transform:translateY(-50%);
     border-radius:20px;
 }
 
-/* kid runner */
+/* Task 2: Runner bounce applied */
 .runner{
     position:absolute;
-    top:-5px;
     transform:translateX(-50%);
     transition:left .8s ease;
     z-index:5;
+    animation: bounce .6s ease infinite;
+    text-align:center;
+}
+
+.runner-hamzah{top:-12px}
+.runner-yahya{top:30px}
+.runner-yahya .runner-img{width:32px}
+
+.runner-label{
+    display:block;
+    font-size:10px;
+    font-weight:bold;
+    color:#333;
+    margin-top:2px;
 }
 
 .runner-img{
-    width:55px;
+    width:45px;
     height:auto;
     object-fit:contain;
     filter:drop-shadow(0 3px 6px rgba(0,0,0,.2));
 }
 
-/* milestone markers */
 .milestone{
     position:absolute;
     top:-14px;
@@ -126,100 +180,73 @@ h2{
     color:#555;
 }
 
-.m15{
-    left:30%;
-}
+.m15{left:30%}
+.m30{left:60%}
+.m50{left:100%}
 
-.m30{
-    left:60%;
-}
-
-.m50{
-    left:100%;
-}
-
-/* running bounce animation */
 @keyframes bounce{
-    0%,100%{
-        transform:translateX(-50%) translateY(0);
-    }
-    50%{
-        transform:translateX(-50%) translateY(-5px);
-    }
+    0%,100%{transform:translateX(-50%) translateY(0)}
+    50%{transform:translateX(-50%) translateY(-5px)}
 }
 
-.progress-wrap{
-    position:relative;
-    background:#eee;
-    border-radius:25px;
-    height:28px;
-    overflow:visible;
-}
-
-.progress{
-    height:100%;
-    border-radius:25px;
-    background:linear-gradient(
-        90deg,
-        #00c853,
-        #69f0ae
-    );
-    transition:width .6s ease;
-}
-
-.milestone{
-    position:absolute;
-    top:-22px;
-    transform:translateX(-50%);
-    font-size:22px;
-    text-align:center;
-}
-
-.milestone span{
-    display:block;
-    font-size:12px;
-    font-weight:bold;
-    color:#555;
-}
-
+/* Task 4: Button ripple */
 button{
+    position:relative;
+    overflow:hidden;
     border:none;
-    border-radius:14px;
-    padding:12px;
-    margin:6px;
-    font-size:15px;
+    border-radius:10px;
+    padding:8px 10px;
+    margin:4px;
+    font-size:13px;
     cursor:pointer;
-    transition:.2s;
+    transition:transform .2s;
 }
 
-button:hover{
-    transform:scale(1.05);
+button:hover{transform:scale(1.05)}
+
+button::after{
+    content:"";
+    position:absolute;
+    top:50%;left:50%;
+    width:0;height:0;
+    border-radius:50%;
+    background:rgba(255,255,255,.4);
+    transform:translate(-50%,-50%);
+    opacity:0;
 }
 
-.good{
-    background:#4caf50;
-    color:white;
+button.ripple::after{
+    animation: rippleEffect .5s ease;
 }
 
-.bad{
-    background:#ff5252;
-    color:white;
+@keyframes rippleEffect{
+    0%{width:0;height:0;opacity:.6}
+    100%{width:200px;height:200px;opacity:0}
 }
 
-.team{
-    background:#2196f3;
-    color:white;
-    width:100%;
+.good{background:#4caf50;color:white}
+.bad{background:#ff5252;color:white}
+.team{background:#2196f3;color:white;width:100%}
+
+/* Task 7: Confetti */
+.confetti-container{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    pointer-events:none;
+    z-index:999;
 }
 
-.boom{
-    animation: pop .4s ease;
+.confetti-piece{
+    position:absolute;
+    width:10px;height:10px;
+    border-radius:2px;
+    animation: confettiFall 1.5s ease forwards;
 }
 
-@keyframes pop{
-    0%{transform:scale(1)}
-    50%{transform:scale(1.12)}
-    100%{transform:scale(1)}
+@keyframes confettiFall{
+    0%{transform:translate(0,0) rotate(0deg);opacity:1}
+    100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}
 }
 
 @keyframes fadeIn{
@@ -231,8 +258,19 @@ button:hover{
 
 <body>
 
+<!-- Task 6: Floating background elements -->
+<div class="floaters">
+    <div class="floater" style="top:10%;animation-duration:18s;font-size:32px">☁️</div>
+    <div class="floater" style="top:30%;animation-duration:25s;animation-delay:3s">⭐</div>
+    <div class="floater" style="top:55%;animation-duration:22s;animation-delay:7s">☁️</div>
+    <div class="floater" style="top:75%;animation-duration:20s;animation-delay:12s">🌈</div>
+    <div class="floater" style="top:45%;animation-duration:30s;animation-delay:5s;font-size:24px">✨</div>
+    <div class="floater" style="top:85%;animation-duration:28s;animation-delay:9s">☁️</div>
+</div>
+
 <h2>🏝️ Hamzah & Yahya Adventure Quest</h2>
 <div id="app"></div>
+<div class="confetti-container" id="confetti"></div>
 
 <script>
 
@@ -241,13 +279,21 @@ let db = JSON.parse(
     '{"hamzah":0,"yahya":0}'
 );
 
+// Track previous state for milestone/level detection
+let prev = {hamzah: db.hamzah, yahya: db.yahya};
+let initialized = false;
+
 const tasks = [
     "🪥 Teeth",
     "📚 Reading",
     "🧸 Tidy Toys",
     "🤝 Help Brother",
-    "🕌 Prayer"
+    "🕌 Prayer",
+    "🧹 Clean House",
+    "👂 Listen to Parents"
 ];
+
+const milestones = [15, 30, 50];
 
 function level(p){
     if(p >= 50) return "👑 Hero";
@@ -264,34 +310,129 @@ function nextGoal(p){
 }
 
 function add(k){
+    prev[k] = db[k];
     db[k]++;
-    render(k);
+    update(k, 'good');
 }
 
 function remove(k){
+    prev[k] = db[k];
     db[k] = Math.max(0, db[k]-1);
-    render(k);
+    update(k, 'bad');
 }
 
 function teamWork(){
+    prev.hamzah = db.hamzah;
+    prev.yahya = db.yahya;
     db.hamzah += 2;
     db.yahya += 2;
-    render();
+    update('hamzah', 'good');
+    update('yahya', 'good');
 }
 
-function render(animatedKid=""){
+// Task 7: Confetti burst
+function fireConfetti(){
+    const container = document.getElementById('confetti');
+    const colors = ['#ff5252','#ffd700','#4caf50','#2196f3','#e040fb','#ff9800'];
+    for(let i = 0; i < 20; i++){
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = (40 + Math.random()*20) + '%';
+        piece.style.top = (30 + Math.random()*20) + '%';
+        piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+        piece.style.setProperty('--dx', (Math.random()*200-100)+'px');
+        piece.style.setProperty('--dy', (Math.random()*300+100)+'px');
+        container.appendChild(piece);
+    }
+    setTimeout(()=>{ container.innerHTML = ''; }, 1600);
+}
 
+// Task 4: Ripple on button click
+document.addEventListener('click', function(e){
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    btn.classList.remove('ripple');
+    void btn.offsetWidth;
+    btn.classList.add('ripple');
+    setTimeout(()=> btn.classList.remove('ripple'), 500);
+});
+
+// Task 1: Targeted DOM update (after initial render)
+function update(k, type){
+    if(!initialized){ render(); return; }
+
+    const p = db[k];
+    const el = document.getElementById('card-'+k);
+    if(!el) { render(); return; }
+
+    // Update points
+    const pts = el.querySelector('.points');
+    pts.textContent = '⭐ ' + p;
+
+    // Task 3: Points pulse
+    pts.classList.remove('points-pulse','points-bad');
+    void pts.offsetWidth;
+    pts.classList.add(type==='good' ? 'points-pulse' : 'points-bad');
+
+    // Update badge
+    const newLevel = level(p);
+    const badgeEl = el.querySelector('.badge');
+    const oldLevel = badgeEl.textContent;
+    badgeEl.textContent = newLevel;
+
+    // Task 8: Level-up glow
+    if(newLevel !== oldLevel){
+        badgeEl.classList.remove('glow');
+        void badgeEl.offsetWidth;
+        badgeEl.classList.add('glow');
+    }
+
+    // Update runner position on shared track
+    document.getElementById('runner-'+k).style.left = Math.min((p/50)*100,100)+'%';
+
+    // Update goal text
+    el.querySelector('.goal-text').innerHTML = '🎯 Next Goal: <strong>'+nextGoal(p)+' points</strong>';
+
+    // Task 7: Check milestone crossing
+    milestones.forEach(m=>{
+        if(prev[k] < m && p >= m) fireConfetti();
+    });
+
+    localStorage.setItem('questv3', JSON.stringify(db));
+}
+
+// Initial full render
+function render(){
     let out = "";
 
-    ["hamzah","yahya"].forEach(k=>{
+    // Shared race track
+    out += `
+    <div class="card" id="card-race">
+        <h3>🏁 Race Track</h3>
+        <div class="milestone-container">
+            <div class="track">
+                <div class="runner runner-hamzah" id="runner-hamzah" style="left:${Math.min((db.hamzah/50)*100,100)}%">
+                    <img src="images/hamzah-run.gif" class="runner-img" alt="Hamzah runner">
+                    <span class="runner-label">H</span>
+                </div>
+                <div class="runner runner-yahya" id="runner-yahya" style="left:${Math.min((db.yahya/50)*100,100)}%">
+                    <img src="images/yahya-run.jpg" class="runner-img" alt="Yahya runner">
+                    <span class="runner-label">Y</span>
+                </div>
+                <div class="milestone m15">🦸<span>15</span></div>
+                <div class="milestone m30">🐉<span>30</span></div>
+                <div class="milestone m50">👑<span>50</span></div>
+            </div>
+        </div>
+    </div>`;
 
+    // Individual kid cards (without track)
+    ["hamzah","yahya"].forEach((k,i)=>{
         const p = db[k];
         const goal = nextGoal(p);
-        const progress = (p / goal) * 100;
 
         out += `
-        <div class="card ${animatedKid===k ? 'boom' : ''}">
-            
+        <div class="card" id="card-${k}">
             <div class="name">
                 <h3>${k==="hamzah" ? "👦 Hamzah" : "👶 Yahya"}</h3>
                 <div class="points">⭐ ${p}</div>
@@ -299,92 +440,29 @@ function render(animatedKid=""){
 
             <div class="badge">${level(p)}</div>
 
-<div class="milestone-container">
-
-    <div class="track">
-
-<div class="runner"
-     style="left:${Math.min((p/50)*100,100)}%">
-
-    <img
-      src="${
-        k==="hamzah"
-        ? "images/hamzah-run.gif"
-        : "images/yahya-run.gif"
-      }"
-      class="runner-img"
-      alt="runner"
-    >
-
-</div>
-
-        <div class="milestone m15">
-            🦸
-            <span>15</span>
-        </div>
-
-        <div class="milestone m30">
-            🐉
-            <span>30</span>
-        </div>
-
-        <div class="milestone m50">
-            👑
-            <span>50</span>
-        </div>
-
-    </div>
-
-</div>
-
-<p>
-    🎯 Next Goal:
-    <strong>${goal} points</strong>
-</p>
+            <p class="goal-text">🎯 Next Goal: <strong>${goal} points</strong></p>
 
             <h4>✅ Good Deeds</h4>
-
-            ${tasks.map(t=>`
-                <button class="good"
-                    onclick="add('${k}')">
-                    + ${t}
-                </button>
-            `).join("")}
+            ${tasks.map(t=>`<button class="good" onclick="add('${k}')">+ ${t}</button>`).join("")}
 
             <h4>😈 Oops / Bad Deeds</h4>
-
-            ${tasks.map(t=>`
-                <button class="bad"
-                    onclick="remove('${k}')">
-                    − ${t}
-                </button>
-            `).join("")}
-
-        </div>
-        `;
+            ${tasks.map(t=>`<button class="bad" onclick="remove('${k}')">− ${t}</button>`).join("")}
+        </div>`;
     });
 
     out += `
     <div class="card">
         <h3>🤝 Team Quest</h3>
-        <button class="team"
-            onclick="teamWork()">
-            +2 Both Worked Together
-        </button>
-    </div>
-    `;
+        <button class="team" onclick="teamWork()">+2 Both Worked Together</button>
+    </div>`;
 
     document.getElementById("app").innerHTML = out;
-
-    localStorage.setItem(
-        'questv3',
-        JSON.stringify(db)
-    );
+    localStorage.setItem('questv3', JSON.stringify(db));
+    initialized = true;
 }
 
 render();
 
 </script>
-
 </body>
 </html>
