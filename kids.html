@@ -55,7 +55,7 @@ h2{
     backdrop-filter:blur(20px);
     border-radius:24px;
     padding:40px 30px;
-    box-shadow:0 20px 60px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.3);
+    box-shadow:0 20px 60px rgba(0,0,0,.2);
     text-align:center;
     animation: fadeInUp .6s ease forwards;
 }
@@ -80,7 +80,6 @@ h2{
     border:2px solid #e0d4f5;
     border-radius:14px;
     font-size:16px;
-    box-sizing:border-box;
     background:#faf8ff;
     transition:border-color .3s, box-shadow .3s;
 }
@@ -101,14 +100,11 @@ h2{
     font-weight:bold;
     cursor:pointer;
     margin-top:20px;
-    transition:transform .2s, box-shadow .2s;
     box-shadow:0 8px 25px rgba(118,75,162,.4);
+    transition:transform .2s;
 }
 
-#setup .start-btn:hover{
-    transform:scale(1.05) translateY(-2px);
-    box-shadow:0 12px 35px rgba(118,75,162,.5);
-}
+#setup .start-btn:hover{transform:scale(1.05) translateY(-2px)}
 
 #setup .add-kid-btn{
     background:linear-gradient(135deg,#43e97b,#38f9d7);
@@ -120,14 +116,32 @@ h2{
     font-weight:bold;
     cursor:pointer;
     margin-top:12px;
-    transition:transform .2s, box-shadow .2s;
-    box-shadow:0 4px 15px rgba(67,233,123,.3);
+    transition:transform .2s;
 }
 
-#setup .add-kid-btn:hover{
-    transform:scale(1.05);
-    box-shadow:0 6px 20px rgba(67,233,123,.4);
+#setup .add-kid-btn:hover{transform:scale(1.05)}
+
+/* Avatar picker */
+.avatar-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:8px 0;
 }
+
+.avatar-row input{margin:0;flex:1}
+
+.avatar-pick{
+    font-size:28px;
+    cursor:pointer;
+    padding:4px;
+    border-radius:10px;
+    border:2px solid transparent;
+    transition:border-color .2s, transform .2s;
+}
+
+.avatar-pick:hover{transform:scale(1.2)}
+.avatar-pick.selected{border-color:#764ba2;background:#f0e6ff}
 
 .reset-link{
     display:inline-block;
@@ -141,6 +155,30 @@ h2{
 
 .reset-link:hover{color:#fff}
 
+/* Nav tabs */
+.nav-tabs{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-bottom:15px;
+    flex-wrap:wrap;
+}
+
+.nav-tabs button{
+    background:rgba(255,255,255,.2);
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    padding:10px 16px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:background .2s, transform .2s;
+}
+
+.nav-tabs button:hover{background:rgba(255,255,255,.3);transform:scale(1.05)}
+.nav-tabs button.active{background:rgba(255,255,255,.9);color:#4a1a7a}
+
 /* Cards */
 .card{
     position:relative;
@@ -149,7 +187,7 @@ h2{
     border-radius:24px;
     padding:24px;
     margin:18px 0;
-    box-shadow:0 10px 40px rgba(0,0,0,.12), 0 0 0 1px rgba(255,255,255,.2);
+    box-shadow:0 10px 40px rgba(0,0,0,.12);
     opacity:0;
     animation: fadeInUp .5s ease forwards;
     z-index:1;
@@ -162,35 +200,23 @@ h2{
 .card:nth-child(4){animation-delay:.45s}
 .card:nth-child(5){animation-delay:.6s}
 .card:nth-child(6){animation-delay:.75s}
+.card:nth-child(7){animation-delay:.9s}
 
-.card h3{
-    font-size:1.2rem;
-    color:#4a1a7a;
-    margin-bottom:5px;
-}
+.card h3{font-size:1.2rem;color:#4a1a7a;margin-bottom:5px}
+.card h4{margin:12px 0 8px;font-size:.85rem;color:#888;text-transform:uppercase;letter-spacing:1px}
 
-.card h4{
-    margin:12px 0 8px;
-    font-size:.85rem;
-    color:#888;
-    text-transform:uppercase;
-    letter-spacing:1px;
-}
+.name{display:flex;justify-content:space-between;align-items:center}
 
-.name{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+/* Streak */
+.streak{
+    font-size:14px;
+    color:#ff9800;
+    font-weight:bold;
+    margin:4px 0;
 }
 
 /* Points pulse */
-.points{
-    font-size:24px;
-    font-weight:bold;
-    color:#667eea;
-    transition: transform .2s;
-}
-
+.points{font-size:24px;font-weight:bold;color:#667eea;transition:transform .2s}
 .points-pulse{animation: pointsPop .4s ease}
 .points-bad{animation: pointsBad .4s ease}
 
@@ -199,23 +225,18 @@ h2{
     50%{transform:scale(1.5);color:#ffd700}
     100%{transform:scale(1);color:#667eea}
 }
-
 @keyframes pointsBad{
     0%{transform:scale(1);color:#667eea}
     50%{transform:scale(1.5);color:#ff5252}
     100%{transform:scale(1);color:#667eea}
 }
 
-/* Level-up glow */
+/* Badge */
 .badge{
-    font-size:18px;
-    margin:8px 0;
-    display:inline-block;
-    padding:6px 14px;
-    border-radius:20px;
+    font-size:18px;margin:8px 0;display:inline-block;
+    padding:6px 14px;border-radius:20px;
     background:linear-gradient(135deg,#ffecd2,#fcb69f);
-    color:#6b3a0a;
-    font-weight:bold;
+    color:#6b3a0a;font-weight:bold;
 }
 
 .glow{animation: glowPulse 1.5s ease}
@@ -226,12 +247,43 @@ h2{
     100%{box-shadow:0 0 0 rgba(255,215,0,0)}
 }
 
-.goal-text{
-    font-size:.9rem;
-    color:#777;
-    margin:8px 0;
+.goal-text{font-size:.9rem;color:#777;margin:8px 0}
+
+/* Rewards */
+.reward{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:10px;
+    font-size:12px;
+    font-weight:bold;
+    background:linear-gradient(135deg,#ffd700,#ffb347);
+    color:#5d3a00;
+    margin:4px 0;
 }
 
+.reward.earned{opacity:.5;text-decoration:line-through}
+
+/* Daily Challenge */
+.challenge{
+    background:linear-gradient(135deg,#a18cd1,#fbc2eb);
+    border-radius:14px;
+    padding:14px;
+    margin:12px 0;
+    color:#3d1a6e;
+    font-weight:bold;
+    text-align:center;
+}
+
+.challenge button{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:#fff;
+    margin-top:8px;
+    padding:10px 20px;
+    font-size:14px;
+    border-radius:12px;
+}
+
+/* Track */
 .milestone-container{margin:25px 0 15px}
 
 .track{
@@ -244,23 +296,15 @@ h2{
 }
 
 .track::before{
-    content:"";
-    position:absolute;
-    top:50%;left:2%;
-    width:96%;height:6px;
-    background:rgba(0,0,0,.1);
-    transform:translateY(-50%);
-    border-radius:20px;
+    content:"";position:absolute;top:50%;left:2%;
+    width:96%;height:6px;background:rgba(0,0,0,.1);
+    transform:translateY(-50%);border-radius:20px;
 }
 
-/* Runner bounce */
 .runner{
-    position:absolute;
-    transform:translateX(-50%);
+    position:absolute;transform:translateX(-50%);
     transition:left .8s cubic-bezier(.34,1.56,.64,1);
-    z-index:5;
-    animation: bounce .6s ease infinite;
-    text-align:center;
+    z-index:5;animation:bounce .6s ease infinite;text-align:center;
 }
 
 .runner-0{top:-10px}
@@ -271,42 +315,19 @@ h2{
 .runner-5{top:210px}
 
 .runner-label{
-    display:block;
-    font-size:10px;
-    font-weight:bold;
-    color:#4a1a7a;
-    background:rgba(255,255,255,.9);
-    border-radius:10px;
-    padding:2px 6px;
-    margin-top:1px;
-    box-shadow:0 2px 6px rgba(0,0,0,.1);
+    display:block;font-size:10px;font-weight:bold;color:#4a1a7a;
+    background:rgba(255,255,255,.9);border-radius:10px;
+    padding:2px 6px;margin-top:1px;box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 
 .runner-emoji{
-    font-size:30px;
-    display:inline-block;
-    transform:scaleX(-1);
-    filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
+    font-size:30px;display:inline-block;
+    transform:scaleX(-1);filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
 }
 
-.milestone{
-    position:absolute;
-    top:-22px;
-    transform:translateX(-50%);
-    text-align:center;
-    font-size:34px;
-}
-
-.milestone span{
-    display:block;
-    font-size:12px;
-    font-weight:bold;
-    color:#764ba2;
-}
-
-.m15{left:30%}
-.m30{left:60%}
-.m50{left:100%}
+.milestone{position:absolute;top:-22px;transform:translateX(-50%);text-align:center;font-size:34px}
+.milestone span{display:block;font-size:12px;font-weight:bold;color:#764ba2}
+.m15{left:30%}.m30{left:60%}.m50{left:100%}
 
 @keyframes bounce{
     0%,100%{transform:translateX(-50%) translateY(0)}
@@ -315,79 +336,53 @@ h2{
 
 /* Buttons */
 button{
-    position:relative;
-    overflow:hidden;
-    border:none;
-    border-radius:12px;
-    padding:9px 12px;
-    margin:4px;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-    transition:transform .2s, box-shadow .2s;
+    position:relative;overflow:hidden;border:none;border-radius:12px;
+    padding:9px 12px;margin:4px;font-size:13px;font-weight:600;
+    cursor:pointer;transition:transform .2s, box-shadow .2s;
 }
-
-button:hover{
-    transform:scale(1.06) translateY(-1px);
-}
-
+button:hover{transform:scale(1.06) translateY(-1px)}
 button:active{transform:scale(.97)}
-
 button::after{
-    content:"";
-    position:absolute;
-    top:50%;left:50%;
-    width:0;height:0;
-    border-radius:50%;
-    background:rgba(255,255,255,.4);
-    transform:translate(-50%,-50%);
-    opacity:0;
+    content:"";position:absolute;top:50%;left:50%;
+    width:0;height:0;border-radius:50%;
+    background:rgba(255,255,255,.4);transform:translate(-50%,-50%);opacity:0;
 }
-
-button.ripple::after{animation: rippleEffect .5s ease}
+button.ripple::after{animation:rippleEffect .5s ease}
 
 @keyframes rippleEffect{
     0%{width:0;height:0;opacity:.6}
     100%{width:200px;height:200px;opacity:0}
 }
 
-.good{
-    background:linear-gradient(135deg,#43e97b,#38f9d7);
-    color:#1a5c3a;
-    box-shadow:0 3px 10px rgba(67,233,123,.25);
-}
+.good{background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a5c3a;box-shadow:0 3px 10px rgba(67,233,123,.25)}
+.bad{background:linear-gradient(135deg,#ff5252,#f48fb1);color:#fff;box-shadow:0 3px 10px rgba(255,82,82,.25)}
+.team{background:linear-gradient(135deg,#667eea,#764ba2);color:white;width:100%;padding:14px;font-size:15px;border-radius:14px;box-shadow:0 6px 20px rgba(118,75,162,.3)}
 
-.bad{
-    background:linear-gradient(135deg,#ff5252,#f48fb1);
-    color:#fff;
-    box-shadow:0 3px 10px rgba(255,82,82,.25);
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}
+.cal-day{
+    text-align:center;padding:8px 4px;border-radius:10px;
+    font-size:11px;font-weight:bold;background:#f5f0ff;
 }
+.cal-day.today{border:2px solid #764ba2}
+.cal-day .cal-stars{font-size:16px;display:block;margin-top:2px}
+.cal-header{font-size:10px;color:#999;text-align:center;font-weight:bold}
 
-.team{
-    background:linear-gradient(135deg,#667eea,#764ba2);
-    color:white;
-    width:100%;
-    padding:14px;
-    font-size:15px;
-    border-radius:14px;
-    box-shadow:0 6px 20px rgba(118,75,162,.3);
+/* Leaderboard */
+.lb-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px;margin:6px 0;border-radius:14px;
+    background:linear-gradient(135deg,#f5f0ff,#fff);
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
 }
+.lb-row:first-child{background:linear-gradient(135deg,#ffd700,#ffb347);color:#5d3a00}
+.lb-rank{font-size:20px;font-weight:bold;width:35px}
+.lb-name{flex:1;font-weight:bold;color:#4a1a7a}
+.lb-stat{font-size:13px;color:#666;text-align:right}
 
 /* Confetti */
-.confetti-container{
-    position:fixed;
-    top:0;left:0;
-    width:100%;height:100%;
-    pointer-events:none;
-    z-index:999;
-}
-
-.confetti-piece{
-    position:absolute;
-    width:10px;height:10px;
-    border-radius:2px;
-    animation: confettiFall 1.5s ease forwards;
-}
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease forwards}
 
 @keyframes confettiFall{
     0%{transform:translate(0,0) rotate(0deg);opacity:1}
@@ -399,12 +394,12 @@ button.ripple::after{animation: rippleEffect .5s ease}
     to{opacity:1;transform:translateY(0)}
 }
 
-/* Responsive */
 @media(max-width:500px){
     body{padding:10px}
     .card{padding:16px;margin:12px 0}
     h2{font-size:1.4rem}
     #setup{padding:25px 20px;margin:30px auto}
+    .nav-tabs button{padding:8px 12px;font-size:12px}
 }
 </style>
 </head>
@@ -424,10 +419,7 @@ button.ripple::after{animation: rippleEffect .5s ease}
 <div id="setup" style="display:none">
     <h2>🏝️ Adventure Quest</h2>
     <p>Enter the names of your little adventurers!</p>
-    <div id="name-inputs">
-        <input type="text" class="name-input" placeholder="👦 First kid's name" maxlength="15">
-        <input type="text" class="name-input" placeholder="👶 Second kid's name" maxlength="15">
-    </div>
+    <div id="name-inputs"></div>
     <button class="add-kid-btn" onclick="addNameInput()">➕ Add another kid</button>
     <br>
     <button class="start-btn" onclick="startGame()">🚀 Start the Adventure!</button>
@@ -435,6 +427,11 @@ button.ripple::after{animation: rippleEffect .5s ease}
 
 <div id="game" style="display:none">
     <h2>🏝️ <span id="title"></span> Adventure Quest</h2>
+    <div class="nav-tabs" id="nav">
+        <button class="active" onclick="showTab('quest')">🎮 Quest</button>
+        <button onclick="showTab('calendar')">📅 History</button>
+        <button onclick="showTab('leaderboard')">🏆 Leaderboard</button>
+    </div>
     <div id="app"></div>
 </div>
 
@@ -442,48 +439,149 @@ button.ripple::after{animation: rippleEffect .5s ease}
 
 <script>
 
-const runnerEmojis = ['🏃','🏃‍♂️','🏃‍♀️','🧒','👧','🦸'];
-const kidEmojis = ['👦','👶','👧','🧒','🦸','👑'];
+// --- AUDIO (Web Audio API - no files needed) ---
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function getAudio(){
+    if(!audioCtx) audioCtx = new AudioCtx();
+    return audioCtx;
+}
+
+function playDing(){
+    const ctx = getAudio();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type='sine'; o.frequency.setValueAtTime(880,ctx.currentTime);
+    o.frequency.setValueAtTime(1100,ctx.currentTime+.08);
+    g.gain.setValueAtTime(.3,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+    o.start(); o.stop(ctx.currentTime+.3);
+}
+
+function playBoop(){
+    const ctx = getAudio();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type='square'; o.frequency.setValueAtTime(200,ctx.currentTime);
+    o.frequency.setValueAtTime(150,ctx.currentTime+.1);
+    g.gain.setValueAtTime(.2,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);
+    o.start(); o.stop(ctx.currentTime+.2);
+}
+
+function playFanfare(){
+    const ctx = getAudio();
+    const notes = [523,659,784,1047];
+    notes.forEach((freq,i)=>{
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type='triangle'; o.frequency.setValueAtTime(freq,ctx.currentTime+i*.12);
+        g.gain.setValueAtTime(.25,ctx.currentTime+i*.12);
+        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.12+.4);
+        o.start(ctx.currentTime+i*.12); o.stop(ctx.currentTime+i*.12+.4);
+    });
+}
+
+// --- DATA ---
+const avatarOptions = ['🦁','🐸','🦄','🐱','🐶','🦊','🐼','🐨','🦋','🐯','🦸','🧙'];
+const defaultAvatars = ['🦁','🐸','🦄','🐱','🐶','🦊'];
 let kids = JSON.parse(localStorage.getItem('quest_kids') || 'null');
-let db, prev, initialized = false;
+let avatars = JSON.parse(localStorage.getItem('quest_avatars') || '{}');
+let db, prev, history, streaks, initialized = false;
+let currentTab = 'quest';
 
 const tasks = [
-    "🪥 Teeth",
-    "📚 Reading",
-    "🧸 Tidy Toys",
-    "🤝 Help Brother",
-    "🕌 Prayer",
-    "🧹 Clean House",
-    "👂 Listen to Parents"
+    "🪥 Teeth","📚 Reading","🧸 Tidy Toys","🤝 Help Brother",
+    "🕌 Prayer","🧹 Clean House","👂 Listen to Parents"
+];
+
+const rewards = [
+    {at:15, prize:"🍦 Ice cream!"},
+    {at:30, prize:"🎬 Movie night!"},
+    {at:50, prize:"🎁 Special surprise!"}
+];
+
+const challengePool = [
+    {task:"🧑‍🍳 Help cook dinner", points:3},
+    {task:"🌱 Water the plants", points:2},
+    {task:"✏️ Draw a picture for someone", points:2},
+    {task:"🧓 Call a grandparent", points:3},
+    {task:"📖 Read an extra story", points:2},
+    {task:"🎵 Sing a song for the family", points:2},
+    {task:"🧹 Clean your room without being asked", points:3},
+    {task:"💌 Write a nice note for a family member", points:2}
 ];
 
 const milestones = [15, 30, 50];
 
 function level(p){
-    if(p >= 50) return "👑 Hero";
-    if(p >= 30) return "🐉 Dragon Rider";
-    if(p >= 15) return "🦸 Super Helper";
+    if(p>=50) return "👑 Hero";
+    if(p>=30) return "🐉 Dragon Rider";
+    if(p>=15) return "🦸 Super Helper";
     return "🚀 Explorer";
 }
 
 function nextGoal(p){
-    if(p < 15) return 15;
-    if(p < 30) return 30;
-    if(p < 50) return 50;
+    if(p<15) return 15;
+    if(p<30) return 30;
+    if(p<50) return 50;
     return 100;
 }
 
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function getDailyChallenge(){
+    const seed = todayStr().split('-').join('');
+    const idx = parseInt(seed) % challengePool.length;
+    return challengePool[idx];
+}
+
+// --- STREAK ---
+function updateStreak(k){
+    const today = todayStr();
+    if(!streaks[k]) streaks[k] = {last:'', count:0};
+    const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+    if(streaks[k].last === today) return;
+    if(streaks[k].last === yesterday){
+        streaks[k].count++;
+    } else if(streaks[k].last !== today){
+        streaks[k].count = 1;
+    }
+    streaks[k].last = today;
+    localStorage.setItem('quest_streaks', JSON.stringify(streaks));
+}
+
+// --- HISTORY ---
+function recordHistory(k, points){
+    const today = todayStr();
+    if(!history[k]) history[k] = {};
+    history[k][today] = points;
+    localStorage.setItem('quest_history', JSON.stringify(history));
+}
+
+// --- SETUP ---
 function addNameInput(){
     const div = document.getElementById('name-inputs');
-    const count = div.querySelectorAll('input').length;
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'name-input';
-    input.placeholder = kidEmojis[count % kidEmojis.length] + " Kid's name";
-    input.maxLength = 15;
-    input.style.animation = 'fadeInUp .3s ease forwards';
-    div.appendChild(input);
-    input.focus();
+    const count = div.querySelectorAll('.avatar-row').length;
+    const row = document.createElement('div');
+    row.className = 'avatar-row';
+    row.style.animation = 'fadeInUp .3s ease forwards';
+    row.innerHTML = `
+        <span class="avatar-pick selected" onclick="pickAvatar(this,${count})">${defaultAvatars[count % defaultAvatars.length]}</span>
+        <input type="text" class="name-input" placeholder="Kid's name" maxlength="15">
+    `;
+    div.appendChild(row);
+    row.querySelector('input').focus();
+}
+
+function pickAvatar(el, idx){
+    const current = avatarOptions.indexOf(el.textContent);
+    const next = (current+1) % avatarOptions.length;
+    el.textContent = avatarOptions[next];
 }
 
 function init(){
@@ -491,26 +589,35 @@ function init(){
         loadGame();
     } else {
         document.getElementById('setup').style.display = 'block';
+        addNameInput();
+        addNameInput();
     }
 }
 
 function startGame(){
-    const inputs = document.querySelectorAll('.name-input');
-    const names = [];
-    inputs.forEach(inp=>{
-        const v = inp.value.trim();
-        if(v) names.push(v);
+    const rows = document.querySelectorAll('.avatar-row');
+    const names = [], avs = {};
+    rows.forEach(row=>{
+        const name = row.querySelector('input').value.trim();
+        const av = row.querySelector('.avatar-pick').textContent;
+        if(name){ names.push(name); avs[name] = av; }
     });
     if(names.length < 2){ alert('Please enter at least 2 names!'); return; }
     if(new Set(names).size !== names.length){ alert('Each name must be unique!'); return; }
     kids = names;
+    avatars = avs;
     localStorage.setItem('quest_kids', JSON.stringify(kids));
+    localStorage.setItem('quest_avatars', JSON.stringify(avatars));
     loadGame();
 }
 
 function resetNames(){
     localStorage.removeItem('quest_kids');
+    localStorage.removeItem('quest_avatars');
     localStorage.removeItem('quest_data');
+    localStorage.removeItem('quest_history');
+    localStorage.removeItem('quest_streaks');
+    localStorage.removeItem('quest_challenge');
     location.reload();
 }
 
@@ -520,102 +627,157 @@ function loadGame(){
     document.getElementById('title').textContent = kids.join(' & ');
 
     db = JSON.parse(localStorage.getItem('quest_data') || '{}');
+    history = JSON.parse(localStorage.getItem('quest_history') || '{}');
+    streaks = JSON.parse(localStorage.getItem('quest_streaks') || '{}');
     kids.forEach(k=>{ if(!(k in db)) db[k] = 0; });
     prev = {...db};
 
-    render();
+    showTab('quest');
 }
 
+// --- TABS ---
+function showTab(tab){
+    currentTab = tab;
+    document.querySelectorAll('.nav-tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.nav-tabs button').forEach(b=>{
+        if(b.textContent.includes(tab==='quest'?'Quest':tab==='calendar'?'History':'Leaderboard'))
+            b.classList.add('active');
+    });
+    if(tab==='quest') render();
+    else if(tab==='calendar') renderCalendar();
+    else renderLeaderboard();
+}
+
+// --- ACTIONS ---
 function add(k){
     prev[k] = db[k];
     db[k]++;
-    update(k, 'good');
+    updateStreak(k);
+    recordHistory(k, db[k]);
+    playDing();
+    update(k,'good');
 }
 
 function remove(k){
     prev[k] = db[k];
     db[k] = Math.max(0, db[k]-1);
-    update(k, 'bad');
+    recordHistory(k, db[k]);
+    playBoop();
+    update(k,'bad');
 }
 
 function teamWork(){
-    kids.forEach(k=>{ prev[k] = db[k]; db[k] += 2; });
-    kids.forEach(k=> update(k, 'good'));
+    kids.forEach(k=>{ prev[k] = db[k]; db[k]+=2; updateStreak(k); recordHistory(k,db[k]); });
+    playDing();
+    kids.forEach(k=> update(k,'good'));
 }
 
+function completeChallenge(k){
+    const ch = getDailyChallenge();
+    const done = JSON.parse(localStorage.getItem('quest_challenge')||'{}');
+    const today = todayStr();
+    if(!done[today]) done[today] = [];
+    if(done[today].includes(k)) return;
+    done[today].push(k);
+    localStorage.setItem('quest_challenge', JSON.stringify(done));
+    prev[k] = db[k];
+    db[k] += ch.points;
+    updateStreak(k);
+    recordHistory(k, db[k]);
+    playFanfare();
+    update(k,'good');
+}
+
+function isChallengeComplete(k){
+    const done = JSON.parse(localStorage.getItem('quest_challenge')||'{}');
+    const today = todayStr();
+    return done[today] && done[today].includes(k);
+}
+
+// --- CONFETTI ---
 function fireConfetti(){
     const container = document.getElementById('confetti');
     const colors = ['#667eea','#764ba2','#f093fb','#43e97b','#ffd700','#ff5252'];
-    for(let i = 0; i < 25; i++){
+    for(let i=0;i<25;i++){
         const piece = document.createElement('div');
-        piece.className = 'confetti-piece';
-        piece.style.left = (30 + Math.random()*40) + '%';
-        piece.style.top = (20 + Math.random()*30) + '%';
-        piece.style.background = colors[Math.floor(Math.random()*colors.length)];
-        piece.style.setProperty('--dx', (Math.random()*250-125)+'px');
-        piece.style.setProperty('--dy', (Math.random()*350+100)+'px');
-        piece.style.borderRadius = Math.random()>.5 ? '50%' : '2px';
+        piece.className='confetti-piece';
+        piece.style.left=(30+Math.random()*40)+'%';
+        piece.style.top=(20+Math.random()*30)+'%';
+        piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+        piece.style.setProperty('--dx',(Math.random()*250-125)+'px');
+        piece.style.setProperty('--dy',(Math.random()*350+100)+'px');
+        piece.style.borderRadius=Math.random()>.5?'50%':'2px';
         container.appendChild(piece);
     }
-    setTimeout(()=>{ container.innerHTML = ''; }, 1600);
+    setTimeout(()=>{container.innerHTML='';},1600);
 }
 
-document.addEventListener('click', function(e){
-    const btn = e.target.closest('button');
-    if(!btn) return;
+// --- RIPPLE ---
+document.addEventListener('click',function(e){
+    const btn=e.target.closest('button');
+    if(!btn)return;
     btn.classList.remove('ripple');
     void btn.offsetWidth;
     btn.classList.add('ripple');
-    setTimeout(()=> btn.classList.remove('ripple'), 500);
+    setTimeout(()=>btn.classList.remove('ripple'),500);
 });
 
-function update(k, type){
-    if(!initialized){ render(); return; }
+// --- UPDATE ---
+function update(k,type){
+    if(!initialized||currentTab!=='quest'){render();return;}
 
-    const p = db[k];
-    const el = document.getElementById('card-'+CSS.escape(k));
-    if(!el){ render(); return; }
+    const p=db[k];
+    const el=document.getElementById('card-'+CSS.escape(k));
+    if(!el){render();return;}
 
-    const pts = el.querySelector('.points');
-    pts.textContent = '⭐ ' + p;
+    const pts=el.querySelector('.points');
+    pts.textContent='⭐ '+p;
     pts.classList.remove('points-pulse','points-bad');
     void pts.offsetWidth;
-    pts.classList.add(type==='good' ? 'points-pulse' : 'points-bad');
+    pts.classList.add(type==='good'?'points-pulse':'points-bad');
 
-    const newLevel = level(p);
-    const badgeEl = el.querySelector('.badge');
-    const oldLevel = badgeEl.textContent;
-    badgeEl.textContent = newLevel;
+    const newLevel=level(p);
+    const badgeEl=el.querySelector('.badge');
+    const oldLevel=badgeEl.textContent;
+    badgeEl.textContent=newLevel;
 
-    if(newLevel !== oldLevel){
+    if(newLevel!==oldLevel){
         badgeEl.classList.remove('glow');
         void badgeEl.offsetWidth;
         badgeEl.classList.add('glow');
+        playFanfare();
     }
 
-    document.getElementById('runner-'+CSS.escape(k)).style.left = Math.min((p/50)*100,100)+'%';
-    el.querySelector('.goal-text').innerHTML = '🎯 Next Goal: <strong>'+nextGoal(p)+' points</strong>';
+    const runnerEl=document.getElementById('runner-'+CSS.escape(k));
+    if(runnerEl) runnerEl.style.left=Math.min((p/50)*100,100)+'%';
+    el.querySelector('.goal-text').innerHTML='🎯 Next Goal: <strong>'+nextGoal(p)+' points</strong>';
+
+    // Streak display
+    const streakEl=el.querySelector('.streak');
+    if(streakEl&&streaks[k]) streakEl.textContent='🔥 '+streaks[k].count+' day streak';
 
     milestones.forEach(m=>{
-        if(prev[k] < m && p >= m) fireConfetti();
+        if(prev[k]<m&&p>=m){fireConfetti();playFanfare();}
     });
 
-    localStorage.setItem('quest_data', JSON.stringify(db));
+    localStorage.setItem('quest_data',JSON.stringify(db));
 }
 
+// --- RENDER QUEST ---
 function render(){
-    let out = "";
+    let out="";
+    const trackHeight=60+kids.length*44;
+    const today=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+    const ch=getDailyChallenge();
 
-    const trackHeight = 60 + kids.length * 44;
-    const today = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
-    out += `
+    out+=`
     <div class="card" id="card-race">
         <h3>📅 Daily Progress — ${today}</h3>
         <div class="milestone-container">
             <div class="track" style="height:${trackHeight}px">
                 ${kids.map((k,i)=>`
                 <div class="runner runner-${i}" id="runner-${CSS.escape(k)}" style="left:${Math.min((db[k]/50)*100,100)}%">
-                    <span class="runner-emoji">${runnerEmojis[i % runnerEmojis.length]}</span>
+                    <span class="runner-emoji">${avatars[k]||defaultAvatars[i%defaultAvatars.length]}</span>
                     <span class="runner-label">${k}</span>
                 </div>`).join('')}
                 <div class="milestone m15">🦸<span>15</span></div>
@@ -623,17 +785,35 @@ function render(){
                 <div class="milestone m50">👑<span>50</span></div>
             </div>
         </div>
+        <h4>🎁 Rewards</h4>
+        <div>${rewards.map(r=>`<span class="reward">${r.at} pts → ${r.prize}</span> `).join('')}</div>
     </div>`;
 
+    // Daily Challenge
+    out+=`
+    <div class="card">
+        <h3>⚡ Daily Challenge</h3>
+        <div class="challenge">
+            <div>${ch.task} (+${ch.points}⭐)</div>
+            ${kids.map(k=>
+                isChallengeComplete(k)
+                ? `<button disabled style="opacity:.5;margin-top:8px">✅ ${k} done!</button>`
+                : `<button onclick="completeChallenge('${k.replace(/'/g,"\\'")}')" style="margin-top:8px">${avatars[k]||'⭐'} ${k}</button>`
+            ).join('')}
+        </div>
+    </div>`;
+
+    // Kid cards
     kids.forEach((k,i)=>{
-        const p = db[k];
-        out += `
+        const p=db[k];
+        const streak=streaks[k]?streaks[k].count:0;
+        out+=`
         <div class="card" id="card-${CSS.escape(k)}">
             <div class="name">
-                <h3>${kidEmojis[i % kidEmojis.length]} ${k}</h3>
+                <h3>${avatars[k]||defaultAvatars[i%defaultAvatars.length]} ${k}</h3>
                 <div class="points">⭐ ${p}</div>
             </div>
-
+            ${streak>0?`<div class="streak">🔥 ${streak} day streak</div>`:''}
             <div class="badge">${level(p)}</div>
             <p class="goal-text">🎯 Next Goal: <strong>${nextGoal(p)} points</strong></p>
 
@@ -645,7 +825,7 @@ function render(){
         </div>`;
     });
 
-    out += `
+    out+=`
     <div class="card">
         <h3>🤝 Team Quest</h3>
         <button class="team" onclick="teamWork()">⚡ +2 Both Worked Together!</button>
@@ -653,9 +833,75 @@ function render(){
         <span class="reset-link" onclick="resetNames()">⚙️ Change names & reset</span>
     </div>`;
 
-    document.getElementById("app").innerHTML = out;
-    localStorage.setItem('quest_data', JSON.stringify(db));
-    initialized = true;
+    document.getElementById("app").innerHTML=out;
+    localStorage.setItem('quest_data',JSON.stringify(db));
+    initialized=true;
+}
+
+// --- RENDER CALENDAR ---
+function renderCalendar(){
+    let out='<div class="card"><h3>📅 Weekly Performance</h3>';
+    const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+    kids.forEach(k=>{
+        out+=`<h4>${avatars[k]||'⭐'} ${k}</h4><div class="calendar">`;
+        days.forEach(d=>out+=`<div class="cal-header">${d}</div>`);
+
+        // Get last 7 days
+        for(let i=6;i>=0;i--){
+            const d=new Date(Date.now()-i*86400000);
+            const key=d.toISOString().slice(0,10);
+            const pts=history[k]&&history[k][key]?history[k][key]:0;
+            const isToday=i===0;
+            const stars=pts>=5?'🌟':pts>=3?'⭐':pts>0?'✨':'·';
+            out+=`<div class="cal-day ${isToday?'today':''}">
+                <span>${d.getDate()}</span>
+                <span class="cal-stars">${stars}</span>
+            </div>`;
+        }
+        out+=`</div>`;
+    });
+
+    out+='</div>';
+    document.getElementById("app").innerHTML=out;
+}
+
+// --- RENDER LEADERBOARD ---
+function renderLeaderboard(){
+    const sorted=[...kids].sort((a,b)=>db[b]-db[a]);
+    let out='<div class="card"><h3>🏆 All-Time Leaderboard</h3>';
+
+    sorted.forEach((k,i)=>{
+        const rank=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+        const streak=streaks[k]?streaks[k].count:0;
+        out+=`
+        <div class="lb-row">
+            <span class="lb-rank">${rank}</span>
+            <span class="lb-name">${avatars[k]||'⭐'} ${k}</span>
+            <span class="lb-stat">
+                ⭐ ${db[k]} pts<br>
+                🔥 ${streak} day streak<br>
+                ${level(db[k])}
+            </span>
+        </div>`;
+    });
+
+    // Stats
+    out+=`<h4 style="margin-top:20px">📊 Stats</h4>`;
+    const totalPts=kids.reduce((s,k)=>s+db[k],0);
+    const bestStreak=Math.max(...kids.map(k=>streaks[k]?streaks[k].count:0));
+    out+=`
+    <div class="lb-row">
+        <span class="lb-name">Total points earned</span>
+        <span class="lb-stat">⭐ ${totalPts}</span>
+    </div>
+    <div class="lb-row">
+        <span class="lb-name">Best streak</span>
+        <span class="lb-stat">🔥 ${bestStreak} days</span>
+    </div>`;
+
+    out+='</div>';
+    document.getElementById("app").innerHTML=out;
 }
 
 init();
