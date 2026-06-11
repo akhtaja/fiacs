@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daily Report Kids</title>
+<style>
+body{font-family:Arial;background:#eef7ff;padding:10px}
+.card{background:#fff;border-radius:16px;padding:15px;margin:10px 0}
+.map{font-size:32px;line-height:1.8}
+button{padding:10px;border:none;border-radius:10px;margin:4px}
+.badge{font-size:22px}
+</style>
+</head>
+<body>
+<h2>🏝️ Hamzah & Yahya Adventure Quest</h2>
+<div id="app"></div>
+<script>
+let db=JSON.parse(localStorage.getItem('questv2')||'{"hamza":0,"yahya":0}');
+
+const tasks=["🪥 Teeth","📚 Reading","🧸 Tidy Toys","🤝 Help Brother","🕌 Prayer"];
+
+function level(p){
+ if(p>=50) return "👑 Hero";
+ if(p>=30) return "🐉 Dragon Rider";
+ if(p>=15) return "🦸 Super Helper";
+ return "🚀 Explorer";
+}
+
+function add(k){db[k]++;render();}
+function render(){
+ let out="";
+ ["hamza","yahya"].forEach(k=>{
+  let p=db[k];
+  out+=`
+  <div class="card">
+   <h3>${k=="hamzah"?"👦 Hamzah":"👶 Yahya"}</h3>
+   <div class="badge">${level(p)}</div>
+   <div class="map">🚀 ${"⭐".repeat(Math.min(p,10))} 🏝️ 🐉 🏰 👑</div>
+   <p>Points: ${p}</p>
+   <h4>Daily Missions</h4>
+   ${tasks.map(t=>`<button onclick="add('${k}')">${t}</button>`).join("")}
+  </div>`;
+ });
+ out+=`<div class="card"><h3>🤝 Team Quest</h3>
+ <button onclick="db.hamza+=2;db.yahya+=2;render()">Both Worked Together</button>
+ </div>`;
+ document.getElementById("app").innerHTML=out;
+ localStorage.setItem('questv2',JSON.stringify(db));
+}
+render();
+</script>
+</body></html>
