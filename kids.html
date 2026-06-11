@@ -6,9 +6,12 @@
 <title>Adventure Quest</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
+
 body{
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom,#d9f0ff,#fdf7d4);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+    background-attachment:fixed;
     margin:0;
     padding:15px;
     min-height:100vh;
@@ -17,10 +20,13 @@ body{
 
 h2{
     text-align:center;
-    color:#333;
+    color:#fff;
+    font-size:1.8rem;
+    text-shadow:0 2px 10px rgba(0,0,0,.3);
+    margin-bottom:15px;
 }
 
-/* Task 6: Floating background */
+/* Floating background */
 .floaters{
     position:fixed;
     top:0;left:0;
@@ -32,33 +38,144 @@ h2{
 
 .floater{
     position:absolute;
-    font-size:28px;
-    opacity:.25;
+    opacity:.2;
     animation: floatAcross linear infinite;
 }
 
 @keyframes floatAcross{
-    from{transform:translateX(-60px)}
-    to{transform:translateX(calc(100vw + 60px))}
+    from{transform:translateX(-60px) rotate(0deg)}
+    to{transform:translateX(calc(100vw + 60px)) rotate(360deg)}
 }
 
-/* Task 5: Staggered card entrance */
+/* Setup screen */
+#setup{
+    max-width:420px;
+    margin:60px auto;
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(20px);
+    border-radius:24px;
+    padding:40px 30px;
+    box-shadow:0 20px 60px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.3);
+    text-align:center;
+    animation: fadeInUp .6s ease forwards;
+}
+
+#setup h2{
+    color:#4a1a7a;
+    font-size:2rem;
+    margin-bottom:8px;
+    text-shadow:none;
+}
+
+#setup p{
+    color:#666;
+    margin-bottom:20px;
+}
+
+#setup input{
+    display:block;
+    width:100%;
+    padding:14px 16px;
+    margin:10px 0;
+    border:2px solid #e0d4f5;
+    border-radius:14px;
+    font-size:16px;
+    box-sizing:border-box;
+    background:#faf8ff;
+    transition:border-color .3s, box-shadow .3s;
+}
+
+#setup input:focus{
+    outline:none;
+    border-color:#764ba2;
+    box-shadow:0 0 0 4px rgba(118,75,162,.15);
+}
+
+#setup .start-btn{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
+    border:none;
+    border-radius:16px;
+    padding:16px 40px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:20px;
+    transition:transform .2s, box-shadow .2s;
+    box-shadow:0 8px 25px rgba(118,75,162,.4);
+}
+
+#setup .start-btn:hover{
+    transform:scale(1.05) translateY(-2px);
+    box-shadow:0 12px 35px rgba(118,75,162,.5);
+}
+
+#setup .add-kid-btn{
+    background:linear-gradient(135deg,#43e97b,#38f9d7);
+    color:#1a5c3a;
+    border:none;
+    border-radius:12px;
+    padding:12px 24px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:12px;
+    transition:transform .2s, box-shadow .2s;
+    box-shadow:0 4px 15px rgba(67,233,123,.3);
+}
+
+#setup .add-kid-btn:hover{
+    transform:scale(1.05);
+    box-shadow:0 6px 20px rgba(67,233,123,.4);
+}
+
+.reset-link{
+    display:inline-block;
+    margin-top:15px;
+    color:rgba(255,255,255,.7);
+    font-size:12px;
+    cursor:pointer;
+    text-decoration:underline;
+    transition:color .2s;
+}
+
+.reset-link:hover{color:#fff}
+
+/* Cards */
 .card{
     position:relative;
-    background:white;
-    border-radius:20px;
-    padding:20px;
-    margin:15px 0;
-    box-shadow:0 6px 20px rgba(0,0,0,.12);
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(15px);
+    border-radius:24px;
+    padding:24px;
+    margin:18px 0;
+    box-shadow:0 10px 40px rgba(0,0,0,.12), 0 0 0 1px rgba(255,255,255,.2);
     opacity:0;
-    animation: fadeIn .5s ease forwards;
+    animation: fadeInUp .5s ease forwards;
     z-index:1;
+    border:1px solid rgba(255,255,255,.5);
 }
 
 .card:nth-child(1){animation-delay:0s}
-.card:nth-child(2){animation-delay:.2s}
-.card:nth-child(3){animation-delay:.4s}
-.card:nth-child(4){animation-delay:.6s}
+.card:nth-child(2){animation-delay:.15s}
+.card:nth-child(3){animation-delay:.3s}
+.card:nth-child(4){animation-delay:.45s}
+.card:nth-child(5){animation-delay:.6s}
+.card:nth-child(6){animation-delay:.75s}
+
+.card h3{
+    font-size:1.2rem;
+    color:#4a1a7a;
+    margin-bottom:5px;
+}
+
+.card h4{
+    margin:12px 0 8px;
+    font-size:.85rem;
+    color:#888;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
 
 .name{
     display:flex;
@@ -66,118 +183,125 @@ h2{
     align-items:center;
 }
 
-/* Task 3: Points pulse */
+/* Points pulse */
 .points{
-    font-size:22px;
+    font-size:24px;
     font-weight:bold;
-    color:#2d6a4f;
+    color:#667eea;
     transition: transform .2s;
 }
 
-.points-pulse{
-    animation: pointsPop .4s ease;
-}
-
-.points-bad{
-    animation: pointsBad .4s ease;
-}
+.points-pulse{animation: pointsPop .4s ease}
+.points-bad{animation: pointsBad .4s ease}
 
 @keyframes pointsPop{
-    0%{transform:scale(1);color:#2d6a4f}
-    50%{transform:scale(1.4);color:#ffd700}
-    100%{transform:scale(1);color:#2d6a4f}
+    0%{transform:scale(1);color:#667eea}
+    50%{transform:scale(1.5);color:#ffd700}
+    100%{transform:scale(1);color:#667eea}
 }
 
 @keyframes pointsBad{
-    0%{transform:scale(1);color:#2d6a4f}
-    50%{transform:scale(1.4);color:#ff5252}
-    100%{transform:scale(1);color:#2d6a4f}
+    0%{transform:scale(1);color:#667eea}
+    50%{transform:scale(1.5);color:#ff5252}
+    100%{transform:scale(1);color:#667eea}
 }
 
-/* Task 8: Level-up glow */
+/* Level-up glow */
 .badge{
-    font-size:22px;
-    margin:10px 0;
+    font-size:18px;
+    margin:8px 0;
     display:inline-block;
-    padding:4px 12px;
-    border-radius:12px;
+    padding:6px 14px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#ffecd2,#fcb69f);
+    color:#6b3a0a;
+    font-weight:bold;
 }
 
-.glow{
-    animation: glowPulse 1.5s ease;
-}
+.glow{animation: glowPulse 1.5s ease}
 
 @keyframes glowPulse{
     0%{box-shadow:0 0 0 rgba(255,215,0,0)}
-    30%{box-shadow:0 0 20px rgba(255,215,0,.8), 0 0 40px rgba(255,215,0,.4)}
+    30%{box-shadow:0 0 25px rgba(255,215,0,.9), 0 0 50px rgba(255,215,0,.4)}
     100%{box-shadow:0 0 0 rgba(255,215,0,0)}
 }
 
-.milestone-container{
-    margin:30px 0 20px;
+.goal-text{
+    font-size:.9rem;
+    color:#777;
+    margin:8px 0;
 }
+
+.milestone-container{margin:25px 0 15px}
 
 .track{
     position:relative;
-    height:90px;
     border-radius:40px;
-    background:linear-gradient(to right,#dcedc8,#fff9c4);
-    border:4px solid #ddd;
+    background:linear-gradient(to right,#a8edea,#fed6e3,#ffecd2);
+    border:3px solid rgba(255,255,255,.6);
     overflow:visible;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.08), 0 4px 15px rgba(0,0,0,.1);
 }
 
 .track::before{
     content:"";
     position:absolute;
-    top:50%;left:0;
-    width:100%;height:8px;
-    background:#bbb;
+    top:50%;left:2%;
+    width:96%;height:6px;
+    background:rgba(0,0,0,.1);
     transform:translateY(-50%);
     border-radius:20px;
 }
 
-/* Task 2: Runner bounce applied */
+/* Runner bounce */
 .runner{
     position:absolute;
     transform:translateX(-50%);
-    transition:left .8s ease;
+    transition:left .8s cubic-bezier(.34,1.56,.64,1);
     z-index:5;
     animation: bounce .6s ease infinite;
     text-align:center;
 }
 
-.runner-hamzah{top:-12px}
-.runner-yahya{top:30px}
-.runner-yahya .runner-img{width:32px}
+.runner-0{top:-10px}
+.runner-1{top:34px}
+.runner-2{top:78px}
+.runner-3{top:122px}
+.runner-4{top:166px}
+.runner-5{top:210px}
 
 .runner-label{
     display:block;
     font-size:10px;
     font-weight:bold;
-    color:#333;
-    margin-top:2px;
+    color:#4a1a7a;
+    background:rgba(255,255,255,.9);
+    border-radius:10px;
+    padding:2px 6px;
+    margin-top:1px;
+    box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 
-.runner-img{
-    width:45px;
-    height:auto;
-    object-fit:contain;
-    filter:drop-shadow(0 3px 6px rgba(0,0,0,.2));
+.runner-emoji{
+    font-size:30px;
+    display:inline-block;
+    transform:scaleX(-1);
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
 }
 
 .milestone{
     position:absolute;
-    top:-14px;
+    top:-22px;
     transform:translateX(-50%);
     text-align:center;
-    font-size:26px;
+    font-size:34px;
 }
 
 .milestone span{
     display:block;
     font-size:12px;
     font-weight:bold;
-    color:#555;
+    color:#764ba2;
 }
 
 .m15{left:30%}
@@ -186,23 +310,28 @@ h2{
 
 @keyframes bounce{
     0%,100%{transform:translateX(-50%) translateY(0)}
-    50%{transform:translateX(-50%) translateY(-5px)}
+    50%{transform:translateX(-50%) translateY(-6px)}
 }
 
-/* Task 4: Button ripple */
+/* Buttons */
 button{
     position:relative;
     overflow:hidden;
     border:none;
-    border-radius:10px;
-    padding:8px 10px;
+    border-radius:12px;
+    padding:9px 12px;
     margin:4px;
     font-size:13px;
+    font-weight:600;
     cursor:pointer;
-    transition:transform .2s;
+    transition:transform .2s, box-shadow .2s;
 }
 
-button:hover{transform:scale(1.05)}
+button:hover{
+    transform:scale(1.06) translateY(-1px);
+}
+
+button:active{transform:scale(.97)}
 
 button::after{
     content:"";
@@ -215,20 +344,36 @@ button::after{
     opacity:0;
 }
 
-button.ripple::after{
-    animation: rippleEffect .5s ease;
-}
+button.ripple::after{animation: rippleEffect .5s ease}
 
 @keyframes rippleEffect{
     0%{width:0;height:0;opacity:.6}
     100%{width:200px;height:200px;opacity:0}
 }
 
-.good{background:#4caf50;color:white}
-.bad{background:#ff5252;color:white}
-.team{background:#2196f3;color:white;width:100%}
+.good{
+    background:linear-gradient(135deg,#43e97b,#38f9d7);
+    color:#1a5c3a;
+    box-shadow:0 3px 10px rgba(67,233,123,.25);
+}
 
-/* Task 7: Confetti */
+.bad{
+    background:linear-gradient(135deg,#ff5252,#f48fb1);
+    color:#fff;
+    box-shadow:0 3px 10px rgba(255,82,82,.25);
+}
+
+.team{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
+    width:100%;
+    padding:14px;
+    font-size:15px;
+    border-radius:14px;
+    box-shadow:0 6px 20px rgba(118,75,162,.3);
+}
+
+/* Confetti */
 .confetti-container{
     position:fixed;
     top:0;left:0;
@@ -249,39 +394,58 @@ button.ripple::after{
     100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}
 }
 
-@keyframes fadeIn{
-    from{opacity:0;transform:translateY(10px)}
+@keyframes fadeInUp{
+    from{opacity:0;transform:translateY(20px)}
     to{opacity:1;transform:translateY(0)}
+}
+
+/* Responsive */
+@media(max-width:500px){
+    body{padding:10px}
+    .card{padding:16px;margin:12px 0}
+    h2{font-size:1.4rem}
+    #setup{padding:25px 20px;margin:30px auto}
 }
 </style>
 </head>
 
 <body>
 
-<!-- Task 6: Floating background elements -->
 <div class="floaters">
-    <div class="floater" style="top:10%;animation-duration:18s;font-size:32px">☁️</div>
-    <div class="floater" style="top:30%;animation-duration:25s;animation-delay:3s">⭐</div>
-    <div class="floater" style="top:55%;animation-duration:22s;animation-delay:7s">☁️</div>
-    <div class="floater" style="top:75%;animation-duration:20s;animation-delay:12s">🌈</div>
-    <div class="floater" style="top:45%;animation-duration:30s;animation-delay:5s;font-size:24px">✨</div>
-    <div class="floater" style="top:85%;animation-duration:28s;animation-delay:9s">☁️</div>
+    <div class="floater" style="top:8%;animation-duration:20s;font-size:36px">☁️</div>
+    <div class="floater" style="top:25%;animation-duration:28s;animation-delay:4s;font-size:24px">✨</div>
+    <div class="floater" style="top:50%;animation-duration:24s;animation-delay:8s;font-size:34px">☁️</div>
+    <div class="floater" style="top:70%;animation-duration:22s;animation-delay:13s;font-size:28px">🌈</div>
+    <div class="floater" style="top:40%;animation-duration:32s;animation-delay:6s;font-size:22px">⭐</div>
+    <div class="floater" style="top:88%;animation-duration:26s;animation-delay:10s;font-size:30px">🦋</div>
+    <div class="floater" style="top:15%;animation-duration:35s;animation-delay:15s;font-size:26px">🌟</div>
 </div>
 
-<h2>🏝️ Hamzah & Yahya Adventure Quest</h2>
-<div id="app"></div>
+<div id="setup" style="display:none">
+    <h2>🏝️ Adventure Quest</h2>
+    <p>Enter the names of your little adventurers!</p>
+    <div id="name-inputs">
+        <input type="text" class="name-input" placeholder="👦 First kid's name" maxlength="15">
+        <input type="text" class="name-input" placeholder="👶 Second kid's name" maxlength="15">
+    </div>
+    <button class="add-kid-btn" onclick="addNameInput()">➕ Add another kid</button>
+    <br>
+    <button class="start-btn" onclick="startGame()">🚀 Start the Adventure!</button>
+</div>
+
+<div id="game" style="display:none">
+    <h2>🏝️ <span id="title"></span> Adventure Quest</h2>
+    <div id="app"></div>
+</div>
+
 <div class="confetti-container" id="confetti"></div>
 
 <script>
 
-let db = JSON.parse(
-    localStorage.getItem('questv3') ||
-    '{"hamzah":0,"yahya":0}'
-);
-
-// Track previous state for milestone/level detection
-let prev = {hamzah: db.hamzah, yahya: db.yahya};
-let initialized = false;
+const runnerEmojis = ['🏃','🏃‍♂️','🏃‍♀️','🧒','👧','🦸'];
+const kidEmojis = ['👦','👶','👧','🧒','🦸','👑'];
+let kids = JSON.parse(localStorage.getItem('quest_kids') || 'null');
+let db, prev, initialized = false;
 
 const tasks = [
     "🪥 Teeth",
@@ -309,6 +473,59 @@ function nextGoal(p){
     return 100;
 }
 
+function addNameInput(){
+    const div = document.getElementById('name-inputs');
+    const count = div.querySelectorAll('input').length;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'name-input';
+    input.placeholder = kidEmojis[count % kidEmojis.length] + " Kid's name";
+    input.maxLength = 15;
+    input.style.animation = 'fadeInUp .3s ease forwards';
+    div.appendChild(input);
+    input.focus();
+}
+
+function init(){
+    if(kids && kids.length >= 2){
+        loadGame();
+    } else {
+        document.getElementById('setup').style.display = 'block';
+    }
+}
+
+function startGame(){
+    const inputs = document.querySelectorAll('.name-input');
+    const names = [];
+    inputs.forEach(inp=>{
+        const v = inp.value.trim();
+        if(v) names.push(v);
+    });
+    if(names.length < 2){ alert('Please enter at least 2 names!'); return; }
+    if(new Set(names).size !== names.length){ alert('Each name must be unique!'); return; }
+    kids = names;
+    localStorage.setItem('quest_kids', JSON.stringify(kids));
+    loadGame();
+}
+
+function resetNames(){
+    localStorage.removeItem('quest_kids');
+    localStorage.removeItem('quest_data');
+    location.reload();
+}
+
+function loadGame(){
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('game').style.display = 'block';
+    document.getElementById('title').textContent = kids.join(' & ');
+
+    db = JSON.parse(localStorage.getItem('quest_data') || '{}');
+    kids.forEach(k=>{ if(!(k in db)) db[k] = 0; });
+    prev = {...db};
+
+    render();
+}
+
 function add(k){
     prev[k] = db[k];
     db[k]++;
@@ -322,32 +539,27 @@ function remove(k){
 }
 
 function teamWork(){
-    prev.hamzah = db.hamzah;
-    prev.yahya = db.yahya;
-    db.hamzah += 2;
-    db.yahya += 2;
-    update('hamzah', 'good');
-    update('yahya', 'good');
+    kids.forEach(k=>{ prev[k] = db[k]; db[k] += 2; });
+    kids.forEach(k=> update(k, 'good'));
 }
 
-// Task 7: Confetti burst
 function fireConfetti(){
     const container = document.getElementById('confetti');
-    const colors = ['#ff5252','#ffd700','#4caf50','#2196f3','#e040fb','#ff9800'];
-    for(let i = 0; i < 20; i++){
+    const colors = ['#667eea','#764ba2','#f093fb','#43e97b','#ffd700','#ff5252'];
+    for(let i = 0; i < 25; i++){
         const piece = document.createElement('div');
         piece.className = 'confetti-piece';
-        piece.style.left = (40 + Math.random()*20) + '%';
-        piece.style.top = (30 + Math.random()*20) + '%';
+        piece.style.left = (30 + Math.random()*40) + '%';
+        piece.style.top = (20 + Math.random()*30) + '%';
         piece.style.background = colors[Math.floor(Math.random()*colors.length)];
-        piece.style.setProperty('--dx', (Math.random()*200-100)+'px');
-        piece.style.setProperty('--dy', (Math.random()*300+100)+'px');
+        piece.style.setProperty('--dx', (Math.random()*250-125)+'px');
+        piece.style.setProperty('--dy', (Math.random()*350+100)+'px');
+        piece.style.borderRadius = Math.random()>.5 ? '50%' : '2px';
         container.appendChild(piece);
     }
     setTimeout(()=>{ container.innerHTML = ''; }, 1600);
 }
 
-// Task 4: Ripple on button click
 document.addEventListener('click', function(e){
     const btn = e.target.closest('button');
     if(!btn) return;
@@ -357,68 +569,55 @@ document.addEventListener('click', function(e){
     setTimeout(()=> btn.classList.remove('ripple'), 500);
 });
 
-// Task 1: Targeted DOM update (after initial render)
 function update(k, type){
     if(!initialized){ render(); return; }
 
     const p = db[k];
-    const el = document.getElementById('card-'+k);
-    if(!el) { render(); return; }
+    const el = document.getElementById('card-'+CSS.escape(k));
+    if(!el){ render(); return; }
 
-    // Update points
     const pts = el.querySelector('.points');
     pts.textContent = '⭐ ' + p;
-
-    // Task 3: Points pulse
     pts.classList.remove('points-pulse','points-bad');
     void pts.offsetWidth;
     pts.classList.add(type==='good' ? 'points-pulse' : 'points-bad');
 
-    // Update badge
     const newLevel = level(p);
     const badgeEl = el.querySelector('.badge');
     const oldLevel = badgeEl.textContent;
     badgeEl.textContent = newLevel;
 
-    // Task 8: Level-up glow
     if(newLevel !== oldLevel){
         badgeEl.classList.remove('glow');
         void badgeEl.offsetWidth;
         badgeEl.classList.add('glow');
     }
 
-    // Update runner position on shared track
-    document.getElementById('runner-'+k).style.left = Math.min((p/50)*100,100)+'%';
-
-    // Update goal text
+    document.getElementById('runner-'+CSS.escape(k)).style.left = Math.min((p/50)*100,100)+'%';
     el.querySelector('.goal-text').innerHTML = '🎯 Next Goal: <strong>'+nextGoal(p)+' points</strong>';
 
-    // Task 7: Check milestone crossing
     milestones.forEach(m=>{
         if(prev[k] < m && p >= m) fireConfetti();
     });
 
-    localStorage.setItem('questv3', JSON.stringify(db));
+    localStorage.setItem('quest_data', JSON.stringify(db));
 }
 
-// Initial full render
 function render(){
     let out = "";
 
-    // Shared race track
+    const trackHeight = 60 + kids.length * 44;
+    const today = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
     out += `
     <div class="card" id="card-race">
-        <h3>🏁 Race Track</h3>
+        <h3>📅 Daily Progress — ${today}</h3>
         <div class="milestone-container">
-            <div class="track">
-                <div class="runner runner-hamzah" id="runner-hamzah" style="left:${Math.min((db.hamzah/50)*100,100)}%">
-                    <img src="images/hamzah-run.gif" class="runner-img" alt="Hamzah runner">
-                    <span class="runner-label">H</span>
-                </div>
-                <div class="runner runner-yahya" id="runner-yahya" style="left:${Math.min((db.yahya/50)*100,100)}%">
-                    <img src="images/yahya-run.jpg" class="runner-img" alt="Yahya runner">
-                    <span class="runner-label">Y</span>
-                </div>
+            <div class="track" style="height:${trackHeight}px">
+                ${kids.map((k,i)=>`
+                <div class="runner runner-${i}" id="runner-${CSS.escape(k)}" style="left:${Math.min((db[k]/50)*100,100)}%">
+                    <span class="runner-emoji">${runnerEmojis[i % runnerEmojis.length]}</span>
+                    <span class="runner-label">${k}</span>
+                </div>`).join('')}
                 <div class="milestone m15">🦸<span>15</span></div>
                 <div class="milestone m30">🐉<span>30</span></div>
                 <div class="milestone m50">👑<span>50</span></div>
@@ -426,42 +625,40 @@ function render(){
         </div>
     </div>`;
 
-    // Individual kid cards (without track)
-    ["hamzah","yahya"].forEach((k,i)=>{
+    kids.forEach((k,i)=>{
         const p = db[k];
-        const goal = nextGoal(p);
-
         out += `
-        <div class="card" id="card-${k}">
+        <div class="card" id="card-${CSS.escape(k)}">
             <div class="name">
-                <h3>${k==="hamzah" ? "👦 Hamzah" : "👶 Yahya"}</h3>
+                <h3>${kidEmojis[i % kidEmojis.length]} ${k}</h3>
                 <div class="points">⭐ ${p}</div>
             </div>
 
             <div class="badge">${level(p)}</div>
-
-            <p class="goal-text">🎯 Next Goal: <strong>${goal} points</strong></p>
+            <p class="goal-text">🎯 Next Goal: <strong>${nextGoal(p)} points</strong></p>
 
             <h4>✅ Good Deeds</h4>
-            ${tasks.map(t=>`<button class="good" onclick="add('${k}')">+ ${t}</button>`).join("")}
+            ${tasks.map(t=>`<button class="good" onclick="add('${k.replace(/'/g,"\\'")}')">+ ${t}</button>`).join("")}
 
-            <h4>😈 Oops / Bad Deeds</h4>
-            ${tasks.map(t=>`<button class="bad" onclick="remove('${k}')">− ${t}</button>`).join("")}
+            <h4>😈 Oops</h4>
+            ${tasks.map(t=>`<button class="bad" onclick="remove('${k.replace(/'/g,"\\'")}')">− ${t}</button>`).join("")}
         </div>`;
     });
 
     out += `
     <div class="card">
         <h3>🤝 Team Quest</h3>
-        <button class="team" onclick="teamWork()">+2 Both Worked Together</button>
+        <button class="team" onclick="teamWork()">⚡ +2 Both Worked Together!</button>
+        <br><br>
+        <span class="reset-link" onclick="resetNames()">⚙️ Change names & reset</span>
     </div>`;
 
     document.getElementById("app").innerHTML = out;
-    localStorage.setItem('questv3', JSON.stringify(db));
+    localStorage.setItem('quest_data', JSON.stringify(db));
     initialized = true;
 }
 
-render();
+init();
 
 </script>
 </body>
