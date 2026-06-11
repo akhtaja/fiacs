@@ -64,6 +64,56 @@ h2{
     transition:width .5s ease;
 }
 
+.milestone-container{
+    margin:20px 0;
+}
+
+.progress-wrap{
+    position:relative;
+    background:#eee;
+    border-radius:25px;
+    height:28px;
+    overflow:visible;
+}
+
+.progress{
+    height:100%;
+    border-radius:25px;
+    background:linear-gradient(
+        90deg,
+        #00c853,
+        #69f0ae
+    );
+    transition:width .6s ease;
+}
+
+.milestone{
+    position:absolute;
+    top:-22px;
+    transform:translateX(-50%);
+    font-size:22px;
+    text-align:center;
+}
+
+.milestone span{
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+    color:#555;
+}
+
+.m15{
+    left:30%;
+}
+
+.m30{
+    left:60%;
+}
+
+.m50{
+    left:100%;
+}
+
 button{
     border:none;
     border-radius:14px;
@@ -181,13 +231,33 @@ function render(animatedKid=""){
 
             <div class="badge">${level(p)}</div>
 
-            <div class="progress-wrap">
-                <div class="progress" style="width:${progress}%"></div>
-            </div>
+<div class="milestone-container">
 
-            <div>
-                Next Goal: ${goal} points
-            </div>
+    <div class="progress-wrap">
+        <div class="progress" style="width:${Math.min((p/50)*100,100)}%"></div>
+
+        <div class="milestone m15">
+            🦸
+            <span>15</span>
+        </div>
+
+        <div class="milestone m30">
+            🐉
+            <span>30</span>
+        </div>
+
+        <div class="milestone m50">
+            👑
+            <span>50</span>
+        </div>
+    </div>
+
+</div>
+
+<p>
+    🎯 Next Goal:
+    <strong>${goal}</strong>
+</p>
 
             <div class="map">
                 🚀 ${"⭐".repeat(Math.min(p,8))}
