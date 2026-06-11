@@ -841,24 +841,28 @@ function render(){
 // --- RENDER CALENDAR ---
 function renderCalendar(){
     let out='<div class="card"><h3>📅 Weekly Performance</h3>';
-    const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    // Build last 7 days array
+    const last7=[];
+    for(let i=6;i>=0;i--){
+        last7.push(new Date(Date.now()-i*86400000));
+    }
 
     kids.forEach(k=>{
         out+=`<h4>${avatars[k]||'⭐'} ${k}</h4><div class="calendar">`;
-        days.forEach(d=>out+=`<div class="cal-header">${d}</div>`);
+        last7.forEach(d=>out+=`<div class="cal-header">${dayNames[d.getDay()]}</div>`);
 
-        // Get last 7 days
-        for(let i=6;i>=0;i--){
-            const d=new Date(Date.now()-i*86400000);
+        last7.forEach((d,idx)=>{
             const key=d.toISOString().slice(0,10);
             const pts=history[k]&&history[k][key]?history[k][key]:0;
-            const isToday=i===0;
+            const isToday=idx===6;
             const stars=pts>=5?'🌟':pts>=3?'⭐':pts>0?'✨':'·';
             out+=`<div class="cal-day ${isToday?'today':''}">
                 <span>${d.getDate()}</span>
                 <span class="cal-stars">${stars}</span>
             </div>`;
-        }
+        });
         out+=`</div>`;
     });
 
