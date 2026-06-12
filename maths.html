@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maths Fun!</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:'Segoe UI',Tahoma,sans-serif;
+    background:linear-gradient(135deg,#a18cd1,#fbc2eb);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding:15px;
+    overflow-x:hidden;
+}
+
+h1{
+    text-align:center;
+    font-size:2rem;
+    color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.2);
+    margin-bottom:20px;
+}
+
+.container{
+    max-width:500px;
+    margin:0 auto;
+}
+
+/* Sidebar */
+.menu-toggle{
+    position:fixed;top:15px;left:15px;z-index:100;
+    background:rgba(255,255,255,.9);border:none;border-radius:12px;
+    width:44px;height:44px;font-size:22px;cursor:pointer;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s;
+}
+.menu-toggle:hover{transform:scale(1.1)}
+.sidebar{
+    position:fixed;top:0;left:-260px;width:250px;height:100%;
+    background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
+    z-index:99;padding:70px 20px 20px;
+    box-shadow:4px 0 30px rgba(0,0,0,.15);
+    transition:left .3s ease;border-radius:0 20px 20px 0;
+}
+.sidebar.open{left:0}
+.sidebar a{
+    display:block;padding:14px 16px;margin:6px 0;
+    border-radius:12px;text-decoration:none;
+    font-size:15px;font-weight:600;color:#4a1a7a;transition:background .2s;
+}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.3);z-index:98;display:none}
+.overlay.open{display:block}
+
+/* Card */
+.card{
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(15px);
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 15px 50px rgba(0,0,0,.15);
+    text-align:center;
+    margin-bottom:20px;
+}
+
+/* Problem display */
+.problem{
+    font-size:3.5rem;
+    font-weight:bold;
+    color:#4a1a7a;
+    margin:20px 0;
+    animation:popIn .3s ease;
+}
+
+.visual{
+    font-size:2rem;
+    margin:15px 0;
+    line-height:1.6;
+    min-height:60px;
+}
+
+/* Answer options */
+.options{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin:20px 0;
+}
+
+.option{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:#fff;
+    border:none;
+    border-radius:16px;
+    padding:20px;
+    font-size:2rem;
+    font-weight:bold;
+    cursor:pointer;
+    transition:transform .2s,box-shadow .2s;
+    box-shadow:0 6px 20px rgba(118,75,162,.3);
+}
+
+.option:hover{transform:scale(1.05) translateY(-2px)}
+.option:active{transform:scale(.95)}
+
+.option.correct{
+    background:linear-gradient(135deg,#43e97b,#38f9d7)!important;
+    color:#1a5c3a!important;
+}
+
+.option.wrong{
+    background:linear-gradient(135deg,#ff5252,#f48fb1)!important;
+    animation:shake .4s ease;
+}
+
+/* Score & streak */
+.score-bar{
+    display:flex;
+    justify-content:space-around;
+    margin-bottom:15px;
+    font-size:1.1rem;
+    font-weight:bold;
+    color:#fff;
+}
+
+.score-item{
+    background:rgba(255,255,255,.2);
+    padding:8px 16px;
+    border-radius:12px;
+}
+
+/* Difficulty */
+.difficulty{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.diff-btn{
+    background:rgba(255,255,255,.2);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:8px 14px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:background .2s;
+}
+
+.diff-btn.active{background:rgba(255,255,255,.9);color:#4a1a7a}
+
+/* Feedback */
+.feedback{
+    font-size:1.5rem;
+    font-weight:bold;
+    min-height:40px;
+    margin:10px 0;
+}
+
+.feedback.correct{color:#2d6a4f}
+.feedback.wrong{color:#d63031}
+
+/* Floaters */
+.floaters{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.floater{position:absolute;opacity:.2;animation:floatAcross linear infinite}
+@keyframes floatAcross{from{transform:translateX(-50px) rotate(0deg)}to{transform:translateX(calc(100vw + 50px)) rotate(360deg)}}
+
+@keyframes popIn{
+    0%{transform:scale(.5);opacity:0}
+    60%{transform:scale(1.1)}
+    100%{transform:scale(1);opacity:1}
+}
+
+@keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    75%{transform:translateX(8px)}
+}
+
+/* Confetti */
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti-piece{
+    position:absolute;width:10px;height:10px;border-radius:2px;
+    animation:confettiFall 1.2s ease forwards;
+}
+@keyframes confettiFall{
+    0%{transform:translate(0,0) rotate(0deg);opacity:1}
+    100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}
+}
+
+@media(max-width:400px){
+    .problem{font-size:2.5rem}
+    .option{font-size:1.5rem;padding:15px}
+}
+</style>
+</head>
+
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+    <a href="maths.html" class="active">🧮 Maths</a>
+</div>
+
+<div class="floaters">
+    <div class="floater" style="top:12%;animation-duration:22s;font-size:30px">➕</div>
+    <div class="floater" style="top:45%;animation-duration:28s;animation-delay:5s;font-size:26px">➖</div>
+    <div class="floater" style="top:75%;animation-duration:24s;animation-delay:10s;font-size:28px">🌟</div>
+    <div class="floater" style="top:30%;animation-duration:30s;animation-delay:8s;font-size:24px">🎯</div>
+    <div class="floater" style="top:85%;animation-duration:26s;animation-delay:3s;font-size:30px">✨</div>
+</div>
+
+<div class="container">
+    <h1>🧮 Maths Fun!</h1>
+
+<div class="confetti-container" id="confetti"></div>
+
+    <div class="score-bar">
+        <span class="score-item">⭐ <span id="score">0</span></span>
+        <span class="score-item">🔥 <span id="streak">0</span></span>
+        <span class="score-item">✅ <span id="total">0</span>/<span id="attempts">0</span></span>
+    </div>
+
+    <div class="difficulty">
+        <button class="diff-btn active" onclick="setDifficulty('easy')">😊 Easy</button>
+        <button class="diff-btn" onclick="setDifficulty('medium')">🤔 Medium</button>
+        <button class="diff-btn" onclick="setDifficulty('hard')">🔥 Hard</button>
+    </div>
+
+    <div class="card">
+        <div class="visual" id="visual"></div>
+        <div class="problem" id="problem"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="options" id="options"></div>
+    </div>
+</div>
+
+<script>
+
+function toggleMenu(){
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+
+let score=0, streak=0, total=0, attempts=0;
+let currentAnswer=0;
+let difficulty='easy';
+let waiting=false;
+
+// --- AUDIO ---
+function makeWav(freq,duration,type){
+    const sampleRate=8000;
+    const samples=Math.floor(sampleRate*duration);
+    const buffer=new ArrayBuffer(44+samples*2);
+    const view=new DataView(buffer);
+    const str=(s,o)=>{for(let i=0;i<s.length;i++)view.setUint8(o+i,s.charCodeAt(i));};
+    str('RIFF',0);view.setUint32(4,36+samples*2,true);str('WAVE',8);
+    str('fmt ',12);view.setUint32(16,16,true);view.setUint16(20,1,true);
+    view.setUint16(22,1,true);view.setUint32(24,sampleRate,true);
+    view.setUint32(28,sampleRate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);
+    str('data',36);view.setUint32(40,samples*2,true);
+    for(let i=0;i<samples;i++){
+        const t=i/sampleRate;
+        const env=Math.max(0,1-t/duration);
+        let val=type==='sine'?Math.sin(2*Math.PI*freq*t):(Math.sin(2*Math.PI*freq*t)>0?1:-1);
+        view.setInt16(44+i*2,val*env*16000,true);
+    }
+    return URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}));
+}
+
+const correctSound=makeWav(880,.25,'sine');
+const wrongSound=makeWav(200,.2,'square');
+
+function playCorrect(){ new Audio(correctSound).play().catch(()=>{}); }
+function playWrong(){ new Audio(wrongSound).play().catch(()=>{}); }
+
+// --- CONFETTI ---
+function fireConfetti(){
+    const container=document.getElementById('confetti');
+    const colors=['#667eea','#764ba2','#fbc2eb','#43e97b','#ffd700','#ff5252'];
+    for(let i=0;i<20;i++){
+        const piece=document.createElement('div');
+        piece.className='confetti-piece';
+        piece.style.left=(30+Math.random()*40)+'%';
+        piece.style.top=(20+Math.random()*20)+'%';
+        piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+        piece.style.setProperty('--dx',(Math.random()*200-100)+'px');
+        piece.style.setProperty('--dy',(Math.random()*300+80)+'px');
+        piece.style.borderRadius=Math.random()>.5?'50%':'2px';
+        container.appendChild(piece);
+    }
+    setTimeout(()=>{container.innerHTML='';},1300);
+}
+
+const ranges={
+    easy:{max:10,ops:['+']},
+    medium:{max:15,ops:['+','-']},
+    hard:{max:20,ops:['+','-']}
+};
+
+function setDifficulty(d){
+    difficulty=d;
+    document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.diff-btn').forEach(b=>{
+        if(b.textContent.toLowerCase().includes(d)) b.classList.add('active');
+    });
+    newProblem();
+}
+
+function rand(min,max){
+    return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+function newProblem(){
+    waiting=false;
+    const r=ranges[difficulty];
+    const op=r.ops[Math.floor(Math.random()*r.ops.length)];
+    let a,b,answer;
+
+    if(op==='+'){
+        a=rand(1,r.max);
+        b=rand(1,r.max);
+        answer=a+b;
+    } else {
+        a=rand(2,r.max);
+        b=rand(1,a); // ensure no negative results
+        answer=a-b;
+    }
+
+    currentAnswer=answer;
+
+    // Visual representation
+    const emoji=op==='+'?'🟡':'🔵';
+    let vis='';
+    if(a<=12&&b<=12){
+        vis=emoji.repeat(a)+' '+op+' '+emoji.repeat(b);
+    }
+
+    document.getElementById('problem').textContent=`${a} ${op} ${b} = ?`;
+    document.getElementById('problem').style.animation='none';
+    void document.getElementById('problem').offsetWidth;
+    document.getElementById('problem').style.animation='popIn .3s ease';
+    document.getElementById('visual').textContent=vis;
+    document.getElementById('feedback').textContent='';
+    document.getElementById('feedback').className='feedback';
+
+    // Generate options
+    const options=new Set([answer]);
+    while(options.size<4){
+        let wrong=answer+rand(-3,3);
+        if(wrong<0) wrong=rand(0,answer+5);
+        if(wrong!==answer) options.add(wrong);
+    }
+
+    const shuffled=[...options].sort(()=>Math.random()-.5);
+    const optDiv=document.getElementById('options');
+    optDiv.innerHTML=shuffled.map(n=>
+        `<button class="option" onclick="check(this,${n})">${n}</button>`
+    ).join('');
+}
+
+function check(btn,val){
+    if(waiting) return;
+    waiting=true;
+    attempts++;
+
+    if(val===currentAnswer){
+        btn.classList.add('correct');
+        score++;
+        streak++;
+        total++;
+        playCorrect();
+        fireConfetti();
+        document.getElementById('feedback').textContent=['🎉 Correct!','⭐ Amazing!','🚀 Great job!','✨ Perfect!'][Math.floor(Math.random()*4)];
+        document.getElementById('feedback').className='feedback correct';
+    } else {
+        btn.classList.add('wrong');
+        streak=0;
+        playWrong();
+        // Show correct answer
+        document.querySelectorAll('.option').forEach(o=>{
+            if(parseInt(o.textContent)===currentAnswer) o.classList.add('correct');
+        });
+        document.getElementById('feedback').textContent='❌ Oops! It was '+currentAnswer;
+        document.getElementById('feedback').className='feedback wrong';
+    }
+
+    document.getElementById('score').textContent=score;
+    document.getElementById('streak').textContent=streak;
+    document.getElementById('total').textContent=total;
+    document.getElementById('attempts').textContent=attempts;
+
+    setTimeout(newProblem,1500);
+}
+
+newProblem();
+
+</script>
+</body>
+</html>
