@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Counting Fun!</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:'Segoe UI',Tahoma,sans-serif;
+    background:linear-gradient(135deg,#f6d365,#fda085);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding:15px;
+    overflow-x:hidden;
+}
+
+h1{
+    text-align:center;
+    font-size:2rem;
+    color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.2);
+    margin-bottom:20px;
+}
+
+.container{
+    max-width:500px;
+    margin:0 auto;
+}
+
+/* Number display */
+.number-display{
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(15px);
+    border-radius:30px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 15px 50px rgba(0,0,0,.15);
+    margin-bottom:20px;
+}
+
+.big-number{
+    font-size:8rem;
+    font-weight:bold;
+    color:#ff6b6b;
+    text-shadow:3px 3px 0 #feca57;
+    animation:popIn .4s ease;
+    line-height:1;
+}
+
+.number-word{
+    font-size:1.8rem;
+    color:#5f27cd;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.number-dots{
+    margin:15px 0;
+    font-size:2rem;
+    line-height:1.8;
+}
+
+/* Buttons */
+.controls{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:20px 0;
+}
+
+.btn{
+    border:none;
+    border-radius:50%;
+    width:70px;height:70px;
+    font-size:2rem;
+    cursor:pointer;
+    transition:transform .2s,box-shadow .2s;
+    box-shadow:0 6px 20px rgba(0,0,0,.15);
+}
+
+.btn:hover{transform:scale(1.1) translateY(-3px)}
+.btn:active{transform:scale(.95)}
+
+.btn-prev{background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff}
+.btn-next{background:linear-gradient(135deg,#55efc4,#00b894);color:#fff}
+.btn-speak{background:linear-gradient(135deg,#fdcb6e,#e17055);color:#fff}
+
+/* Number grid */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+    margin-top:20px;
+}
+
+.grid-num{
+    background:rgba(255,255,255,.9);
+    border-radius:16px;
+    padding:14px 8px;
+    text-align:center;
+    font-size:1.4rem;
+    font-weight:bold;
+    color:#6c5ce7;
+    cursor:pointer;
+    transition:transform .2s,background .2s;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.grid-num:hover{transform:scale(1.1);background:#dfe6e9}
+.grid-num.active{background:linear-gradient(135deg,#ff6b6b,#feca57);color:#fff;transform:scale(1.15)}
+
+/* Progress */
+.progress-bar{
+    background:rgba(255,255,255,.4);
+    border-radius:20px;
+    height:12px;
+    margin:15px 0;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    border-radius:20px;
+    background:linear-gradient(90deg,#6c5ce7,#a29bfe);
+    transition:width .4s ease;
+}
+
+/* Animation */
+@keyframes popIn{
+    0%{transform:scale(.5);opacity:0}
+    60%{transform:scale(1.2)}
+    100%{transform:scale(1);opacity:1}
+}
+
+@keyframes bounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-8px)}
+}
+
+.celebrating .big-number{
+    animation:bounce .3s ease 3;
+}
+
+/* Floaters */
+.floaters{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.floater{position:absolute;opacity:.2;animation:floatAcross linear infinite}
+@keyframes floatAcross{from{transform:translateX(-50px)}to{transform:translateX(calc(100vw + 50px))}}
+
+@media(max-width:400px){
+    .big-number{font-size:5rem}
+    .btn{width:60px;height:60px;font-size:1.6rem}
+    .grid-num{font-size:1.1rem;padding:10px 6px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="floaters">
+    <div class="floater" style="top:10%;animation-duration:20s;font-size:30px">🔢</div>
+    <div class="floater" style="top:40%;animation-duration:26s;animation-delay:5s;font-size:26px">⭐</div>
+    <div class="floater" style="top:70%;animation-duration:22s;animation-delay:10s;font-size:28px">🎈</div>
+    <div class="floater" style="top:25%;animation-duration:30s;animation-delay:8s;font-size:24px">🌟</div>
+    <div class="floater" style="top:85%;animation-duration:24s;animation-delay:3s;font-size:30px">🎉</div>
+</div>
+
+<div class="container">
+    <h1>🔢 Counting Fun!</h1>
+
+    <div class="number-display" id="display">
+        <div class="big-number" id="bigNum">1</div>
+        <div class="number-word" id="word">One</div>
+        <div class="number-dots" id="dots">🟡</div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress" style="width:5%"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-prev" onclick="go(-1)">◀</button>
+        <button class="btn btn-speak" onclick="speak()">🔊</button>
+        <button class="btn btn-next" onclick="go(1)">▶</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+</div>
+
+<script>
+
+const words=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten',
+    'Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen','Twenty'];
+
+let current=1;
+
+function go(dir){
+    current+=dir;
+    if(current<1) current=20;
+    if(current>20) current=1;
+    updateDisplay();
+}
+
+function jumpTo(n){
+    current=n;
+    updateDisplay();
+}
+
+function updateDisplay(){
+    const display=document.getElementById('display');
+    document.getElementById('bigNum').textContent=current;
+    document.getElementById('word').textContent=words[current];
+    document.getElementById('dots').textContent='🟡'.repeat(current);
+    document.getElementById('progress').style.width=(current/20*100)+'%';
+
+    // Animate
+    display.classList.remove('celebrating');
+    void display.offsetWidth;
+    display.classList.add('celebrating');
+    document.getElementById('bigNum').style.animation='none';
+    void document.getElementById('bigNum').offsetWidth;
+    document.getElementById('bigNum').style.animation='popIn .4s ease';
+
+    // Update grid
+    document.querySelectorAll('.grid-num').forEach(el=>{
+        el.classList.toggle('active',parseInt(el.dataset.n)===current);
+    });
+
+    // Sound
+    playTone(200+current*40);
+}
+
+function speak(){
+    if('speechSynthesis' in window){
+        const u=new SpeechSynthesisUtterance(current+'. '+words[current]);
+        u.rate=0.8;
+        u.pitch=1.2;
+        speechSynthesis.speak(u);
+    }
+}
+
+function playTone(freq){
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    const ctx=new AudioCtx();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';o.frequency.setValueAtTime(freq,ctx.currentTime);
+    g.gain.setValueAtTime(.2,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);
+    o.start();o.stop(ctx.currentTime+.2);
+}
+
+// Build grid
+const grid=document.getElementById('grid');
+for(let i=1;i<=20;i++){
+    const el=document.createElement('div');
+    el.className='grid-num'+(i===1?' active':'');
+    el.dataset.n=i;
+    el.textContent=i;
+    el.onclick=()=>jumpTo(i);
+    grid.appendChild(el);
+}
+
+</script>
+</body>
+</html>
