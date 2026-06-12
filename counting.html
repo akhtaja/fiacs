@@ -271,12 +271,10 @@ function updateDisplay(){
     document.querySelectorAll('.grid-num').forEach(el=>{
         el.classList.toggle('active',parseInt(el.dataset.n)===current);
     });
-
-    // Sound
-    playTone(200+current*40);
 }
 
 function speak(){
+    playTone(200+current*40);
     if('speechSynthesis' in window){
         const u=new SpeechSynthesisUtterance(current+'. '+words[current]);
         u.rate=0.8;
