@@ -358,15 +358,55 @@ button.ripple::after{animation:rippleEffect .5s ease}
 .bad{background:linear-gradient(135deg,#ff5252,#f48fb1);color:#fff;box-shadow:0 3px 10px rgba(255,82,82,.25)}
 .team{background:linear-gradient(135deg,#667eea,#764ba2);color:white;width:100%;padding:14px;font-size:15px;border-radius:14px;box-shadow:0 6px 20px rgba(118,75,162,.3)}
 
-/* Calendar */
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}
-.cal-day{
-    text-align:center;padding:8px 4px;border-radius:10px;
-    font-size:11px;font-weight:bold;background:#f5f0ff;
+/* Graph */
+.graph{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    height:120px;
+    gap:8px;
+    margin:12px 0;
+    padding:10px 0;
+    border-bottom:2px solid #e0d4f5;
 }
-.cal-day.today{border:2px solid #764ba2}
-.cal-day .cal-stars{font-size:16px;display:block;margin-top:2px}
-.cal-header{font-size:10px;color:#999;text-align:center;font-weight:bold}
+
+.graph-col{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    height:100%;
+    justify-content:flex-end;
+}
+
+.graph-val{
+    font-size:11px;
+    font-weight:bold;
+    color:#667eea;
+    margin-bottom:4px;
+}
+
+.graph-bar{
+    width:100%;
+    max-width:32px;
+    min-height:4px;
+    border-radius:8px 8px 4px 4px;
+    background:linear-gradient(180deg,#667eea,#764ba2);
+    transition:height .4s ease;
+}
+
+.graph-bar.today{
+    background:linear-gradient(180deg,#43e97b,#38f9d7);
+    box-shadow:0 2px 10px rgba(67,233,123,.4);
+}
+
+.graph-label{
+    font-size:10px;
+    color:#888;
+    text-align:center;
+    margin-top:6px;
+    line-height:1.3;
+}
 
 /* Leaderboard */
 .lb-row{
@@ -859,26 +899,32 @@ function renderCalendar(){
     let out='<div class="card"><h3>📅 Weekly Performance</h3>';
     const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-    // Build last 7 days array
     const last7=[];
     for(let i=6;i>=0;i--){
         last7.push(new Date(Date.now()-i*86400000));
     }
 
     kids.forEach(k=>{
-        out+=`<h4>${avatars[k]||'⭐'} ${k}</h4><div class="calendar">`;
-        last7.forEach(d=>out+=`<div class="cal-header">${dayNames[d.getDay()]}</div>`);
-
-        last7.forEach((d,idx)=>{
+        // Get points for each day
+        const pts7=last7.map((d,idx)=>{
             const key=d.toISOString().slice(0,10);
-            const pts=history[k]&&history[k][key]?history[k][key]:(key===todayStr()?db[k]:0);
-            const isToday=idx===6;
-            out+=`<div class="cal-day ${isToday?'today':''}">
-                <span>${d.getDate()}</span>
-                <span class="cal-stars">${pts>0?pts:'·'}</span>
-            </div>`;
+            return history[k]&&history[k][key]?history[k][key]:(key===todayStr()?db[k]:0);
         });
-        out+=`</div>`;
+        const maxPts=Math.max(...pts7,1);
+
+        out+=`<h4>${avatars[k]||'⭐'} ${k}</h4>
+        <div class="graph">
+            ${pts7.map((p,idx)=>{
+                const h=Math.round((p/maxPts)*100);
+                const isToday=idx===6;
+                const d=last7[idx];
+                return `<div class="graph-col">
+                    <span class="graph-val">${p||''}</span>
+                    <div class="graph-bar ${isToday?'today':''}" style="height:${h}%"></div>
+                    <span class="graph-label">${dayNames[d.getDay()]}<br>${d.getDate()}</span>
+                </div>`;
+            }).join('')}
+        </div>`;
     });
 
     out+='</div>';
