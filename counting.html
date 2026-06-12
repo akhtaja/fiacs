@@ -87,6 +87,8 @@ h1{
 .btn-prev{background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff}
 .btn-next{background:linear-gradient(135deg,#55efc4,#00b894);color:#fff}
 .btn-speak{background:linear-gradient(135deg,#fdcb6e,#e17055);color:#fff}
+.btn-play{background:linear-gradient(135deg,#00b894,#00cec9);color:#fff}
+.btn-play.playing{background:linear-gradient(135deg,#d63031,#e17055);color:#fff}
 .btn-lang{background:linear-gradient(135deg,#dfe6e9,#b2bec3);color:#2d3436;font-size:1.4rem}
 
 /* Number grid */
@@ -224,6 +226,7 @@ h1{
     <div class="controls">
         <button class="btn btn-prev" onclick="go(-1)">◀</button>
         <button class="btn btn-speak" onclick="speak()">🔊</button>
+        <button class="btn btn-play" id="playBtn" onclick="toggleAutoPlay()">▶️</button>
         <button class="btn btn-next" onclick="go(1)">▶</button>
         <button class="btn btn-lang" id="langBtn" onclick="toggleLang()">🇬🇧</button>
     </div>
@@ -311,6 +314,26 @@ function toggleLang(){
     localStorage.setItem('counting_lang', lang);
     document.getElementById('langBtn').textContent = lang==='en' ? '🇬🇧' : '🇳🇱';
     updateDisplay();
+}
+
+let autoPlayTimer=null;
+
+function toggleAutoPlay(){
+    const btn=document.getElementById('playBtn');
+    if(autoPlayTimer){
+        clearInterval(autoPlayTimer);
+        autoPlayTimer=null;
+        btn.textContent='▶️';
+        btn.classList.remove('playing');
+    } else {
+        btn.textContent='⏸️';
+        btn.classList.add('playing');
+        speak();
+        autoPlayTimer=setInterval(()=>{
+            go(1);
+            speak();
+        },5000);
+    }
 }
 
 let _lastTone=0;
