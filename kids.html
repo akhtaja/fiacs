@@ -559,7 +559,7 @@ function updateStreak(k){
 function recordHistory(k, points){
     const today = todayStr();
     if(!history[k]) history[k] = {};
-    history[k][today] = points;
+    history[k][today] = db[k];
     localStorage.setItem('quest_history', JSON.stringify(history));
 }
 
@@ -618,6 +618,7 @@ function resetNames(){
     localStorage.removeItem('quest_history');
     localStorage.removeItem('quest_streaks');
     localStorage.removeItem('quest_challenge');
+    localStorage.removeItem('quest_last_date');
     location.reload();
 }
 
@@ -630,6 +631,21 @@ function loadGame(){
     history = JSON.parse(localStorage.getItem('quest_history') || '{}');
     streaks = JSON.parse(localStorage.getItem('quest_streaks') || '{}');
     kids.forEach(k=>{ if(!(k in db)) db[k] = 0; });
+
+    // Daily reset: if last played date is not today, save scores to history and reset
+    const lastDate = localStorage.getItem('quest_last_date') || '';
+    const today = todayStr();
+    if(lastDate && lastDate !== today){
+        kids.forEach(k=>{
+            if(!history[k]) history[k] = {};
+            history[k][lastDate] = db[k];
+            db[k] = 0;
+        });
+        localStorage.setItem('quest_history', JSON.stringify(history));
+        localStorage.setItem('quest_data', JSON.stringify(db));
+    }
+    localStorage.setItem('quest_last_date', today);
+
     prev = {...db};
 
     showTab('quest');
@@ -855,12 +871,11 @@ function renderCalendar(){
 
         last7.forEach((d,idx)=>{
             const key=d.toISOString().slice(0,10);
-            const pts=history[k]&&history[k][key]?history[k][key]:0;
+            const pts=history[k]&&history[k][key]?history[k][key]:(key===todayStr()?db[k]:0);
             const isToday=idx===6;
-            const stars=pts>=5?'🌟':pts>=3?'⭐':pts>0?'✨':'·';
             out+=`<div class="cal-day ${isToday?'today':''}">
                 <span>${d.getDate()}</span>
-                <span class="cal-stars">${stars}</span>
+                <span class="cal-stars">${pts>0?pts:'·'}</span>
             </div>`;
         });
         out+=`</div>`;
