@@ -285,16 +285,20 @@ function speak(){
     }
 }
 
+let _lastTone=0;
 function playTone(freq){
+    const now=Date.now();
+    if(now-_lastTone<100) return;
+    _lastTone=now;
     if(!window._audioCtx) window._audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     const ctx=window._audioCtx;
     const o=ctx.createOscillator();
     const g=ctx.createGain();
     o.connect(g);g.connect(ctx.destination);
     o.type='sine';o.frequency.setValueAtTime(freq,ctx.currentTime);
-    g.gain.setValueAtTime(.2,ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.15);
-    o.start();o.stop(ctx.currentTime+.15);
+    g.gain.setValueAtTime(.15,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.12);
+    o.start();o.stop(ctx.currentTime+.12);
 }
 
 // Build grid
