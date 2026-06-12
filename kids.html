@@ -579,10 +579,20 @@ let avatars = JSON.parse(localStorage.getItem('quest_avatars') || '{}');
 let db, prev, history, streaks, initialized = false;
 let currentTab = 'quest';
 
-const tasks = [
+const defaultTasks = [
     "🪥 Teeth","📚 Reading","🧸 Tidy Toys","🤝 Help Brother",
     "🕌 Prayer","🧹 Clean House","👂 Listen to Parents"
 ];
+
+let tasks = JSON.parse(localStorage.getItem('quest_tasks') || 'null') || [...defaultTasks];
+
+function addCustomTask(){
+    const name = prompt('Enter new good deed:');
+    if(!name || !name.trim()) return;
+    tasks.push('⭐ ' + name.trim());
+    localStorage.setItem('quest_tasks', JSON.stringify(tasks));
+    render();
+}
 
 const rewards = [
     {at:15, prize:"🍦 Ice cream!"},
@@ -704,6 +714,7 @@ function resetNames(){
     localStorage.removeItem('quest_streaks');
     localStorage.removeItem('quest_challenge');
     localStorage.removeItem('quest_last_date');
+    localStorage.removeItem('quest_tasks');
     location.reload();
 }
 
@@ -920,6 +931,7 @@ function render(){
 
             <h4>✅ Good Deeds</h4>
             ${tasks.map(t=>`<button class="good" onclick="add('${k.replace(/'/g,"\\'")}')">+ ${t}</button>`).join("")}
+            <button class="good" style="opacity:.7;border:2px dashed #1a5c3a" onclick="addCustomTask()">➕ Other</button>
 
             <h4>😈 Oops</h4>
             ${tasks.map(t=>`<button class="bad" onclick="remove('${k.replace(/'/g,"\\'")}')">− ${t}</button>`).join("")}
