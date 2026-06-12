@@ -281,19 +281,28 @@ function updateDisplay(){
     });
 }
 
+// Pre-load voices (needed for Safari/Edge)
+let _voices=[];
+if('speechSynthesis' in window){
+    _voices=speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged=()=>{ _voices=speechSynthesis.getVoices(); };
+}
+
 function speak(){
     const text = words[lang][current];
     const ttsLang = lang==='nl' ? 'nl' : 'en';
     const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${ttsLang}&q=${encodeURIComponent(text)}`);
     audio.play().catch(()=>{
-        // Fallback to speechSynthesis if Google TTS blocked
-        if('speechSynthesis' in window){
-            speechSynthesis.cancel();
-            const u=new SpeechSynthesisUtterance(text);
-            u.lang=lang==='nl'?'nl-NL':'en-GB';
-            u.rate=0.7;
-            speechSynthesis.speak(u);
-        }
+        // Fallback to speechSynthesis
+        if(!('speechSynthesis' in window)) return;
+        speechSynthesis.cancel();
+        const u=new SpeechSynthesisUtterance(text);
+        const targetLang = lang==='nl' ? 'nl' : 'en';
+        const voice = _voices.find(v=>v.lang.startsWith(targetLang));
+        if(voice) u.voice=voice;
+        u.lang = lang==='nl' ? 'nl-NL' : 'en-GB';
+        u.rate=0.7;
+        speechSynthesis.speak(u);
     });
 }
 
