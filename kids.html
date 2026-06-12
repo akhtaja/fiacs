@@ -429,6 +429,38 @@ button.ripple::after{animation:rippleEffect .5s ease}
     100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}
 }
 
+/* Sidebar menu */
+.menu-toggle{
+    position:fixed;top:15px;left:15px;z-index:100;
+    background:rgba(255,255,255,.9);border:none;border-radius:12px;
+    width:44px;height:44px;font-size:22px;cursor:pointer;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+    transition:transform .2s;
+}
+.menu-toggle:hover{transform:scale(1.1)}
+
+.sidebar{
+    position:fixed;top:0;left:-260px;width:250px;height:100%;
+    background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
+    z-index:99;padding:70px 20px 20px;
+    box-shadow:4px 0 30px rgba(0,0,0,.15);
+    transition:left .3s ease;border-radius:0 20px 20px 0;
+}
+.sidebar.open{left:0}
+.sidebar a{
+    display:block;padding:14px 16px;margin:6px 0;
+    border-radius:12px;text-decoration:none;
+    font-size:15px;font-weight:600;color:#4a1a7a;
+    transition:background .2s;
+}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.3);z-index:98;display:none;
+}
+.overlay.open{display:block}
+
 @keyframes fadeInUp{
     from{opacity:0;transform:translateY(20px)}
     to{opacity:1;transform:translateY(0)}
@@ -445,6 +477,13 @@ button.ripple::after{animation:rippleEffect .5s ease}
 </head>
 
 <body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html" class="active">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+</div>
 
 <div class="floaters">
     <div class="floater" style="top:8%;animation-duration:20s;font-size:36px">☁️</div>
@@ -471,7 +510,6 @@ button.ripple::after{animation:rippleEffect .5s ease}
         <button class="active" onclick="showTab('quest')">🎮 Quest</button>
         <button onclick="showTab('calendar')">📅 History</button>
         <button onclick="showTab('leaderboard')">🏆 Leaderboard</button>
-        <a href="counting.html" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-size:13px;font-weight:bold;text-decoration:none;transition:background .2s">🔢 Counting</a>
     </div>
     <div id="app"></div>
 </div>
@@ -479,6 +517,11 @@ button.ripple::after{animation:rippleEffect .5s ease}
 <div class="confetti-container" id="confetti"></div>
 
 <script>
+
+function toggleMenu(){
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
 
 // --- AUDIO (Web Audio API - no files needed) ---
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
