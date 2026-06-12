@@ -284,7 +284,16 @@ function speak(){
     const text = words[lang][current];
     const ttsLang = lang==='nl' ? 'nl' : 'en';
     const audio = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${ttsLang}&q=${encodeURIComponent(text)}`);
-    audio.play();
+    audio.play().catch(()=>{
+        // Fallback to speechSynthesis if Google TTS blocked
+        if('speechSynthesis' in window){
+            speechSynthesis.cancel();
+            const u=new SpeechSynthesisUtterance(text);
+            u.lang=lang==='nl'?'nl-NL':'en-GB';
+            u.rate=0.7;
+            speechSynthesis.speak(u);
+        }
+    });
 }
 
 function toggleLang(){
