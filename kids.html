@@ -537,63 +537,64 @@ function toggleMenu(){
     document.getElementById('overlay').classList.toggle('open');
 }
 
-// --- AUDIO (Web Audio API - no files needed) ---
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx;
+// --- AUDIO ---
+// Use short silence-prefixed Audio objects to unlock audio on Safari
+let audioUnlocked=false;
+const silenceDataURL='data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwMHAAAAAAD/+1DEAAAHAALJ9AAABGgAaf/EAABR4AAAABgAAAAAA//tQxBcAAADSAAAAAAAAANIAAAAA';
 
-// Safari requires AudioContext to be created/resumed inside a user gesture
-document.addEventListener('touchstart', initAudio, {once:true});
-document.addEventListener('click', initAudio, {once:true});
-
-function initAudio(){
-    if(!audioCtx){
-        audioCtx = new AudioCtx();
-    }
-    if(audioCtx.state==='suspended') audioCtx.resume();
+function unlockAudio(){
+    if(audioUnlocked) return;
+    const a=new Audio(silenceDataURL);
+    a.play().then(()=>{audioUnlocked=true;}).catch(()=>{});
 }
-
-function getAudio(){
-    if(!audioCtx) audioCtx = new AudioCtx();
-    if(audioCtx.state==='suspended') audioCtx.resume();
-    return audioCtx;
-}
+document.addEventListener('touchstart',unlockAudio,{once:true});
+document.addEventListener('click',unlockAudio,{once:true});
 
 function playDing(){
-    const ctx = getAudio();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.type='sine'; o.frequency.setValueAtTime(880,ctx.currentTime);
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    const ctx=new AudioCtx();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';
+    o.frequency.setValueAtTime(880,ctx.currentTime);
     o.frequency.setValueAtTime(1100,ctx.currentTime+.08);
     g.gain.setValueAtTime(.3,ctx.currentTime);
     g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
-    o.start(); o.stop(ctx.currentTime+.3);
+    o.start();o.stop(ctx.currentTime+.3);
+    setTimeout(()=>ctx.close(),500);
 }
 
 function playBoop(){
-    const ctx = getAudio();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.type='square'; o.frequency.setValueAtTime(200,ctx.currentTime);
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    const ctx=new AudioCtx();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='square';
+    o.frequency.setValueAtTime(200,ctx.currentTime);
     o.frequency.setValueAtTime(150,ctx.currentTime+.1);
     g.gain.setValueAtTime(.2,ctx.currentTime);
     g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);
-    o.start(); o.stop(ctx.currentTime+.2);
+    o.start();o.stop(ctx.currentTime+.2);
+    setTimeout(()=>ctx.close(),400);
 }
 
 function playFanfare(){
-    const ctx = getAudio();
-    const notes = [523,659,784,1047];
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    const ctx=new AudioCtx();
+    const notes=[523,659,784,1047];
     notes.forEach((freq,i)=>{
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.type='triangle'; o.frequency.setValueAtTime(freq,ctx.currentTime+i*.12);
+        const o=ctx.createOscillator();
+        const g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type='triangle';
+        o.frequency.setValueAtTime(freq,ctx.currentTime+i*.12);
         g.gain.setValueAtTime(.25,ctx.currentTime+i*.12);
         g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.12+.4);
-        o.start(ctx.currentTime+i*.12); o.stop(ctx.currentTime+i*.12+.4);
+        o.start(ctx.currentTime+i*.12);o.stop(ctx.currentTime+i*.12+.4);
     });
+    setTimeout(()=>ctx.close(),1000);
 }
 
 // --- DATA ---
