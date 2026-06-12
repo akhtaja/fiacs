@@ -529,6 +529,7 @@ let audioCtx;
 
 function getAudio(){
     if(!audioCtx) audioCtx = new AudioCtx();
+    if(audioCtx.state==='suspended') audioCtx.resume();
     return audioCtx;
 }
 
