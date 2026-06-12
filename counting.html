@@ -274,9 +274,9 @@ function updateDisplay(){
 }
 
 function speak(){
-    playTone(200+current*40);
     if('speechSynthesis' in window){
-        const u=new SpeechSynthesisUtterance(current+'. '+words[current]);
+        speechSynthesis.cancel();
+        const u=new SpeechSynthesisUtterance(words[current]);
         u.rate=0.8;
         u.pitch=1.2;
         speechSynthesis.speak(u);
