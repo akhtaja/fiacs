@@ -541,6 +541,17 @@ function toggleMenu(){
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
 
+// Safari requires AudioContext to be created/resumed inside a user gesture
+document.addEventListener('touchstart', initAudio, {once:true});
+document.addEventListener('click', initAudio, {once:true});
+
+function initAudio(){
+    if(!audioCtx){
+        audioCtx = new AudioCtx();
+    }
+    if(audioCtx.state==='suspended') audioCtx.resume();
+}
+
 function getAudio(){
     if(!audioCtx) audioCtx = new AudioCtx();
     if(audioCtx.state==='suspended') audioCtx.resume();
