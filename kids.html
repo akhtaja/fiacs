@@ -886,8 +886,19 @@ function renderCalendar(){
 }
 
 // --- RENDER LEADERBOARD ---
+function allTimeTotal(k){
+    let total = db[k]; // today's points
+    if(history[k]){
+        Object.values(history[k]).forEach(v=>{ total += v; });
+    }
+    // subtract today's from history if already recorded there to avoid double count
+    const today = todayStr();
+    if(history[k] && history[k][today]) total -= history[k][today];
+    return total;
+}
+
 function renderLeaderboard(){
-    const sorted=[...kids].sort((a,b)=>db[b]-db[a]);
+    const sorted=[...kids].sort((a,b)=>allTimeTotal(b)-allTimeTotal(a));
     let out='<div class="card"><h3>🏆 All-Time Leaderboard</h3>';
 
     sorted.forEach((k,i)=>{
@@ -898,16 +909,16 @@ function renderLeaderboard(){
             <span class="lb-rank">${rank}</span>
             <span class="lb-name">${avatars[k]||'⭐'} ${k}</span>
             <span class="lb-stat">
-                ⭐ ${db[k]} pts<br>
+                ⭐ ${allTimeTotal(k)} pts<br>
                 🔥 ${streak} day streak<br>
-                ${level(db[k])}
+                ${level(allTimeTotal(k))}
             </span>
         </div>`;
     });
 
     // Stats
     out+=`<h4 style="margin-top:20px">📊 Stats</h4>`;
-    const totalPts=kids.reduce((s,k)=>s+db[k],0);
+    const totalPts=kids.reduce((s,k)=>s+allTimeTotal(k),0);
     const bestStreak=Math.max(...kids.map(k=>streaks[k]?streaks[k].count:0));
     out+=`
     <div class="lb-row">
