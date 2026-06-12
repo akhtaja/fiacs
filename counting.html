@@ -42,7 +42,7 @@ h1{
 }
 
 .big-number{
-    font-size:8rem;
+    font-size:12rem;
     font-weight:bold;
     color:#ff6b6b;
     text-shadow:3px 3px 0 #feca57;
@@ -51,7 +51,7 @@ h1{
 }
 
 .number-word{
-    font-size:1.8rem;
+    font-size:2.5rem;
     color:#5f27cd;
     font-weight:bold;
     margin-top:10px;
@@ -59,7 +59,7 @@ h1{
 
 .number-dots{
     margin:15px 0;
-    font-size:2rem;
+    font-size:2.2rem;
     line-height:1.8;
 }
 
@@ -92,26 +92,26 @@ h1{
 /* Number grid */
 .grid{
     display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:10px;
-    margin-top:20px;
+    grid-template-columns:repeat(10,1fr);
+    gap:5px;
+    margin-top:15px;
 }
 
 .grid-num{
     background:rgba(255,255,255,.9);
-    border-radius:16px;
-    padding:14px 8px;
+    border-radius:10px;
+    padding:6px 2px;
     text-align:center;
-    font-size:1.4rem;
+    font-size:.9rem;
     font-weight:bold;
     color:#6c5ce7;
     cursor:pointer;
     transition:transform .2s,background .2s;
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
 }
 
 .grid-num:hover{transform:scale(1.1);background:#dfe6e9}
-.grid-num.active{background:linear-gradient(135deg,#ff6b6b,#feca57);color:#fff;transform:scale(1.15)}
+.grid-num.active{background:linear-gradient(135deg,#ff6b6b,#feca57);color:#fff;transform:scale(1.1)}
 
 /* Progress */
 .progress-bar{
@@ -183,9 +183,10 @@ h1{
 @keyframes floatAcross{from{transform:translateX(-50px)}to{transform:translateX(calc(100vw + 50px))}}
 
 @media(max-width:400px){
-    .big-number{font-size:5rem}
-    .btn{width:60px;height:60px;font-size:1.6rem}
-    .grid-num{font-size:1.1rem;padding:10px 6px}
+    .big-number{font-size:8rem}
+    .number-word{font-size:2rem}
+    .btn{width:55px;height:55px;font-size:1.4rem}
+    .grid-num{font-size:.8rem;padding:5px 2px}
 }
 </style>
 </head>
