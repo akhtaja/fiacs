@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Be Kind!</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:'Segoe UI',Tahoma,sans-serif;
+    background:linear-gradient(135deg,#89f7fe,#66a6ff);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding:15px;
+    overflow-x:hidden;
+    transition:background 1s ease;
+}
+
+body.fighting{
+    background:linear-gradient(135deg,#434343,#000);
+}
+
+h1{
+    text-align:center;
+    font-size:2rem;
+    color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.2);
+    margin-bottom:20px;
+}
+
+.container{max-width:550px;margin:0 auto}
+
+/* Sidebar */
+.menu-toggle{
+    position:fixed;top:15px;left:15px;z-index:100;
+    background:rgba(255,255,255,.9);border:none;border-radius:12px;
+    width:44px;height:44px;font-size:22px;cursor:pointer;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s;
+}
+.menu-toggle:hover{transform:scale(1.1)}
+.sidebar{
+    position:fixed;top:0;left:-260px;width:250px;height:100%;
+    background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
+    z-index:99;padding:70px 20px 20px;
+    box-shadow:4px 0 30px rgba(0,0,0,.15);
+    transition:left .3s ease;border-radius:0 20px 20px 0;
+}
+.sidebar.open{left:0}
+.sidebar a{
+    display:block;padding:14px 16px;margin:6px 0;
+    border-radius:12px;text-decoration:none;
+    font-size:15px;font-weight:600;color:#4a1a7a;transition:background .2s;
+}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.3);z-index:98;display:none}
+.overlay.open{display:block}
+
+/* Card */
+.card{
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(15px);
+    border-radius:24px;
+    padding:28px;
+    margin:18px 0;
+    box-shadow:0 10px 40px rgba(0,0,0,.12);
+    text-align:center;
+    transition:background .5s, box-shadow .5s;
+}
+
+.card h2{color:#4a1a7a;margin-bottom:15px;font-size:1.4rem}
+
+/* === SECTION 1: Team Castle === */
+.castle{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:4px;
+    max-width:280px;
+    margin:15px auto;
+    min-height:130px;
+    align-content:end;
+}
+
+.brick{
+    height:28px;
+    border-radius:4px;
+    background:linear-gradient(135deg,#ff9a56,#d2691e);
+    box-shadow:inset 0 -2px 3px rgba(0,0,0,.2);
+    animation:brickDrop .4s ease;
+}
+
+@keyframes brickDrop{
+    0%{transform:translateY(-30px);opacity:0}
+    60%{transform:translateY(3px)}
+    100%{transform:translateY(0);opacity:1}
+}
+
+.castle-status{
+    font-size:1.1rem;
+    font-weight:bold;
+    color:#4a1a7a;
+    margin:10px 0;
+}
+
+.castle-msg{
+    font-size:1rem;
+    font-weight:bold;
+    min-height:30px;
+    margin:8px 0;
+}
+
+.castle-msg.good{color:#2d6a4f}
+.castle-msg.bad{color:#d63031}
+.castle-msg.win{color:#ffd700;font-size:1.3rem}
+
+.action-btns{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+.btn-fight{
+    background:linear-gradient(135deg,#ff5252,#d63031);
+    color:#fff;border:none;border-radius:14px;
+    padding:14px 24px;font-size:15px;font-weight:bold;
+    cursor:pointer;transition:transform .2s;
+}
+
+.btn-kind{
+    background:linear-gradient(135deg,#43e97b,#38f9d7);
+    color:#1a5c3a;border:none;border-radius:14px;
+    padding:14px 24px;font-size:15px;font-weight:bold;
+    cursor:pointer;transition:transform .2s;
+}
+
+.btn-fight:hover,.btn-kind:hover{transform:scale(1.06)}
+
+/* === SECTION 2: Choose Your Story === */
+.story-scene{
+    background:#f8f4ff;
+    border-radius:16px;
+    padding:20px;
+    margin:15px 0;
+    min-height:120px;
+}
+
+.story-text{
+    font-size:1.1rem;
+    color:#333;
+    margin-bottom:15px;
+    line-height:1.5;
+}
+
+.story-emoji{
+    font-size:3rem;
+    margin:10px 0;
+    animation:popIn .4s ease;
+}
+
+.story-options{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.story-btn{
+    border:none;border-radius:12px;
+    padding:12px 20px;font-size:14px;font-weight:bold;
+    cursor:pointer;transition:transform .2s;
+}
+
+.story-btn:hover{transform:scale(1.05)}
+
+.story-btn.fight-opt{background:#ffcdd2;color:#c62828}
+.story-btn.kind-opt{background:#c8e6c9;color:#2e7d32}
+.story-btn.next-opt{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+
+.outcome{
+    margin-top:15px;
+    padding:15px;
+    border-radius:14px;
+    font-size:1rem;
+    font-weight:bold;
+    animation:popIn .4s ease;
+}
+
+.outcome.bad{background:#ffebee;color:#c62828}
+.outcome.good{background:#e8f5e9;color:#2e7d32}
+
+@keyframes popIn{
+    0%{transform:scale(.5);opacity:0}
+    60%{transform:scale(1.1)}
+    100%{transform:scale(1);opacity:1}
+}
+
+/* Floaters */
+.floaters{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.floater{position:absolute;opacity:.2;animation:floatAcross linear infinite}
+@keyframes floatAcross{from{transform:translateX(-50px)}to{transform:translateX(calc(100vw + 50px))}}
+
+@media(max-width:400px){
+    .characters{font-size:3rem;gap:12px}
+    .card{padding:20px}
+    h1{font-size:1.6rem}
+}
+</style>
+</head>
+
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+    <a href="maths.html">🧮 Maths</a>
+    <a href="kindness.html" class="active">🫂 Be Kind</a>
+</div>
+
+<div class="floaters">
+    <div class="floater" style="top:10%;animation-duration:22s;font-size:28px">💕</div>
+    <div class="floater" style="top:40%;animation-duration:28s;animation-delay:6s;font-size:24px">🌈</div>
+    <div class="floater" style="top:70%;animation-duration:25s;animation-delay:11s;font-size:26px">⭐</div>
+    <div class="floater" style="top:25%;animation-duration:32s;animation-delay:4s;font-size:22px">🕊️</div>
+    <div class="floater" style="top:85%;animation-duration:20s;animation-delay:9s;font-size:28px">🌸</div>
+</div>
+
+<div class="container">
+    <h1 id="pageTitle">🫂 Be Kind to Each Other!</h1>
+    <div style="text-align:center;margin-bottom:15px">
+        <button class="diff-btn" id="langBtn" onclick="toggleLang()" style="background:rgba(255,255,255,.3);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:bold;cursor:pointer">🇬🇧 English</button>
+    </div>
+
+    <!-- Section: Choose Your Story -->
+    <div class="card">
+        <h2 id="storyTitleEl">📖 Choose Your Story</h2>
+        <p id="storyDescEl" style="color:#666;font-size:13px;margin-bottom:10px">What would YOU do? Pick the best choice!</p>
+
+        <div class="story-scene" id="story">
+            <div class="story-emoji" id="storyEmoji"></div>
+            <div class="story-text" id="storyText"></div>
+            <button class="story-btn kind-opt" onclick="readQuestion()" style="margin-bottom:12px">🔊</button>
+            <div class="story-options" id="storyOptions"></div>
+            <div id="storyOutcome"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+function toggleMenu(){
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+
+let lang=localStorage.getItem('kindness_lang')||'en';
+
+const t={
+    en:{
+        title:'🫂 Be Kind to Each Other!',
+        castleTitle:'🏰 Team Castle',
+        castleDesc:'Build together with kindness! Fighting breaks it down!',
+        bricks:'🧱 Bricks:',
+        fight:'😡 Fight!',
+        kind:'🤗 Be Kind!',
+        storyTitle:'📖 Choose Your Story',
+        storyDesc:'What would YOU do? Pick the best choice!',
+        next:'➡️ Next Story',
+        castleWin:'🎉🏰✨ Castle Complete! You did it TOGETHER! ✨🏰🎉',
+        castleDragon:'🐉 Dragon destroyed the castle! Start over with kindness...',
+        dragonMsg:'🐉 A dragon appeared! Nothing left to destroy...',
+        kindMsgs:['🧱 Nice teamwork!','💪 Building together!','⭐ Great job!','🤝 Stronger together!'],
+        fightMsgs:['💔 2 bricks crumbled!','😢 Fighting breaks things!','🌧️ The castle is cracking...'],
+    },
+    nl:{
+        title:'🫂 Wees Lief voor Elkaar!',
+        castleTitle:'🏰 Team Kasteel',
+        castleDesc:'Bouw samen met vriendelijkheid! Vechten breekt het af!',
+        bricks:'🧱 Stenen:',
+        fight:'😡 Vechten!',
+        kind:'🤗 Lief zijn!',
+        storyTitle:'📖 Kies je Verhaal',
+        storyDesc:'Wat zou JIJ doen? Kies het beste antwoord!',
+        next:'➡️ Volgend Verhaal',
+        castleWin:'🎉🏰✨ Kasteel Klaar! Jullie hebben het SAMEN gedaan! ✨🏰🎉',
+        castleDragon:'🐉 De draak heeft het kasteel vernietigd! Begin opnieuw met vriendelijkheid...',
+        dragonMsg:'🐉 Een draak verscheen! Niks meer om te breken...',
+        kindMsgs:['🧱 Goed teamwerk!','💪 Samen bouwen!','⭐ Goed gedaan!','🤝 Samen sterker!'],
+        fightMsgs:['💔 2 stenen kapot!','😢 Vechten maakt dingen stuk!','🌧️ Het kasteel scheurt...'],
+    }
+};
+
+const storiesData={
+    en:[
+        {emoji:'🧸',text:'Your brother is playing with your favourite toy. You want it NOW!',
+            options:[{text:'😡 Grab it and push him!',kind:false},{text:'🗣️ Ask nicely: "Can I have a turn?"',kind:true}],
+            bad:'😢 Your brother cries. Mama is upset. Toy gets taken away from BOTH of you.',
+            good:'😊 He says "OK, 5 more minutes!" You wait, then play together. Mama gives you both a snack!'},
+        {emoji:'📺',text:'You both want to watch different shows on TV.',
+            options:[{text:'😤 Grab the remote and shout!',kind:false},{text:'🤝 Take turns — you pick first, then him',kind:true}],
+            bad:'😢 Papa turns off the TV completely. Nobody watches anything.',
+            good:'🎉 You both get to watch! And later you find a show you BOTH love!'},
+        {emoji:'🍪',text:'There\'s one cookie left. You both want it!',
+            options:[{text:'😡 Eat it all before he can!',kind:false},{text:'✂️ Break it in half and share!',kind:true}],
+            bad:'😢 You feel guilty. Your brother is sad. Mama says no more cookies for a week.',
+            good:'💛 You both enjoy your half! Mama sees you sharing and gives you ANOTHER cookie each!'},
+        {emoji:'🏗️',text:'Your brother accidentally breaks your LEGO tower!',
+            options:[{text:'😡 Scream and break HIS toys!',kind:false},{text:'😮‍💨 Take a deep breath. Ask him to help rebuild.',kind:true}],
+            bad:'😢 Now BOTH toys are broken. You\'re both crying.',
+            good:'🏰 Together you build something even COOLER!'},
+        {emoji:'🎮',text:'You lose a game against your brother. You feel angry!',
+            options:[{text:'😤 Throw the controller and say he cheated!',kind:false},{text:'👏 Say "Good game!" and try again',kind:true}],
+            bad:'😢 Game gets taken away. No more playing today.',
+            good:'🎮 Your brother teaches you a trick! Next round you win! High-five!'}
+    ],
+    nl:[
+        {emoji:'🧸',text:'Je broer speelt met jouw lievelingsspeelgoed. Je wilt het NU!',
+            options:[{text:'😡 Pak het af en duw hem!',kind:false},{text:'🗣️ Vraag lief: "Mag ik een beurt?"',kind:true}],
+            bad:'😢 Je broer huilt. Mama is boos. Het speelgoed wordt van ALLEBEI afgepakt.',
+            good:'😊 Hij zegt "OK, nog 5 minuutjes!" Je wacht en speelt dan samen. Mama geeft jullie een snack!'},
+        {emoji:'📺',text:'Jullie willen allebei een ander programma kijken.',
+            options:[{text:'😤 Pak de afstandsbediening en schreeuw!',kind:false},{text:'🤝 Om de beurt — jij kiest eerst, dan hij',kind:true}],
+            bad:'😢 Papa zet de TV helemaal uit. Niemand kijkt iets.',
+            good:'🎉 Jullie kijken allebei! En later vinden jullie iets wat jullie SAMEN leuk vinden!'},
+        {emoji:'🍪',text:'Er is nog één koekje over. Jullie willen het allebei!',
+            options:[{text:'😡 Eet het op voor hij kan!',kind:false},{text:'✂️ Breek het in twee en deel!',kind:true}],
+            bad:'😢 Je voelt je schuldig. Je broer is verdrietig. Mama zegt een week geen koekjes.',
+            good:'💛 Jullie genieten allebei! Mama ziet het delen en geeft jullie ALLEBEI nog een koekje!'},
+        {emoji:'🏗️',text:'Je broer breekt per ongeluk je LEGO toren!',
+            options:[{text:'😡 Schreeuw en breek ZIJN speelgoed!',kind:false},{text:'😮‍💨 Adem diep. Vraag of hij wil helpen herbouwen.',kind:true}],
+            bad:'😢 Nu is ALLEBEI het speelgoed kapot. Jullie huilen allebei.',
+            good:'🏰 Samen bouwen jullie iets nog VETTERs!'},
+        {emoji:'🎮',text:'Je verliest een spelletje van je broer. Je bent boos!',
+            options:[{text:'😤 Gooi de controller en zeg dat hij vals speelt!',kind:false},{text:'👏 Zeg "Goed gespeeld!" en probeer opnieuw',kind:true}],
+            bad:'😢 Het spel wordt afgepakt. Vandaag niet meer spelen.',
+            good:'🎮 Je broer leert je een truc! Volgende ronde win jij! High-five!'}
+    ]
+};
+
+function toggleLang(){
+    lang=lang==='en'?'nl':'en';
+    localStorage.setItem('kindness_lang',lang);
+    updateLangUI();
+    showStory();
+}
+
+function updateLangUI(){
+    document.getElementById('langBtn').textContent=lang==='en'?'🇬🇧 English':'🇳🇱 Nederlands';
+    document.getElementById('pageTitle').textContent=t[lang].title;
+    document.getElementById('storyTitleEl').textContent=t[lang].storyTitle;
+    document.getElementById('storyDescEl').textContent=t[lang].storyDesc;
+}
+
+function readQuestion(){
+    const stories=storiesData[lang];
+    const s=stories[currentStory%stories.length];
+    speakText(s.text);
+}
+
+// === AUDIO ===
+function makeWav(freq,duration,type){
+    const sampleRate=8000;
+    const samples=Math.floor(sampleRate*duration);
+    const buffer=new ArrayBuffer(44+samples*2);
+    const view=new DataView(buffer);
+    const str=(s,o)=>{for(let i=0;i<s.length;i++)view.setUint8(o+i,s.charCodeAt(i));};
+    str('RIFF',0);view.setUint32(4,36+samples*2,true);str('WAVE',8);
+    str('fmt ',12);view.setUint32(16,16,true);view.setUint16(20,1,true);
+    view.setUint16(22,1,true);view.setUint32(24,sampleRate,true);
+    view.setUint32(28,sampleRate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);
+    str('data',36);view.setUint32(40,samples*2,true);
+    for(let i=0;i<samples;i++){
+        const t=i/sampleRate;
+        const env=Math.max(0,1-t/duration);
+        let val=type==='sine'?Math.sin(2*Math.PI*freq*t):(Math.sin(2*Math.PI*freq*t)>0?1:-1);
+        view.setInt16(44+i*2,val*env*16000,true);
+    }
+    return URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}));
+}
+
+const goodSound=makeWav(880,.25,'sine');
+const badSound=makeWav(180,.25,'square');
+
+function playGood(){ new Audio(goodSound).play().catch(()=>{}); }
+function playBad(){ new Audio(badSound).play().catch(()=>{}); }
+
+// === TTS for outcome text ===
+function speakText(text){
+    const clean=text.replace(/[^\w\s.,!?'àáâãäåæçèéêëìíîïðñòóôõöùúûüý]/g,'');
+    const ttsLang=lang==='nl'?'nl':'en';
+    const audio=new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${ttsLang}&q=${encodeURIComponent(clean)}`);
+    audio.play().catch(()=>{
+        if('speechSynthesis' in window){
+            speechSynthesis.cancel();
+            const u=new SpeechSynthesisUtterance(clean);
+            u.lang=lang==='nl'?'nl-NL':'en-GB';u.rate=0.85;
+            speechSynthesis.speak(u);
+        }
+    });
+}
+
+// === CHOOSE YOUR STORY ===
+let currentStory=0;
+let storyAnswered=false;
+
+function showStory(){
+    storyAnswered=false;
+    const stories=storiesData[lang];
+    const s=stories[currentStory%stories.length];
+    document.getElementById('storyEmoji').textContent=s.emoji;
+    document.getElementById('storyText').textContent=s.text;
+    document.getElementById('storyOutcome').innerHTML='';
+
+    const optsDiv=document.getElementById('storyOptions');
+    optsDiv.innerHTML=s.options.map((o,i)=>
+        `<div style="display:flex;gap:6px;align-items:center;width:100%">
+            <button class="story-btn ${o.kind?'kind-opt':'fight-opt'}" style="flex:1" onclick="pickStory(${i})">${o.text}</button>
+            <button class="story-btn kind-opt" style="padding:8px 10px" onclick="speakText('${o.text.replace(/'/g,"\\'")}')">🔊</button>
+        </div>`
+    ).join('');
+}
+
+function pickStory(idx){
+    if(storyAnswered) return;
+    storyAnswered=true;
+    const stories=storiesData[lang];
+    const s=stories[currentStory%stories.length];
+    const choice=s.options[idx];
+    const outcomeDiv=document.getElementById('storyOutcome');
+    const btns=document.querySelectorAll('.story-btn');
+
+    if(choice.kind){
+        btns[idx].style.transform='scale(1.1)';
+        btns[idx].style.boxShadow='0 0 20px rgba(67,233,123,.6)';
+        playGood();
+        outcomeDiv.innerHTML=`<div class="outcome good">✅ ${s.good}</div>`;
+        speakText(s.good);
+    } else {
+        btns[idx].style.transform='scale(0.95)';
+        btns[idx].style.boxShadow='0 0 20px rgba(255,82,82,.6)';
+        btns[idx].style.animation='shake .4s ease';
+        playBad();
+        outcomeDiv.innerHTML=`<div class="outcome bad">❌ ${s.bad}</div>`;
+        speakText(s.bad);
+    }
+
+    setTimeout(()=>{
+        const optsDiv=document.getElementById('storyOptions');
+        optsDiv.innerHTML=`<button class="story-btn next-opt" onclick="nextStory()">${t[lang].next}</button>`;
+    },1000);
+}
+
+function nextStory(){
+    currentStory++;
+    showStory();
+}
+
+updateLangUI();
+showStory();
+
+</script>
+</body>
+</html>
