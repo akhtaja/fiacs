@@ -479,11 +479,24 @@ function makeWav(freq,duration,type){
     return URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}));
 }
 
-const goodSound=makeWav(880,.25,'sine');
-const badSound=makeWav(180,.25,'square');
+const goodAudio=new Audio(makeWav(880,.25,'sine'));
+const badAudio=new Audio(makeWav(180,.25,'square'));
 
-function playGood(){ new Audio(goodSound).play().catch(()=>{}); }
-function playBad(){ new Audio(badSound).play().catch(()=>{}); }
+let _iosUnlocked=false;
+function iosUnlock(){
+    if(_iosUnlocked) return;
+    _iosUnlocked=true;
+    [goodAudio,badAudio].forEach(a=>{
+        a.volume=0;
+        a.play().then(()=>{a.pause();a.currentTime=0;a.volume=1;}).catch(()=>{});
+    });
+    setTimeout(()=>{[goodAudio,badAudio].forEach(a=>{a.volume=1;});},200);
+}
+document.addEventListener('touchstart',iosUnlock,{once:true});
+document.addEventListener('click',iosUnlock,{once:true});
+
+function playGood(){ goodAudio.currentTime=0;goodAudio.play().catch(()=>{}); }
+function playBad(){ badAudio.currentTime=0;badAudio.play().catch(()=>{}); }
 
 // === TTS for outcome text ===
 function speakText(text){

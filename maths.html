@@ -278,11 +278,24 @@ function makeWav(freq,duration,type){
     return URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}));
 }
 
-const correctSound=makeWav(880,.25,'sine');
-const wrongSound=makeWav(200,.2,'square');
+const correctAudio=new Audio(makeWav(880,.25,'sine'));
+const wrongAudio=new Audio(makeWav(200,.2,'square'));
 
-function playCorrect(){ new Audio(correctSound).play().catch(()=>{}); }
-function playWrong(){ new Audio(wrongSound).play().catch(()=>{}); }
+let _iosUnlocked=false;
+function iosUnlock(){
+    if(_iosUnlocked) return;
+    _iosUnlocked=true;
+    [correctAudio,wrongAudio].forEach(a=>{
+        a.volume=0;
+        a.play().then(()=>{a.pause();a.currentTime=0;a.volume=1;}).catch(()=>{});
+    });
+    setTimeout(()=>{[correctAudio,wrongAudio].forEach(a=>{a.volume=1;});},200);
+}
+document.addEventListener('touchstart',iosUnlock,{once:true});
+document.addEventListener('click',iosUnlock,{once:true});
+
+function playCorrect(){ correctAudio.currentTime=0;correctAudio.play().catch(()=>{}); }
+function playWrong(){ wrongAudio.currentTime=0;wrongAudio.play().catch(()=>{}); }
 
 // --- CONFETTI ---
 function fireConfetti(){
