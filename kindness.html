@@ -362,6 +362,12 @@ function readQuestion(){
     speakText(s.text);
 }
 
+function readOption(idx){
+    const stories=storiesData[lang];
+    const s=stories[currentStory%stories.length];
+    speakText(s.options[idx].text);
+}
+
 // === AUDIO ===
 function makeWav(freq,duration,type){
     const sampleRate=8000;
@@ -420,7 +426,7 @@ function showStory(){
     optsDiv.innerHTML=s.options.map((o,i)=>
         `<div style="display:flex;gap:6px;align-items:center;width:100%">
             <button class="story-btn ${o.kind?'kind-opt':'fight-opt'}" style="flex:1" onclick="pickStory(${i})">${o.text}</button>
-            <button class="story-btn kind-opt" style="padding:8px 10px" onclick="speakText('${o.text.replace(/'/g,"\\'")}')">🔊</button>
+            <button class="story-btn kind-opt" style="padding:8px 10px" onclick="readOption(${i})">🔊</button>
         </div>`
     ).join('');
 }
