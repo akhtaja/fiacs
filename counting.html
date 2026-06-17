@@ -330,10 +330,10 @@ function speakText(text){
         if(!('speechSynthesis' in window)) return;
         speechSynthesis.cancel();
         const u=new SpeechSynthesisUtterance(text);
+        u.lang=lang==='nl'?'nl-NL':'en-GB';
+        u.rate=0.75;
         const voice=_voices.find(v=>v.lang.startsWith(ttsLang));
         if(voice) u.voice=voice;
-        u.lang=lang==='nl'?'nl-NL':'en-GB';
-        u.rate=0.7;
         speechSynthesis.speak(u);
     });
 }

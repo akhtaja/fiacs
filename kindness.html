@@ -507,7 +507,8 @@ function speakText(text){
         if('speechSynthesis' in window){
             speechSynthesis.cancel();
             const u=new SpeechSynthesisUtterance(clean);
-            u.lang=lang==='nl'?'nl-NL':'en-GB';u.rate=0.85;
+            u.lang=lang==='nl'?'nl-NL':'en-GB';
+            u.rate=0.8;
             speechSynthesis.speak(u);
         }
     });
