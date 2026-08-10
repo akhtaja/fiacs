@@ -194,9 +194,90 @@ h1{
     100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}
 }
 
+/* Stats panel */
+.stats-panel{
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(15px);
+    border-radius:24px;
+    padding:24px;
+    box-shadow:0 15px 50px rgba(0,0,0,.15);
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.stats-panel h3{
+    font-size:1rem;
+    color:#4a1a7a;
+    margin-bottom:15px;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:12px;
+    align-items:center;
+}
+
+.stat-box{
+    text-align:center;
+}
+
+.stat-number{
+    font-size:2rem;
+    font-weight:bold;
+    color:#4a1a7a;
+    display:block;
+}
+
+.stat-label{
+    font-size:.75rem;
+    color:#888;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-weight:600;
+}
+
+.accuracy-ring{
+    position:relative;
+    width:80px;
+    height:80px;
+    margin:0 auto;
+}
+
+.accuracy-ring svg{
+    transform:rotate(-90deg);
+    width:80px;
+    height:80px;
+}
+
+.accuracy-ring .ring-bg{
+    fill:none;
+    stroke:#e8e0f4;
+    stroke-width:8;
+}
+
+.accuracy-ring .ring-fill{
+    fill:none;
+    stroke:#667eea;
+    stroke-width:8;
+    stroke-linecap:round;
+    transition:stroke-dashoffset .5s ease, stroke .3s;
+}
+
+.accuracy-text{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    font-size:1.1rem;
+    font-weight:bold;
+    color:#4a1a7a;
+}
+
 @media(max-width:400px){
     .problem{font-size:2.5rem}
     .option{font-size:1.5rem;padding:15px}
+    .stats-grid{grid-template-columns:1fr}
+    .stat-number{font-size:1.6rem}
 }
 </style>
 </head>
@@ -244,6 +325,31 @@ h1{
         <div class="problem" id="problem"></div>
         <div class="feedback" id="feedback"></div>
         <div class="options" id="options"></div>
+    </div>
+
+    <div class="stats-panel" id="stats-panel">
+        <h3>📊 Session Stats</h3>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="stat-number" id="stat-correct">0</span>
+                <span class="stat-label">Correct</span>
+            </div>
+            <div class="stat-box">
+                <div class="accuracy-ring">
+                    <svg viewBox="0 0 36 36">
+                        <circle class="ring-bg" cx="18" cy="18" r="14"/>
+                        <circle class="ring-fill" id="ring-fill" cx="18" cy="18" r="14"
+                            stroke-dasharray="88" stroke-dashoffset="88"/>
+                    </svg>
+                    <span class="accuracy-text" id="stat-percent">0%</span>
+                </div>
+                <span class="stat-label">Accuracy</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-number" id="stat-attempted">0</span>
+                <span class="stat-label">Attempted</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -432,8 +538,26 @@ function check(btn,val){
     document.getElementById('streak').textContent=streak;
     document.getElementById('total').textContent=total;
     document.getElementById('attempts').textContent=attempts;
+    updateStats();
 
     setTimeout(newProblem,1500);
+}
+
+function updateStats(){
+    document.getElementById('stat-correct').textContent=total;
+    document.getElementById('stat-attempted').textContent=attempts;
+    const pct=attempts>0?Math.round((total/attempts)*100):0;
+    document.getElementById('stat-percent').textContent=pct+'%';
+    // Update ring (circumference = 2*pi*14 ≈ 88)
+    const circumference=88;
+    const offset=circumference-((pct/100)*circumference);
+    const ring=document.getElementById('ring-fill');
+    ring.style.strokeDashoffset=offset;
+    // Color based on accuracy
+    if(pct>=80) ring.style.stroke='#43e97b';
+    else if(pct>=50) ring.style.stroke='#ffd700';
+    else if(attempts>0) ring.style.stroke='#ff5252';
+    else ring.style.stroke='#667eea';
 }
 
 newProblem();
