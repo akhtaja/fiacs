@@ -215,9 +215,10 @@ h1{
 <div class="floaters">
     <div class="floater" style="top:12%;animation-duration:22s;font-size:30px">➕</div>
     <div class="floater" style="top:45%;animation-duration:28s;animation-delay:5s;font-size:26px">➖</div>
-    <div class="floater" style="top:75%;animation-duration:24s;animation-delay:10s;font-size:28px">🌟</div>
-    <div class="floater" style="top:30%;animation-duration:30s;animation-delay:8s;font-size:24px">🎯</div>
+    <div class="floater" style="top:75%;animation-duration:24s;animation-delay:10s;font-size:28px">✖️</div>
+    <div class="floater" style="top:30%;animation-duration:30s;animation-delay:8s;font-size:24px">➗</div>
     <div class="floater" style="top:85%;animation-duration:26s;animation-delay:3s;font-size:30px">✨</div>
+    <div class="floater" style="top:60%;animation-duration:34s;animation-delay:12s;font-size:22px">🌟</div>
 </div>
 
 <div class="container">
@@ -235,6 +236,7 @@ h1{
         <button class="diff-btn active" onclick="setDifficulty('easy')">😊 Easy</button>
         <button class="diff-btn" onclick="setDifficulty('medium')">🤔 Medium</button>
         <button class="diff-btn" onclick="setDifficulty('hard')">🔥 Hard</button>
+        <button class="diff-btn" onclick="setDifficulty('expert')">🧠 Expert</button>
     </div>
 
     <div class="card">
@@ -318,7 +320,8 @@ function fireConfetti(){
 const ranges={
     easy:{max:10,ops:['+']},
     medium:{max:15,ops:['+','-']},
-    hard:{max:20,ops:['+','-']}
+    hard:{max:12,ops:['+','-','×']},
+    expert:{max:12,ops:['+','-','×','÷']}
 };
 
 function setDifficulty(d){
@@ -344,19 +347,36 @@ function newProblem(){
         a=rand(1,r.max);
         b=rand(1,r.max);
         answer=a+b;
-    } else {
+    } else if(op==='-'){
         a=rand(2,r.max);
         b=rand(1,a); // ensure no negative results
         answer=a-b;
+    } else if(op==='×'){
+        a=rand(1,r.max);
+        b=rand(1,10);
+        answer=a*b;
+    } else if(op==='÷'){
+        // Generate division with whole number answers
+        b=rand(1,10);
+        answer=rand(1,r.max);
+        a=b*answer; // ensures clean division
     }
 
     currentAnswer=answer;
 
     // Visual representation
-    const emoji=op==='+'?'🟡':'🔵';
     let vis='';
-    if(a<=12&&b<=12){
-        vis=emoji.repeat(a)+' '+op+' '+emoji.repeat(b);
+    if(op==='+' && a<=12 && b<=12){
+        vis='🟡'.repeat(a)+' + '+'🟡'.repeat(b);
+    } else if(op==='-' && a<=12 && b<=12){
+        vis='🔵'.repeat(a)+' - '+'🔵'.repeat(b);
+    } else if(op==='×' && a<=6 && b<=6){
+        // Show groups for multiplication
+        let groups=[];
+        for(let i=0;i<b;i++) groups.push('🟢'.repeat(a));
+        vis=groups.join(' · ');
+    } else if(op==='÷' && a<=20){
+        vis='🟠'.repeat(a)+' ÷ '+b;
     }
 
     document.getElementById('problem').textContent=`${a} ${op} ${b} = ?`;
