@@ -498,6 +498,7 @@ button.ripple::after{animation:rippleEffect .5s ease}
     <a href="counting.html">🔢 Counting</a>
     <a href="maths.html">🧮 Maths</a>
     <a href="kindness.html">🫂 Be Kind</a>
+    <a href="sos.html">🚨 SOS Police</a>
 </div>
 
 <div class="floaters">
@@ -898,7 +899,11 @@ function update(k,type){
     }
 
     const runnerEl=document.getElementById('runner-'+CSS.escape(k));
-    if(runnerEl) runnerEl.style.left=Math.min((p/50)*100,100)+'%';
+    if(runnerEl){
+        runnerEl.style.left=Math.min((p/50)*100,100)+'%';
+        const label=runnerEl.querySelector('.runner-label');
+        if(label) label.textContent=k+' ('+p+'⭐)';
+    }
     el.querySelector('.goal-text').innerHTML='🎯 Next Goal: <strong>'+nextGoal(p)+' points</strong>';
 
     // Streak display
@@ -928,7 +933,7 @@ function render(){
                 ${kids.map((k,i)=>`
                 <div class="runner runner-${i}" id="runner-${CSS.escape(k)}" style="left:${Math.min((db[k]/50)*100,100)}%">
                     <span class="runner-emoji">${avatars[k]||defaultAvatars[i%defaultAvatars.length]}</span>
-                    <span class="runner-label">${k}</span>
+                    <span class="runner-label">${k} (${db[k]}⭐)</span>
                 </div>`).join('')}
                 <div class="milestone m15">🦸<span>15</span></div>
                 <div class="milestone m30">🐉<span>30</span></div>

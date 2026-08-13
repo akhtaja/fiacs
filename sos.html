@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🚨 SOS - Police!</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+    background-attachment:fixed;
+    margin:0;padding:15px;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    overflow:hidden;
+}
+
+/* Flashing background when active */
+body.active{
+    animation:flashBg .5s infinite alternate;
+}
+
+@keyframes flashBg{
+    0%{background:linear-gradient(135deg,#ff0000,#1a1a2e)}
+    100%{background:linear-gradient(135deg,#0000ff,#1a1a2e)}
+}
+
+/* SOS Button */
+.sos-btn{
+    width:220px;height:220px;
+    border-radius:50%;
+    background:radial-gradient(circle,#ff4444,#cc0000);
+    border:8px solid #ff6666;
+    color:#fff;
+    font-size:42px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 0 40px rgba(255,0,0,.5),0 10px 40px rgba(0,0,0,.4);
+    transition:transform .2s,box-shadow .2s;
+    z-index:10;
+    position:relative;
+    letter-spacing:3px;
+}
+
+.sos-btn:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 60px rgba(255,0,0,.8),0 15px 50px rgba(0,0,0,.5);
+}
+
+.sos-btn:active{
+    transform:scale(.95);
+}
+
+.sos-btn.active{
+    animation:pulseBtn .3s infinite alternate;
+}
+
+@keyframes pulseBtn{
+    0%{box-shadow:0 0 40px rgba(255,0,0,.9);border-color:#ff6666}
+    100%{box-shadow:0 0 80px rgba(0,0,255,.9);border-color:#6666ff}
+}
+
+.subtitle{
+    color:rgba(255,255,255,.7);
+    font-size:16px;
+    margin-top:20px;
+    text-align:center;
+    z-index:10;
+}
+
+.subtitle.active{
+    color:#fff;
+    font-weight:bold;
+    animation:blink .5s infinite;
+}
+
+@keyframes blink{
+    0%,100%{opacity:1}
+    50%{opacity:.3}
+}
+
+/* Police car scene */
+.scene{
+    position:fixed;
+    bottom:-200px;
+    left:50%;
+    transform:translateX(-50%);
+    transition:bottom 1s ease;
+    z-index:5;
+    text-align:center;
+}
+
+.scene.active{
+    bottom:30px;
+}
+
+.police-car{
+    font-size:120px;
+    display:block;
+    animation:carBounce .3s infinite alternate;
+}
+
+@keyframes carBounce{
+    0%{transform:translateY(0)}
+    100%{transform:translateY(-8px)}
+}
+
+.police-text{
+    color:#fff;
+    font-size:22px;
+    font-weight:bold;
+    margin-top:10px;
+    text-shadow:0 2px 10px rgba(0,0,0,.5);
+    animation:blink .6s infinite;
+}
+
+/* Flashing lights */
+.lights{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;z-index:2;display:none;
+}
+
+.lights.active{display:block}
+
+.light-red,.light-blue{
+    position:absolute;top:0;width:50%;height:100%;
+    opacity:.1;
+}
+
+.light-red{
+    left:0;
+    background:red;
+    animation:flashRed .5s infinite alternate;
+}
+
+.light-blue{
+    right:0;
+    background:blue;
+    animation:flashBlue .5s infinite alternate;
+}
+
+@keyframes flashRed{0%{opacity:.15}100%{opacity:0}}
+@keyframes flashBlue{0%{opacity:0}100%{opacity:.15}}
+
+/* Sidebar menu (same as kids.html) */
+.menu-toggle{
+    position:fixed;top:15px;left:15px;z-index:100;
+    background:rgba(255,255,255,.9);border:none;border-radius:12px;
+    width:44px;height:44px;font-size:22px;cursor:pointer;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+    transition:transform .2s;
+}
+.menu-toggle:hover{transform:scale(1.1)}
+
+.sidebar{
+    position:fixed;top:0;left:-260px;width:250px;height:100%;
+    background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
+    z-index:99;padding:70px 20px 20px;
+    box-shadow:4px 0 30px rgba(0,0,0,.15);
+    transition:left .3s ease;border-radius:0 20px 20px 0;
+}
+.sidebar.open{left:0}
+.sidebar a{
+    display:block;padding:14px 16px;margin:6px 0;
+    border-radius:12px;text-decoration:none;
+    font-size:15px;font-weight:600;color:#4a1a7a;
+    transition:background .2s;
+}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.3);z-index:98;display:none;
+}
+.overlay.open{display:block}
+
+/* Stop button */
+.stop-btn{
+    position:fixed;
+    top:20px;right:20px;
+    background:rgba(255,255,255,.9);
+    border:3px solid #ff4444;
+    border-radius:14px;
+    padding:12px 24px;
+    font-size:16px;font-weight:bold;
+    color:#cc0000;
+    cursor:pointer;
+    z-index:100;
+    display:none;
+    transition:transform .2s;
+}
+
+.stop-btn.active{display:block}
+.stop-btn:hover{transform:scale(1.05)}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+    <a href="maths.html">🧮 Maths</a>
+    <a href="kindness.html">🫂 Be Kind</a>
+    <a href="sos.html" class="active">🚨 SOS Police</a>
+</div>
+
+<div class="lights" id="lights">
+    <div class="light-red"></div>
+    <div class="light-blue"></div>
+</div>
+
+<button class="sos-btn" id="sosBtn" onclick="triggerSOS()">🚨<br>SOS</button>
+<p class="subtitle" id="subtitle">Press the button to call the police!</p>
+
+<button class="stop-btn" id="stopBtn" onclick="stopSOS()">✋ Stop</button>
+
+<div class="scene" id="scene">
+    <span class="police-car">🚔</span>
+    <div class="police-text">🚨 POLICE IS COMING! 🚨</div>
+</div>
+
+<script>
+function toggleMenu(){
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+
+// --- Siren sound using Web Audio API ---
+let audioCtx=null;
+let sirenOsc=null;
+let sirenGain=null;
+let sirenInterval=null;
+let isActive=false;
+
+function createSiren(){
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    sirenOsc=audioCtx.createOscillator();
+    sirenGain=audioCtx.createGain();
+    sirenOsc.type='sawtooth';
+    sirenOsc.frequency.value=600;
+    sirenGain.gain.value=0.3;
+    sirenOsc.connect(sirenGain);
+    sirenGain.connect(audioCtx.destination);
+    sirenOsc.start();
+
+    // Sweep siren between two frequencies
+    let goingUp=true;
+    sirenInterval=setInterval(()=>{
+        const now=audioCtx.currentTime;
+        if(goingUp){
+            sirenOsc.frequency.linearRampToValueAtTime(1200,now+0.5);
+        }else{
+            sirenOsc.frequency.linearRampToValueAtTime(600,now+0.5);
+        }
+        goingUp=!goingUp;
+    },500);
+}
+
+function stopSiren(){
+    if(sirenInterval){clearInterval(sirenInterval);sirenInterval=null;}
+    if(sirenOsc){sirenOsc.stop();sirenOsc=null;}
+    if(audioCtx){audioCtx.close();audioCtx=null;}
+}
+
+function triggerSOS(){
+    if(isActive)return;
+    isActive=true;
+
+    // Activate visuals
+    document.body.classList.add('active');
+    document.getElementById('sosBtn').classList.add('active');
+    document.getElementById('subtitle').classList.add('active');
+    document.getElementById('subtitle').textContent='🚨 CALLING POLICE... 🚨';
+    document.getElementById('lights').classList.add('active');
+    document.getElementById('stopBtn').classList.add('active');
+
+    // Show police car after 1 second
+    setTimeout(()=>{
+        document.getElementById('scene').classList.add('active');
+    },1000);
+
+    // Start siren
+    createSiren();
+}
+
+function stopSOS(){
+    isActive=false;
+
+    // Deactivate visuals
+    document.body.classList.remove('active');
+    document.getElementById('sosBtn').classList.remove('active');
+    document.getElementById('subtitle').classList.remove('active');
+    document.getElementById('subtitle').textContent='Press the button to call the police!';
+    document.getElementById('lights').classList.remove('active');
+    document.getElementById('scene').classList.remove('active');
+    document.getElementById('stopBtn').classList.remove('active');
+
+    // Stop siren
+    stopSiren();
+}
+</script>
+</body>
+</html>
