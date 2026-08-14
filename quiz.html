@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🕌 Islamic Quiz</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(135deg,#43e97b 0%,#38f9d7 50%,#667eea 100%);
+    background-attachment:fixed;
+    margin:0;padding:15px;
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
+}
+
+h1{
+    color:#fff;font-size:1.8rem;
+    text-shadow:0 2px 10px rgba(0,0,0,.3);
+    margin:60px 0 10px;text-align:center;
+}
+
+.info{
+    color:rgba(255,255,255,.85);
+    font-size:14px;margin-bottom:20px;text-align:center;
+}
+
+/* Quiz card */
+.quiz-card{
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(15px);
+    border-radius:24px;
+    padding:30px 24px;
+    max-width:500px;width:100%;
+    box-shadow:0 10px 40px rgba(0,0,0,.12);
+    border:1px solid rgba(255,255,255,.5);
+    animation:fadeInUp .5s ease forwards;
+}
+
+.progress-bar{
+    height:8px;border-radius:8px;
+    background:#e0d4f5;margin-bottom:20px;overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;border-radius:8px;
+    background:linear-gradient(90deg,#43e97b,#667eea);
+    transition:width .4s ease;
+}
+
+.question-num{
+    font-size:12px;color:#888;font-weight:bold;
+    text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+}
+
+.question{
+    font-size:1.2rem;font-weight:bold;color:#4a1a7a;
+    margin-bottom:20px;line-height:1.4;
+}
+
+.answers{
+    display:flex;flex-direction:column;gap:10px;
+}
+
+.answer-btn{
+    background:#faf8ff;
+    border:2px solid #e0d4f5;
+    border-radius:14px;
+    padding:14px 18px;
+    font-size:15px;font-weight:600;
+    color:#4a1a7a;
+    cursor:pointer;
+    text-align:left;
+    transition:transform .2s,border-color .2s,background .2s;
+}
+
+.answer-btn:hover{
+    border-color:#764ba2;
+    transform:translateX(4px);
+    background:#f0e6ff;
+}
+
+.answer-btn.correct{
+    background:linear-gradient(135deg,#43e97b,#38f9d7);
+    border-color:#2ecc71;color:#1a5c3a;
+    transform:scale(1.02);
+}
+
+.answer-btn.wrong{
+    background:linear-gradient(135deg,#ff5252,#f48fb1);
+    border-color:#e74c3c;color:#fff;
+    transform:scale(0.98);
+}
+
+.answer-btn:disabled{cursor:default;opacity:.7}
+.answer-btn.correct:disabled,.answer-btn.wrong:disabled{opacity:1}
+
+.feedback{
+    margin-top:15px;padding:12px;
+    border-radius:12px;font-size:14px;
+    font-weight:bold;text-align:center;
+    display:none;
+}
+
+.feedback.show{display:block}
+.feedback.correct{background:#d4edda;color:#155724}
+.feedback.wrong{background:#f8d7da;color:#721c24}
+
+.next-btn{
+    display:none;margin-top:15px;width:100%;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:#fff;border:none;border-radius:14px;
+    padding:14px;font-size:16px;font-weight:bold;
+    cursor:pointer;transition:transform .2s;
+}
+
+.next-btn:hover{transform:scale(1.02)}
+.next-btn.show{display:block}
+
+/* Results */
+.results{
+    text-align:center;
+}
+
+.results h2{
+    font-size:1.8rem;color:#4a1a7a;margin-bottom:10px;
+}
+
+.score-display{
+    font-size:3rem;font-weight:bold;
+    color:#667eea;margin:15px 0;
+}
+
+.results p{font-size:16px;color:#666;margin-bottom:20px}
+
+.results button{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:#fff;border:none;border-radius:14px;
+    padding:14px 30px;font-size:16px;font-weight:bold;
+    cursor:pointer;transition:transform .2s;margin:5px;
+}
+
+.results button:hover{transform:scale(1.05)}
+
+.difficulty{
+    display:flex;gap:10px;margin-bottom:15px;justify-content:center;flex-wrap:wrap;
+}
+
+.difficulty button{
+    background:rgba(255,255,255,.9);
+    border:none;border-radius:12px;
+    padding:10px 18px;font-size:14px;font-weight:bold;
+    color:#4a1a7a;cursor:pointer;
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+    transition:transform .2s;
+}
+.difficulty button:hover{transform:scale(1.05)}
+.difficulty button.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+
+/* Back link */
+.back-link{
+    position:fixed;top:15px;right:15px;z-index:100;
+    background:rgba(255,255,255,.9);
+    border-radius:12px;padding:10px 16px;
+    text-decoration:none;font-size:14px;font-weight:bold;
+    color:#4a1a7a;box-shadow:0 4px 15px rgba(0,0,0,.1);
+    transition:transform .2s;
+}
+.back-link:hover{transform:scale(1.05)}
+
+/* Sidebar */
+.menu-toggle{
+    position:fixed;top:15px;left:15px;z-index:100;
+    background:rgba(255,255,255,.9);border:none;border-radius:12px;
+    width:44px;height:44px;font-size:22px;cursor:pointer;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s;
+}
+.menu-toggle:hover{transform:scale(1.1)}
+
+.sidebar{
+    position:fixed;top:0;left:-260px;width:250px;height:100%;
+    background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
+    z-index:99;padding:70px 20px 20px;
+    box-shadow:4px 0 30px rgba(0,0,0,.15);
+    transition:left .3s ease;border-radius:0 20px 20px 0;
+}
+.sidebar.open{left:0}
+.sidebar a{
+    display:block;padding:14px 16px;margin:6px 0;
+    border-radius:12px;text-decoration:none;
+    font-size:15px;font-weight:600;color:#4a1a7a;
+    transition:background .2s;
+}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.3);z-index:98;display:none;
+}
+.overlay.open{display:block}
+
+/* Confetti */
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease forwards}
+@keyframes confettiFall{
+    0%{transform:translate(0,0) rotate(0deg);opacity:1}
+    100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}
+}
+
+@keyframes fadeInUp{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:500px){
+    h1{font-size:1.4rem;margin-top:50px}
+    .quiz-card{padding:22px 18px}
+    .question{font-size:1.05rem}
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+    <a href="maths.html">🧮 Maths</a>
+    <a href="kindness.html">🫂 Be Kind</a>
+    <a href="games.html" class="active">🎮 Games</a>
+    <a href="sos.html">🚨 SOS Police</a>
+</div>
+
+<a href="games.html" class="back-link">← Games</a>
+
+<h1>🕌 Islamic Quiz</h1>
+<p class="info">Test your Islamic knowledge!</p>
+
+<div class="difficulty">
+    <button class="active" onclick="setDifficulty('easy')">⭐ Easy</button>
+    <button onclick="setDifficulty('medium')">⭐⭐ Medium</button>
+    <button onclick="setDifficulty('hard')">⭐⭐⭐ Hard</button>
+</div>
+
+<div class="quiz-card" id="quizCard"></div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+function toggleMenu(){
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+
+// --- QUESTIONS ---
+const questions={
+    easy:[
+        {q:"How many times do Muslims pray every day?",a:["5","3","7","2"],c:0},
+        {q:"What is the holy book of Islam called?",a:["Quran","Bible","Torah","Vedas"],c:0},
+        {q:"What is the first month of the Islamic calendar?",a:["Muharram","Ramadan","Shawwal","Rajab"],c:0},
+        {q:"In which city is the Kaaba located?",a:["Makkah","Madinah","Jerusalem","Cairo"],c:0},
+        {q:"What do Muslims say before eating?",a:["Bismillah","Alhamdulillah","SubhanAllah","Allahu Akbar"],c:0},
+        {q:"Who was the first Prophet?",a:["Adam (AS)","Ibrahim (AS)","Musa (AS)","Nuh (AS)"],c:0},
+        {q:"What is the month of fasting called?",a:["Ramadan","Muharram","Shaban","Dhul Hijjah"],c:0},
+        {q:"How many surahs are in the Quran?",a:["114","100","120","99"],c:0},
+        {q:"What do we say when we thank Allah?",a:["Alhamdulillah","Bismillah","InshaAllah","MashaAllah"],c:0},
+        {q:"What is the last surah of the Quran?",a:["An-Nas","Al-Falaq","Al-Ikhlas","Al-Fatiha"],c:0},
+        {q:"Which direction do Muslims face when praying?",a:["Towards the Kaaba","North","East","South"],c:0},
+        {q:"What is the first surah of the Quran?",a:["Al-Fatiha","Al-Baqarah","An-Nas","Al-Ikhlas"],c:0},
+    ],
+    medium:[
+        {q:"How many pillars of Islam are there?",a:["5","4","6","3"],c:0},
+        {q:"Who is the last Prophet in Islam?",a:["Muhammad ﷺ","Isa (AS)","Musa (AS)","Ibrahim (AS)"],c:0},
+        {q:"What is the night journey of Prophet Muhammad ﷺ called?",a:["Isra and Mi'raj","Hijra","Laylat al-Qadr","Eid"],c:0},
+        {q:"How many Rakats are in Fajr prayer?",a:["2","3","4","1"],c:0},
+        {q:"Which prophet built the Kaaba?",a:["Ibrahim (AS)","Musa (AS)","Nuh (AS)","Adam (AS)"],c:0},
+        {q:"What is Zakat?",a:["Charity to the poor","Fasting","Pilgrimage","Prayer"],c:0},
+        {q:"Which surah is known as the 'Heart of the Quran'?",a:["Ya-Sin","Al-Fatiha","Al-Baqarah","Ar-Rahman"],c:0},
+        {q:"What do Muslims say when they hear good news?",a:["MashaAllah","InshaAllah","Bismillah","Astaghfirullah"],c:0},
+        {q:"How many prophets are mentioned by name in the Quran?",a:["25","12","50","99"],c:0},
+        {q:"What is Hajj?",a:["Pilgrimage to Makkah","Daily prayer","Fasting","Charity"],c:0},
+        {q:"Which angel brought revelations to Prophet Muhammad ﷺ?",a:["Jibreel (AS)","Mikael (AS)","Israfil (AS)","Azrael (AS)"],c:0},
+        {q:"What is the meaning of 'SubhanAllah'?",a:["Glory be to Allah","Thank God","God willing","God is great"],c:0},
+    ],
+    hard:[
+        {q:"How many years did it take for the Quran to be fully revealed?",a:["23 years","10 years","30 years","15 years"],c:0},
+        {q:"What is the longest surah in the Quran?",a:["Al-Baqarah","Al-Imran","An-Nisa","Al-Maidah"],c:0},
+        {q:"Which prophet was swallowed by a whale?",a:["Yunus (AS)","Musa (AS)","Dawud (AS)","Sulaiman (AS)"],c:0},
+        {q:"What are the names of the 5 daily prayers?",a:["Fajr, Dhuhr, Asr, Maghrib, Isha","Fajr, Zuhr, Asr, Maghrib, Tahajjud","Fajr, Dhuhr, Asr, Isha, Witr","Fajr, Dhuhr, Jummah, Maghrib, Isha"],c:0},
+        {q:"In which year did the Hijra (migration to Madinah) happen?",a:["622 CE","610 CE","630 CE","632 CE"],c:0},
+        {q:"Which prophet could speak to animals?",a:["Sulaiman (AS)","Dawud (AS)","Musa (AS)","Nuh (AS)"],c:0},
+        {q:"What is Laylat al-Qadr?",a:["Night of Power/Decree","Night of Journey","Night of Forgiveness","Night of Eid"],c:0},
+        {q:"How many names/attributes does Allah have?",a:["99","100","50","77"],c:0},
+        {q:"Which prophet was known for his patience?",a:["Ayyub (AS)","Yusuf (AS)","Musa (AS)","Nuh (AS)"],c:0},
+        {q:"What is the meaning of 'Tawakkul'?",a:["Trust in Allah","Repentance","Gratitude","Patience"],c:0},
+        {q:"Which battle was the first major battle in Islam?",a:["Battle of Badr","Battle of Uhud","Battle of Khandaq","Conquest of Makkah"],c:0},
+        {q:"What is Sadaqah Jariyah?",a:["Ongoing charity","One-time donation","Obligatory charity","Charity to family"],c:0},
+    ]
+};
+
+let currentDifficulty='easy';
+let currentQuestions=[];
+let currentIdx=0;
+let score=0;
+let answered=false;
+
+function setDifficulty(d){
+    currentDifficulty=d;
+    document.querySelectorAll('.difficulty button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.difficulty button').forEach(b=>{
+        if(d==='easy'&&b.textContent.trim()==='⭐ Easy') b.classList.add('active');
+        if(d==='medium'&&b.textContent.trim()==='⭐⭐ Medium') b.classList.add('active');
+        if(d==='hard'&&b.textContent.trim()==='⭐⭐⭐ Hard') b.classList.add('active');
+    });
+    startQuiz();
+}
+
+function startQuiz(){
+    currentQuestions=shuffleArray([...questions[currentDifficulty]]).slice(0,10);
+    currentIdx=0;
+    score=0;
+    answered=false;
+    showQuestion();
+}
+
+function shuffleArray(arr){
+    for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+}
+
+function showQuestion(){
+    answered=false;
+    const card=document.getElementById('quizCard');
+    const q=currentQuestions[currentIdx];
+    const progress=((currentIdx)/currentQuestions.length)*100;
+
+    card.innerHTML=`
+        <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+        <div class="question-num">Question ${currentIdx+1} of ${currentQuestions.length}</div>
+        <div class="question">${q.q}</div>
+        <div class="answers">
+            ${q.a.map((a,i)=>`<button class="answer-btn" onclick="answer(${i})">${a}</button>`).join('')}
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+    `;
+    card.style.animation='none';
+    void card.offsetWidth;
+    card.style.animation='fadeInUp .4s ease forwards';
+}
+
+function answer(idx){
+    if(answered) return;
+    answered=true;
+
+    const q=currentQuestions[currentIdx];
+    const buttons=document.querySelectorAll('.answer-btn');
+    const feedback=document.getElementById('feedback');
+
+    buttons.forEach((btn,i)=>{
+        btn.disabled=true;
+        if(i===q.c) btn.classList.add('correct');
+        if(i===idx&&idx!==q.c) btn.classList.add('wrong');
+    });
+
+    if(idx===q.c){
+        score++;
+        feedback.textContent='✅ Correct! MashaAllah! 🌟';
+        feedback.className='feedback show correct';
+    } else {
+        feedback.textContent='❌ Not quite. The answer is: '+q.a[q.c];
+        feedback.className='feedback show wrong';
+    }
+
+    document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion(){
+    currentIdx++;
+    if(currentIdx>=currentQuestions.length){
+        showResults();
+    } else {
+        showQuestion();
+    }
+}
+
+function showResults(){
+    const card=document.getElementById('quizCard');
+    const percentage=Math.round((score/currentQuestions.length)*100);
+    let message='';
+    let emoji='';
+
+    if(percentage===100){message='Perfect! MashaAllah! 🌟';emoji='🏆';fireConfetti();}
+    else if(percentage>=80){message='Excellent! Almost perfect!';emoji='🌟';}
+    else if(percentage>=60){message='Good job! Keep learning!';emoji='👏';}
+    else if(percentage>=40){message='Nice try! Practice makes perfect!';emoji='💪';}
+    else{message='Keep learning, you\'ll do better next time!';emoji='📚';}
+
+    card.innerHTML=`
+        <div class="results">
+            <h2>${emoji} Quiz Complete!</h2>
+            <div class="score-display">${score}/${currentQuestions.length}</div>
+            <p>${message}</p>
+            <button onclick="startQuiz()">🔄 Play Again</button>
+            <button onclick="location.href='games.html'" style="background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a5c3a">← Back to Games</button>
+        </div>
+    `;
+    card.style.animation='none';
+    void card.offsetWidth;
+    card.style.animation='fadeInUp .4s ease forwards';
+}
+
+function fireConfetti(){
+    const container=document.getElementById('confetti');
+    const colors=['#667eea','#764ba2','#f093fb','#43e97b','#ffd700','#ff5252'];
+    for(let i=0;i<30;i++){
+        const piece=document.createElement('div');
+        piece.className='confetti-piece';
+        piece.style.left=(20+Math.random()*60)+'%';
+        piece.style.top=(10+Math.random()*30)+'%';
+        piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+        piece.style.setProperty('--dx',(Math.random()*300-150)+'px');
+        piece.style.setProperty('--dy',(Math.random()*400+100)+'px');
+        piece.style.borderRadius=Math.random()>.5?'50%':'2px';
+        container.appendChild(piece);
+    }
+    setTimeout(()=>{container.innerHTML='';},1600);
+}
+
+// Start
+startQuiz();
+</script>
+</body>
+</html>
