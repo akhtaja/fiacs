@@ -150,9 +150,32 @@ h1{
 @media(max-width:500px){
     h1{font-size:1.4rem;margin-top:50px}
 }
+
+/* Player bar */
+.player-bar{
+    position:fixed;bottom:15px;left:15px;z-index:100;
+    display:flex;align-items:center;gap:10px;
+    padding:8px 14px;
+    background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.08);
+    border-radius:12px;backdrop-filter:blur(10px);
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+.player-name{font-size:12px;font-weight:600;color:#4a1a7a}
+.stats-link-sm{
+    font-size:11px;font-weight:700;color:#764ba2;text-decoration:none;
+    padding:4px 10px;border-radius:8px;
+    background:rgba(118,75,162,.08);border:1px solid rgba(118,75,162,.2);
+    transition:all .2s;
+}
+.stats-link-sm:hover{background:rgba(118,75,162,.15)}
 </style>
 </head>
 <body>
+
+<div class="player-bar">
+    <span class="player-name" id="player-name"></span>
+    <a href="stats.html" class="stats-link-sm">🏆 Stats</a>
+</div>
 
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -325,6 +348,13 @@ function checkWin(){
     // Won!
     gameActive=false;
     stopTimer();
+    // Track stats
+    const ps=JSON.parse(localStorage.getItem('puzzle_stats')||'{"gamesWon":0,"bestMoves":null,"bestTime":null}');
+    ps.gamesWon++;
+    if(!ps.bestMoves||moves<ps.bestMoves)ps.bestMoves=moves;
+    if(!ps.bestTime||seconds<ps.bestTime)ps.bestTime=seconds;
+    localStorage.setItem('puzzle_stats',JSON.stringify(ps));
+
     document.getElementById('winText').textContent=
         `Completed in ${moves} moves and ${formatTime(seconds)}!`;
     document.getElementById('winMsg').classList.add('show');
@@ -349,6 +379,7 @@ function formatTime(s){
 
 // Init
 initPuzzle();
+document.getElementById('player-name').textContent='👋 '+(localStorage.getItem('games_player_name')||'Player');
 </script>
 </body>
 </html>

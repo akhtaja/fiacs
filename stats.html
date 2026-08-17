@@ -219,13 +219,17 @@ function render(){
     const rpsWinRate=stats.rps.gamesPlayed>0?Math.round((stats.rps.wins/stats.rps.gamesPlayed)*100):0;
     const mathRaceBest=JSON.parse(localStorage.getItem('mathrace_best')||'{}');
     const mathRaceTopScore=Math.max(mathRaceBest.easy||0,mathRaceBest.medium||0,mathRaceBest.hard||0);
+    const puzzleStats=JSON.parse(localStorage.getItem('puzzle_stats')||'{"gamesWon":0,"bestMoves":null,"bestTime":null}');
+    const memoryStats=JSON.parse(localStorage.getItem('memory_stats')||'{"gamesWon":0,"bestMoves":null,"bestTime":null}');
+    const sudokuStats=JSON.parse(localStorage.getItem('sudoku_stats')||'{"gamesWon":0,"bestTime":null,"leastErrors":null}');
+    const allTotalGames=totalGames+(puzzleStats.gamesWon||0)+(memoryStats.gamesWon||0)+(sudokuStats.gamesWon||0);
 
     html+=`<div class="card">
         <h2>📊 Player Stats</h2>
         <div class="stats-grid">
             <div class="stat-box">
-                <span class="stat-value">${totalGames}</span>
-                <span class="stat-label">Games Played</span>
+                <span class="stat-value">${allTotalGames}</span>
+                <span class="stat-label">Games Won</span>
             </div>
             <div class="stat-box">
                 <span class="stat-value gold">${stats.reaction.bestTime?stats.reaction.bestTime+'ms':'—'}</span>
@@ -244,20 +248,20 @@ function render(){
                 <span class="stat-label">Best Win Streak</span>
             </div>
             <div class="stat-box">
-                <span class="stat-value">${stats.reaction.totalReactions}</span>
-                <span class="stat-label">Total Reactions</span>
-            </div>
-            <div class="stat-box">
                 <span class="stat-value gold">${mathRaceTopScore||'—'}</span>
                 <span class="stat-label">Math Race Best</span>
             </div>
             <div class="stat-box">
-                <span class="stat-value green">${mathRaceBest.easy||'—'}</span>
-                <span class="stat-label">Race Easy</span>
+                <span class="stat-value green">${puzzleStats.gamesWon}</span>
+                <span class="stat-label">Puzzles Solved</span>
             </div>
             <div class="stat-box">
-                <span class="stat-value purple">${mathRaceBest.hard||'—'}</span>
-                <span class="stat-label">Race Hard</span>
+                <span class="stat-value purple">${memoryStats.gamesWon}</span>
+                <span class="stat-label">Memory Wins</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value">${sudokuStats.gamesWon}</span>
+                <span class="stat-label">Sudoku Solved</span>
             </div>
         </div>
     </div>`;
@@ -317,6 +321,22 @@ function render(){
         if(mrBest.easy)html+=`<li class="highscore-item"><span class="highscore-rank">😊</span><span class="highscore-game">Easy</span><span class="highscore-value">${mrBest.easy} solved</span></li>`;
         if(mrBest.medium)html+=`<li class="highscore-item"><span class="highscore-rank">🤔</span><span class="highscore-game">Medium</span><span class="highscore-value">${mrBest.medium} solved</span></li>`;
         if(mrBest.hard)html+=`<li class="highscore-item"><span class="highscore-rank">🔥</span><span class="highscore-game">Hard</span><span class="highscore-value">${mrBest.hard} solved</span></li>`;
+        html+=`</ul>`;
+    }
+
+    // Puzzle/Memory/Sudoku bests
+    const pzStats=JSON.parse(localStorage.getItem('puzzle_stats')||'{}');
+    const mmStats=JSON.parse(localStorage.getItem('memory_stats')||'{}');
+    const skStats=JSON.parse(localStorage.getItem('sudoku_stats')||'{}');
+    if(pzStats.bestMoves||mmStats.bestMoves||skStats.bestTime){
+        html+=`<h3 style="color:rgba(255,255,255,.5);font-size:12px;margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">🧩 Classic Games (Personal Bests)</h3>
+        <ul class="highscore-list">`;
+        if(pzStats.bestMoves)html+=`<li class="highscore-item"><span class="highscore-rank">🧩</span><span class="highscore-game">Puzzle — Fewest Moves</span><span class="highscore-value">${pzStats.bestMoves} moves</span></li>`;
+        if(pzStats.bestTime)html+=`<li class="highscore-item"><span class="highscore-rank">🧩</span><span class="highscore-game">Puzzle — Fastest</span><span class="highscore-value">${Math.floor(pzStats.bestTime/60)}:${(pzStats.bestTime%60<10?'0':'')+(pzStats.bestTime%60)}</span></li>`;
+        if(mmStats.bestMoves)html+=`<li class="highscore-item"><span class="highscore-rank">🃏</span><span class="highscore-game">Memory — Fewest Moves</span><span class="highscore-value">${mmStats.bestMoves} moves</span></li>`;
+        if(mmStats.bestTime)html+=`<li class="highscore-item"><span class="highscore-rank">🃏</span><span class="highscore-game">Memory — Fastest</span><span class="highscore-value">${Math.floor(mmStats.bestTime/60)}:${(mmStats.bestTime%60<10?'0':'')+(mmStats.bestTime%60)}</span></li>`;
+        if(skStats.bestTime)html+=`<li class="highscore-item"><span class="highscore-rank">🔢</span><span class="highscore-game">Sudoku — Fastest</span><span class="highscore-value">${Math.floor(skStats.bestTime/60)}:${(skStats.bestTime%60<10?'0':'')+(skStats.bestTime%60)}</span></li>`;
+        if(skStats.leastErrors!==null&&skStats.leastErrors!==undefined)html+=`<li class="highscore-item"><span class="highscore-rank">🔢</span><span class="highscore-game">Sudoku — Least Errors</span><span class="highscore-value">${skStats.leastErrors} errors</span></li>`;
         html+=`</ul>`;
     }
 

@@ -201,9 +201,32 @@ h1{
     .sudoku-cell{width:28px;height:28px;font-size:14px}
     .sudoku-board{padding:8px}
 }
+
+/* Player bar */
+.player-bar{
+    position:fixed;bottom:15px;left:15px;z-index:100;
+    display:flex;align-items:center;gap:10px;
+    padding:8px 14px;
+    background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.08);
+    border-radius:12px;backdrop-filter:blur(10px);
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+.player-name{font-size:12px;font-weight:600;color:#4a1a7a}
+.stats-link-sm{
+    font-size:11px;font-weight:700;color:#764ba2;text-decoration:none;
+    padding:4px 10px;border-radius:8px;
+    background:rgba(118,75,162,.08);border:1px solid rgba(118,75,162,.2);
+    transition:all .2s;
+}
+.stats-link-sm:hover{background:rgba(118,75,162,.15)}
 </style>
 </head>
 <body>
+
+<div class="player-bar">
+    <span class="player-name" id="player-name"></span>
+    <a href="stats.html" class="stats-link-sm">🏆 Stats</a>
+</div>
 
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -454,6 +477,13 @@ function checkWin(){
     gameActive=false;
     stopTimer();
     fireConfetti();
+    // Track stats
+    const ss=JSON.parse(localStorage.getItem('sudoku_stats')||'{"gamesWon":0,"bestTime":null,"leastErrors":null}');
+    ss.gamesWon++;
+    if(!ss.bestTime||seconds<ss.bestTime)ss.bestTime=seconds;
+    if(ss.leastErrors===null||errors<ss.leastErrors)ss.leastErrors=errors;
+    localStorage.setItem('sudoku_stats',JSON.stringify(ss));
+
     setTimeout(()=>{
         document.getElementById('winText').textContent=
             `Completed in ${formatTime(seconds)} with ${errors} error${errors!==1?'s':''}! 🌟`;
@@ -505,6 +535,7 @@ document.addEventListener('keydown',function(e){
 
 // Start
 newGame();
+document.getElementById('player-name').textContent='👋 '+(localStorage.getItem('games_player_name')||'Player');
 </script>
 </body>
 </html>
