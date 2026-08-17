@@ -269,17 +269,62 @@ h1{
     font-size:12px;
 }
 
-/* Streak & Daily Challenge */
-.streak-bar{
-    display:flex;align-items:center;justify-content:center;gap:20px;
-    padding:14px 20px;margin-bottom:15px;
-    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-    border-radius:16px;backdrop-filter:blur(10px);flex-wrap:wrap;
+/* Player Profile */
+.player-profile{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    padding:22px 24px;
+    backdrop-filter:blur(15px);
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
 }
-.streak-item{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.8);font-size:14px;font-weight:600}
-.streak-item .num{font-size:20px;font-weight:800;color:#ffd700}
-.streak-item .label{font-size:11px;color:rgba(255,255,255,.4)}
 
+.profile-greeting{
+    display:flex;align-items:center;gap:12px;flex:1;min-width:180px;
+}
+
+.profile-avatar{
+    width:48px;height:48px;border-radius:50%;
+    background:linear-gradient(135deg,rgba(102,126,234,.3),rgba(240,147,251,.3));
+    border:2px solid rgba(255,255,255,.15);
+    display:flex;align-items:center;justify-content:center;font-size:24px;
+}
+
+.profile-name{
+    font-size:16px;font-weight:700;color:#fff;
+}
+
+.profile-name span{
+    display:block;font-size:11px;font-weight:500;color:rgba(255,255,255,.4);margin-top:2px;
+}
+
+.profile-stats{
+    display:flex;gap:16px;flex-wrap:wrap;
+}
+
+.profile-stat{
+    text-align:center;min-width:60px;
+}
+
+.profile-stat-value{
+    font-size:1.3rem;font-weight:800;color:#fff;display:block;line-height:1.2;
+}
+
+.profile-stat-label{
+    font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;
+}
+
+.profile-edit{
+    background:none;border:1px solid rgba(255,255,255,.15);border-radius:10px;
+    padding:6px 12px;color:rgba(255,255,255,.5);font-size:11px;cursor:pointer;
+    transition:all .2s;
+}
+.profile-edit:hover{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.05);transform:none}
+
+/* Streak & Daily Challenge */
 .daily-challenge{
     background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.02));
     border:1px solid rgba(255,215,0,.2);border-radius:16px;
@@ -343,9 +388,13 @@ h1{
 <h1>🎮 Games Hub</h1>
 <p class="subtitle">Pick a game and have fun!</p>
 
+<!-- Player Profile -->
+<div class="category-section">
+    <div class="player-profile" id="player-profile"></div>
+</div>
+
 <!-- Streak & Daily Challenge bar -->
 <div class="category-section">
-    <div class="streak-bar" id="streak-bar"></div>
     <div class="daily-challenge" id="daily-challenge"></div>
 </div>
 
@@ -457,13 +506,48 @@ function renderStreakBar(){
     const stats=getStats();
     const totalGames=(stats.reaction.gamesPlayed||0)+(stats.scramble.gamesPlayed||0)+(stats.rps.gamesPlayed||0);
     const achievements=getAchievements();
+    const highscores=JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}');
+    const totalHighscores=highscores.reaction.length+highscores.scramble.length+highscores.rps.length;
 
-    document.getElementById('streak-bar').innerHTML=`
-        <div class="streak-item">🔥 <span class="num">${streak.currentStreak}</span> <span class="label">Day Streak</span></div>
-        <div class="streak-item">🎮 <span class="num">${totalGames}</span> <span class="label">Games</span></div>
-        <div class="streak-item">🏅 <span class="num">${achievements.length}</span> <span class="label">Achievements</span></div>
-        <div class="streak-item">⚡ <span class="num">${stats.reaction.bestTime?stats.reaction.bestTime+'ms':'—'}</span> <span class="label">Best</span></div>
+    // Player name
+    let playerName=localStorage.getItem('games_player_name')||'Player';
+
+    document.getElementById('player-profile').innerHTML=`
+        <div class="profile-greeting">
+            <div class="profile-avatar">👋</div>
+            <div class="profile-name">Hi, ${playerName}!
+                <span>Keep playing to level up!</span>
+            </div>
+        </div>
+        <div class="profile-stats">
+            <div class="profile-stat">
+                <span class="profile-stat-value">${totalGames}</span>
+                <span class="profile-stat-label">🎮 Played</span>
+            </div>
+            <div class="profile-stat">
+                <span class="profile-stat-value">${totalHighscores}</span>
+                <span class="profile-stat-label">⭐ Records</span>
+            </div>
+            <div class="profile-stat">
+                <span class="profile-stat-value">${streak.currentStreak}</span>
+                <span class="profile-stat-label">🔥 Streak</span>
+            </div>
+            <div class="profile-stat">
+                <span class="profile-stat-value">${achievements.length}</span>
+                <span class="profile-stat-label">🏅 Badges</span>
+            </div>
+        </div>
+        <button class="profile-edit" onclick="editName()">✏️ Edit</button>
     `;
+}
+
+function editName(){
+    const current=localStorage.getItem('games_player_name')||'Player';
+    const name=prompt('What\\'s your name?',current);
+    if(name&&name.trim()){
+        localStorage.setItem('games_player_name',name.trim());
+        renderStreakBar();
+    }
 }
 
 function renderDailyChallenge(){
