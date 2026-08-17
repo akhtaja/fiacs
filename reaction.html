@@ -8,74 +8,140 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{
     font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
-    background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+    background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);
     background-attachment:fixed;
-    margin:0;padding:15px;min-height:100vh;
+    margin:0;padding:15px;min-height:100vh;overflow-x:hidden;
 }
-h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0,.3);margin:60px 0 10px}
-.subtitle{text-align:center;color:rgba(255,255,255,.8);font-size:.9rem;margin-bottom:20px}
+.bg-glow{
+    position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
+    background:
+        radial-gradient(ellipse 500px 500px at 50% 30%, rgba(102,126,234,.15) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 400px at 30% 70%, rgba(67,233,123,.1) 0%, transparent 70%);
+    animation:glowShift 8s ease-in-out infinite alternate;
+}
+@keyframes glowShift{0%{opacity:.7;transform:scale(1)}100%{opacity:1;transform:scale(1.05)}}
+
+h1{
+    position:relative;z-index:1;text-align:center;font-size:2.2rem;margin:60px 0 8px;
+    background:linear-gradient(135deg,#fff,#a78bfa,#43e97b);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    font-weight:800;
+}
+.subtitle{position:relative;z-index:1;text-align:center;color:rgba(255,255,255,.5);font-size:.9rem;margin-bottom:25px}
+
+.container{max-width:480px;margin:0 auto;position:relative;z-index:1}
+
 .card{
-    background:rgba(255,255,255,.92);backdrop-filter:blur(15px);border-radius:24px;
-    padding:30px;margin:0 auto;max-width:500px;
-    box-shadow:0 10px 40px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.5);
-    text-align:center;animation:fadeInUp .5s ease forwards;
+    background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border-radius:22px;
+    padding:28px;margin-bottom:18px;border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 10px 40px rgba(0,0,0,.2);text-align:center;
 }
-.card h3{color:#4a1a7a;margin-bottom:10px}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
+/* Reaction circle */
 .reaction-box{
-    width:200px;height:200px;margin:25px auto;border-radius:50%;
+    width:180px;height:180px;margin:20px auto;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    font-size:18px;font-weight:bold;color:#fff;
-    cursor:pointer;transition:background .2s;user-select:none;
+    font-size:16px;font-weight:bold;color:#fff;
+    cursor:pointer;user-select:none;transition:all .2s;
+    box-shadow:0 8px 30px rgba(0,0,0,.3);
 }
-.reaction-box.waiting{background:#e74c3c}
-.reaction-box.ready{background:#27ae60;animation:pulse .5s ease infinite alternate}
-.reaction-box.clicked{background:#3498db}
-@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.05)}}
+.reaction-box.waiting{background:linear-gradient(135deg,#e74c3c,#c0392b)}
+.reaction-box.ready{background:linear-gradient(135deg,#27ae60,#2ecc71);animation:pulse .5s ease infinite alternate;box-shadow:0 0 40px rgba(39,174,96,.4)}
+.reaction-box.clicked{background:linear-gradient(135deg,#3498db,#2980b9)}
+@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.06)}}
 
-.results{margin-top:20px;font-size:14px;color:#4a1a7a}
-.results .best{color:#27ae60;font-weight:bold}
-.bonus{color:#27ae60;font-weight:bold;font-size:16px;margin-top:10px}
+/* Your time display */
+.your-time{
+    margin:15px 0;
+    opacity:0;
+    transition:opacity .3s;
+}
+.your-time.show{opacity:1}
+.time-label{font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+.time-value{font-size:3rem;font-weight:800;color:#fff;margin:5px 0}
+.time-value.fast{color:#43e97b}
+.time-value.medium{color:#ffd700}
+.time-value.slow{color:#ff9a9e}
+.time-best{font-size:14px;color:rgba(255,255,255,.5);margin-top:5px}
+.time-best span{color:#ffd700;font-weight:bold}
+.time-msg{font-size:14px;font-weight:bold;margin-top:8px;min-height:20px}
+.time-msg.fast{color:#43e97b}
+.time-msg.medium{color:#ffd700}
+
+/* Leaderboard */
+.leaderboard{text-align:left;margin-top:5px}
+.lb-title{
+    font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;
+    letter-spacing:1px;margin-bottom:10px;text-align:center;
+    padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.lb-row{
+    display:flex;align-items:center;padding:10px 12px;margin:5px 0;
+    border-radius:12px;background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.05);transition:all .2s;
+}
+.lb-row.gold{background:rgba(255,215,0,.06);border-color:rgba(255,215,0,.15)}
+.lb-row.silver{background:rgba(192,192,192,.04);border-color:rgba(192,192,192,.1)}
+.lb-row.bronze{background:rgba(205,127,50,.04);border-color:rgba(205,127,50,.1)}
+.lb-row.you{border-color:rgba(102,126,234,.3);background:rgba(102,126,234,.08)}
+.lb-rank{font-size:18px;width:32px;text-align:center}
+.lb-name{flex:1;font-size:14px;font-weight:600;color:#fff;margin-left:8px}
+.lb-time{font-size:14px;font-weight:700;color:rgba(255,255,255,.8)}
+.lb-row.gold .lb-time{color:#ffd700}
+
+.empty-lb{color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:15px}
+
+/* Session stats */
+.session-stats{
+    display:flex;justify-content:center;gap:20px;margin-top:15px;
+    padding-top:12px;border-top:1px solid rgba(255,255,255,.08);
+}
+.session-stat{text-align:center}
+.session-stat-val{font-size:1.2rem;font-weight:700;color:#fff}
+.session-stat-label{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
 
 /* Fixed back button */
 .back-btn{
     position:fixed;top:15px;right:15px;z-index:100;
-    display:inline-flex;align-items:center;gap:6px;
-    padding:10px 18px;
-    background:rgba(255,255,255,.9);
-    color:#4a1a7a;
-    border-radius:12px;
-    text-decoration:none;font-weight:bold;font-size:14px;
-    box-shadow:0 4px 15px rgba(0,0,0,.15);
-    transition:transform .2s, box-shadow .2s;
+    display:inline-flex;align-items:center;gap:6px;padding:10px 18px;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;border-radius:12px;text-decoration:none;font-weight:bold;font-size:14px;
+    backdrop-filter:blur(10px);transition:transform .2s,background .2s;
 }
-.back-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.back-btn:hover{transform:scale(1.05);background:rgba(255,255,255,.15)}
 
 /* Sidebar */
-.menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.9);border:none;border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s}
-.menu-toggle:hover{transform:scale(1.1)}
-.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);z-index:99;padding:70px 20px 20px;box-shadow:4px 0 30px rgba(0,0,0,.15);transition:left .3s ease;border-radius:0 20px 20px 0}
+.menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.2);transition:transform .2s,background .2s;backdrop-filter:blur(10px)}
+.menu-toggle:hover{transform:scale(1.1);background:rgba(255,255,255,.15)}
+.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:rgba(15,12,41,.97);backdrop-filter:blur(20px);z-index:99;padding:70px 20px 20px;box-shadow:4px 0 30px rgba(0,0,0,.4);transition:left .3s ease;border-radius:0 20px 20px 0;border-right:1px solid rgba(255,255,255,.1)}
 .sidebar.open{left:0}
-.sidebar a{display:block;padding:14px 16px;margin:6px 0;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600;color:#4a1a7a;transition:background .2s}
-.sidebar a:hover{background:#f0e6ff}
+.sidebar a{display:block;padding:14px 16px;margin:6px 0;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600;color:rgba(255,255,255,.7);transition:background .2s,color .2s}
+.sidebar a:hover{background:rgba(255,255,255,.08);color:#fff}
 .sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.3);z-index:98;display:none}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:98;display:none}
 .overlay.open{display:block}
 
 /* Confetti */
 .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
 .confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease forwards}
 @keyframes confettiFall{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Particles */
+.particle{position:fixed;width:3px;height:3px;border-radius:50%;background:#fff;opacity:0;pointer-events:none;z-index:0;animation:particleFloat linear infinite}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh)}10%{opacity:.25}90%{opacity:.25}100%{opacity:0;transform:translateY(-20px)}}
 
 @media(max-width:500px){
-    h1{font-size:1.5rem;margin-top:50px}
+    h1{font-size:1.7rem;margin-top:50px}
     .card{padding:20px}
-    .reaction-box{width:160px;height:160px;font-size:15px}
+    .reaction-box{width:150px;height:150px;font-size:14px}
+    .time-value{font-size:2.5rem}
 }
 </style>
 </head>
 <body>
+
+<div class="bg-glow"></div>
 
 <a href="games.html" class="back-btn">← Games</a>
 
@@ -91,36 +157,60 @@ h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0
 </div>
 
 <h1>⚡ Reaction Speed</h1>
-<p class="subtitle">Tap the circle as fast as you can when it turns GREEN!</p>
+<p class="subtitle">Tap when it turns GREEN — how fast are you?</p>
 
-<div class="card">
-    <div class="reaction-box waiting" id="circle" onclick="reactionClick()">Tap to Start</div>
-    <div class="bonus" id="bonus"></div>
-    <div class="results" id="results"></div>
+<div class="container">
+    <div class="card">
+        <div class="reaction-box waiting" id="circle" onclick="reactionClick()">Tap to Start</div>
+        <div class="your-time" id="your-time">
+            <div class="time-label">Your Time</div>
+            <div class="time-value" id="time-value">—</div>
+            <div class="time-best" id="time-best"></div>
+            <div class="time-msg" id="time-msg"></div>
+        </div>
+        <div class="session-stats">
+            <div class="session-stat">
+                <div class="session-stat-val" id="s-attempts">0</div>
+                <div class="session-stat-label">Attempts</div>
+            </div>
+            <div class="session-stat">
+                <div class="session-stat-val" id="s-best">—</div>
+                <div class="session-stat-label">Session Best</div>
+            </div>
+            <div class="session-stat">
+                <div class="session-stat-val" id="s-avg">—</div>
+                <div class="session-stat-label">Average</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="leaderboard" id="leaderboard"></div>
+    </div>
 </div>
 
 <div class="confetti-container" id="confetti"></div>
 
 <script>
-function toggleMenu(){
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('overlay').classList.toggle('open');
-}
+function toggleMenu(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
+
+// Particles
+for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.animationDelay=Math.random()*10+'s';document.body.appendChild(p)}
 
 // Audio
-function makeWav(freq,duration,type){
+function makeWav(freq,duration){
     const sr=8000,samples=Math.floor(sr*duration),buffer=new ArrayBuffer(44+samples*2),v=new DataView(buffer);
     const s=(str,o)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i))};
     s('RIFF',0);v.setUint32(4,36+samples*2,true);s('WAVE',8);s('fmt ',12);v.setUint32(16,16,true);
     v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);
     v.setUint16(32,2,true);v.setUint16(34,16,true);s('data',36);v.setUint32(40,samples*2,true);
     for(let i=0;i<samples;i++){const t=i/sr;const env=Math.max(0,1-t/duration);
-    let val=type==='sine'?Math.sin(2*Math.PI*freq*t):0;v.setInt16(44+i*2,val*env*16000,true);}
+    v.setInt16(44+i*2,Math.sin(2*Math.PI*freq*t)*env*16000,true);}
     return URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}));
 }
-const dingAudio=new Audio(makeWav(1000,.25,'sine'));
-const boopAudio=new Audio(makeWav(180,.2,'sine'));
-const fanfareAudios=[new Audio(makeWav(523,.35,'sine')),new Audio(makeWav(659,.35,'sine')),new Audio(makeWav(784,.35,'sine')),new Audio(makeWav(1047,.4,'sine'))];
+const dingAudio=new Audio(makeWav(1000,.25));
+const boopAudio=new Audio(makeWav(180,.2));
+const fanfareAudios=[new Audio(makeWav(523,.35)),new Audio(makeWav(659,.35)),new Audio(makeWav(784,.35)),new Audio(makeWav(1047,.4))];
 function playDing(){dingAudio.currentTime=0;dingAudio.play().catch(()=>{});}
 function playBoop(){boopAudio.currentTime=0;boopAudio.play().catch(()=>{});}
 function playFanfare(){fanfareAudios.forEach((a,i)=>{setTimeout(()=>{a.currentTime=0;a.play().catch(()=>{})},i*120)});}
@@ -134,18 +224,12 @@ function fireConfetti(){
     c.appendChild(p);}setTimeout(()=>{c.innerHTML=''},1600);
 }
 
-// Data
-let reactionBest=JSON.parse(localStorage.getItem('quest_reaction_best')||'{}');
-
-// --- STATS & ACHIEVEMENTS SYSTEM ---
+// --- STATS & ACHIEVEMENTS ---
 function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0},"rps":{"wins":0,"losses":0,"draws":0,"winStreak":0,"bestWinStreak":0,"gamesPlayed":0}}')}
 function saveStats(s){localStorage.setItem('games_stats',JSON.stringify(s))}
-function getHighscores(){return JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}')}
-function saveHighscores(h){localStorage.setItem('games_highscores',JSON.stringify(h))}
 function getAchievements(){return JSON.parse(localStorage.getItem('games_achievements')||'[]')}
 function unlockAchievement(id){
-    const achs=getAchievements();
-    if(achs.find(a=>a.id===id))return;
+    const achs=getAchievements();if(achs.find(a=>a.id===id))return;
     achs.push({id,unlockedAt:new Date().toISOString().slice(0,10)});
     localStorage.setItem('games_achievements',JSON.stringify(achs));
     showAchievementPopup(id);
@@ -155,106 +239,163 @@ function updatePlayStreak(){
     const s=getStreak();const today=new Date().toISOString().slice(0,10);
     if(s.lastPlayedDate===today)return;
     const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
-    if(s.lastPlayedDate===yesterday){s.currentStreak++;}
-    else if(s.lastPlayedDate!==today){s.currentStreak=1;}
-    s.lastPlayedDate=today;
-    if(s.currentStreak>s.bestStreak)s.bestStreak=s.currentStreak;
-    if(!s.history)s.history=[];
-    if(!s.history.includes(today))s.history.push(today);
+    if(s.lastPlayedDate===yesterday)s.currentStreak++;else s.currentStreak=1;
+    s.lastPlayedDate=today;if(s.currentStreak>s.bestStreak)s.bestStreak=s.currentStreak;
+    if(!s.history)s.history=[];if(!s.history.includes(today))s.history.push(today);
     if(s.history.length>30)s.history=s.history.slice(-30);
     localStorage.setItem('games_streak',JSON.stringify(s));
-    // Streak achievements
     if(s.currentStreak>=3)unlockAchievement('streak_3');
     if(s.currentStreak>=7)unlockAchievement('streak_7');
-    if(s.currentStreak>=14)unlockAchievement('streak_14');
-    if(s.currentStreak>=30)unlockAchievement('streak_30');
 }
-
 function showAchievementPopup(id){
-    const names={first_game:'🎮 First Steps!',speed_demon:'⚡ Speed Demon!',lightning:'🌩️ Lightning!',reaction_10:'🎯 Practice!',reaction_50:'🏅 Focused!',all_games:'🎯 Well Rounded!',streak_3:'🔥 On Fire!',streak_7:'💥 Dedicated!',streak_14:'🌟 Committed!',streak_30:'💎 Legend!'};
-    const name=names[id]||'🏆 Achievement Unlocked!';
+    const names={first_game:'🎮 First Steps!',speed_demon:'⚡ Speed Demon!',lightning:'🌩️ Lightning!',reaction_10:'🎯 Practice!',reaction_50:'🏅 Focused!',all_games:'🎯 Well Rounded!',streak_3:'🔥 On Fire!',streak_7:'💥 Dedicated!'};
     const popup=document.createElement('div');
     popup.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);color:#ffd700;padding:12px 24px;border-radius:14px;font-weight:bold;font-size:14px;z-index:1000;backdrop-filter:blur(10px);animation:fadeInUp .4s ease';
-    popup.textContent=name;
-    document.body.appendChild(popup);
-    setTimeout(()=>popup.remove(),3000);
+    popup.textContent=names[id]||'🏆 Achievement!';
+    document.body.appendChild(popup);setTimeout(()=>popup.remove(),3000);
 }
 
-function recordReactionScore(time){
-    const stats=getStats();
-    stats.reaction.totalReactions++;
-    stats.reaction.gamesPlayed++;
-    if(!stats.reaction.bestTime||time<stats.reaction.bestTime)stats.reaction.bestTime=time;
-    saveStats(stats);
+// --- LEADERBOARD (personal bests per name) ---
+function getLeaderboard(){return JSON.parse(localStorage.getItem('reaction_leaderboard')||'[]')}
+function saveLeaderboard(lb){localStorage.setItem('reaction_leaderboard',JSON.stringify(lb))}
 
-    // High scores (top 5 fastest)
-    const hs=getHighscores();
-    hs.reaction.push({value:time,date:new Date().toISOString().slice(0,10)});
-    hs.reaction.sort((a,b)=>a.value-b.value);
-    hs.reaction=hs.reaction.slice(0,5);
-    saveHighscores(hs);
-
-    // Achievements
-    unlockAchievement('first_game');
-    if(time<300)unlockAchievement('speed_demon');
-    if(time<200)unlockAchievement('lightning');
-    if(stats.reaction.totalReactions>=10)unlockAchievement('reaction_10');
-    if(stats.reaction.totalReactions>=50)unlockAchievement('reaction_50');
-    checkAllGames(stats);
-
-    // Streak
-    updatePlayStreak();
+function addToLeaderboard(name,time){
+    const lb=getLeaderboard();
+    const existing=lb.find(e=>e.name===name);
+    if(existing){
+        if(time<existing.time){existing.time=time;existing.date=new Date().toISOString().slice(0,10);}
+    } else {
+        lb.push({name,time,date:new Date().toISOString().slice(0,10)});
+    }
+    lb.sort((a,b)=>a.time-b.time);
+    saveLeaderboard(lb.slice(0,10));
 }
 
-function checkAllGames(stats){
-    if(stats.reaction.gamesPlayed>0&&stats.scramble.gamesPlayed>0&&stats.rps.gamesPlayed>0)
-        unlockAchievement('all_games');
+function getPlayerName(){return localStorage.getItem('games_player_name')||'Player'}
+
+function renderLeaderboard(highlightTime){
+    const lb=getLeaderboard();
+    const playerName=getPlayerName();
+    let html='<div class="lb-title">🏆 Personal Best Scores</div>';
+
+    if(lb.length===0){
+        html+='<div class="empty-lb">Play to set your first record!</div>';
+    } else {
+        lb.slice(0,5).forEach((entry,i)=>{
+            const rankEmoji=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+            const cls=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+            const youCls=(entry.name===playerName&&entry.time===highlightTime)?' you':'';
+            html+=`<div class="lb-row ${cls}${youCls}">
+                <span class="lb-rank">${rankEmoji}</span>
+                <span class="lb-name">${entry.name}</span>
+                <span class="lb-time">${entry.time}ms</span>
+            </div>`;
+        });
+    }
+
+    document.getElementById('leaderboard').innerHTML=html;
 }
 
-// Game
+// --- GAME ---
 let state='idle',timeout=null,startTime=0;
-let attempts=0;
+let sessionTimes=[];
+let sessionBest=null;
 
-function renderBests(){
-    let h='<strong style="color:#4a1a7a">🏆 Best Times:</strong><br>';
-    const entries=Object.entries(reactionBest);
-    if(entries.length===0){h+='<span style="color:#888">No records yet</span>';}
-    else{entries.forEach(([name,time])=>{h+=`<div>${name}: <span class="best">${time}ms</span></div>`;});}
-    document.getElementById('results').innerHTML=h;
+function updateSessionStats(){
+    document.getElementById('s-attempts').textContent=sessionTimes.length;
+    document.getElementById('s-best').textContent=sessionBest?sessionBest+'ms':'—';
+    if(sessionTimes.length>0){
+        const avg=Math.round(sessionTimes.reduce((a,b)=>a+b,0)/sessionTimes.length);
+        document.getElementById('s-avg').textContent=avg+'ms';
+    }
 }
-renderBests();
 
 function reactionClick(){
     const circle=document.getElementById('circle');
-    const bonus=document.getElementById('bonus');
     if(state==='idle'){
-        state='waiting';circle.className='reaction-box waiting';circle.textContent='Wait for green...';bonus.textContent='';
-        timeout=setTimeout(()=>{state='ready';startTime=Date.now();circle.className='reaction-box ready';circle.textContent='TAP NOW!'},1500+Math.random()*3000);
+        state='waiting';
+        circle.className='reaction-box waiting';
+        circle.textContent='Wait for green...';
+        document.getElementById('your-time').classList.remove('show');
+        timeout=setTimeout(()=>{
+            state='ready';startTime=Date.now();
+            circle.className='reaction-box ready';circle.textContent='TAP NOW!';
+        },1500+Math.random()*3000);
     } else if(state==='waiting'){
-        clearTimeout(timeout);circle.className='reaction-box clicked';circle.textContent='❌ Too early! Tap to retry';playBoop();state='idle';
+        clearTimeout(timeout);
+        circle.className='reaction-box clicked';circle.textContent='❌ Too early!';
+        playBoop();state='idle';
+        setTimeout(()=>{circle.className='reaction-box waiting';circle.textContent='Tap to Retry'},1200);
     } else if(state==='ready'){
         const time=Date.now()-startTime;
-        circle.className='reaction-box clicked';circle.textContent=time+'ms!';playDing();
-        attempts++;
-        recordReactionScore(time);
+        circle.className='reaction-box clicked';circle.textContent=time+'ms';
+        playDing();
 
-        // Save best per session
-        const key='Player';
-        if(!reactionBest[key]||time<reactionBest[key]){
-            reactionBest[key]=time;localStorage.setItem('quest_reaction_best',JSON.stringify(reactionBest));
-            circle.textContent=time+'ms! 🎉 New Best!';playFanfare();fireConfetti();
+        // Track session
+        sessionTimes.push(time);
+        if(!sessionBest||time<sessionBest)sessionBest=time;
+        updateSessionStats();
+
+        // Display time
+        const timeEl=document.getElementById('time-value');
+        const msgEl=document.getElementById('time-msg');
+        timeEl.textContent=time+' ms';
+        timeEl.className='time-value '+(time<300?'fast':time<500?'medium':'slow');
+        document.getElementById('your-time').classList.add('show');
+
+        // Message
+        let msg='',msgCls='';
+        if(time<200){msg='🌩️ Superhuman!';msgCls='fast';}
+        else if(time<300){msg='⚡ Lightning fast!';msgCls='fast';}
+        else if(time<400){msg='🔥 Great reflexes!';msgCls='medium';}
+        else if(time<500){msg='👍 Good job!';msgCls='medium';}
+        else{msg='Keep practicing!';msgCls='';}
+        msgEl.textContent=msg;msgEl.className='time-msg '+msgCls;
+
+        // Best time display
+        const stats=getStats();
+        const allTimeBest=stats.reaction.bestTime;
+        if(allTimeBest&&allTimeBest<=time){
+            document.getElementById('time-best').innerHTML='🏆 Best: <span>'+allTimeBest+'ms</span>';
+        } else {
+            document.getElementById('time-best').innerHTML='🏆 Best: <span>'+time+'ms</span> — NEW!';
         }
 
-        let msg='';
-        if(time<250)msg='⚡ Lightning fast!';
-        else if(time<400)msg='🔥 Great reflexes!';
-        else if(time<600)msg='👍 Good job!';
-        else msg='Keep practicing!';
-        bonus.textContent=msg;
+        // Record stats
+        const st=getStats();
+        st.reaction.totalReactions++;st.reaction.gamesPlayed++;
+        if(!st.reaction.bestTime||time<st.reaction.bestTime)st.reaction.bestTime=time;
+        saveStats(st);
 
-        renderBests();state='idle';
-        setTimeout(()=>{circle.className='reaction-box waiting';circle.textContent='Tap to Play Again'},1500);
+        // Achievements
+        unlockAchievement('first_game');
+        if(time<300)unlockAchievement('speed_demon');
+        if(time<200)unlockAchievement('lightning');
+        if(st.reaction.totalReactions>=10)unlockAchievement('reaction_10');
+        if(st.reaction.totalReactions>=50)unlockAchievement('reaction_50');
+
+        // Leaderboard
+        const playerName=getPlayerName();
+        addToLeaderboard(playerName,time);
+
+        // New best?
+        if(time===getLeaderboard()[0].time&&getLeaderboard()[0].name===playerName){
+            playFanfare();fireConfetti();
+        }
+
+        renderLeaderboard(time);
+        updatePlayStreak();
+
+        state='idle';
+        setTimeout(()=>{circle.className='reaction-box waiting';circle.textContent='Tap to Play Again'},1800);
     }
+}
+
+// Init
+renderLeaderboard();
+const stats=getStats();
+if(stats.reaction.bestTime){
+    document.getElementById('time-best').innerHTML='🏆 Best: <span>'+stats.reaction.bestTime+'ms</span>';
 }
 </script>
 </body>
