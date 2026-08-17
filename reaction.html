@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⚡ Reaction Speed</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+    background-attachment:fixed;
+    margin:0;padding:15px;min-height:100vh;
+}
+h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0,.3);margin:60px 0 10px}
+.subtitle{text-align:center;color:rgba(255,255,255,.8);font-size:.9rem;margin-bottom:20px}
+.card{
+    background:rgba(255,255,255,.92);backdrop-filter:blur(15px);border-radius:24px;
+    padding:30px;margin:0 auto;max-width:500px;
+    box-shadow:0 10px 40px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.5);
+    text-align:center;animation:fadeInUp .5s ease forwards;
+}
+.card h3{color:#4a1a7a;margin-bottom:10px}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.player-select{
+    margin:15px 0;
+}
+.player-select select{
+    padding:10px 16px;border-radius:12px;border:2px solid #e0d4f5;
+    font-size:15px;background:#fff;
+}
+
+.reaction-box{
+    width:200px;height:200px;margin:25px auto;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;font-weight:bold;color:#fff;
+    cursor:pointer;transition:background .2s;user-select:none;
+}
+.reaction-box.waiting{background:#e74c3c}
+.reaction-box.ready{background:#27ae60;animation:pulse .5s ease infinite alternate}
+.reaction-box.clicked{background:#3498db}
+@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.05)}}
+
+.results{margin-top:20px;font-size:14px;color:#4a1a7a}
+.results .best{color:#27ae60;font-weight:bold}
+.bonus{color:#27ae60;font-weight:bold;font-size:16px;margin-top:10px}
+
+.back-link{
+    display:inline-block;margin-top:20px;padding:10px 20px;
+    background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
+    border-radius:12px;text-decoration:none;font-weight:bold;font-size:14px;
+    transition:transform .2s;
+}
+.back-link:hover{transform:scale(1.05)}
+
+/* Sidebar */
+.menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.9);border:none;border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s}
+.menu-toggle:hover{transform:scale(1.1)}
+.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);z-index:99;padding:70px 20px 20px;box-shadow:4px 0 30px rgba(0,0,0,.15);transition:left .3s ease;border-radius:0 20px 20px 0}
+.sidebar.open{left:0}
+.sidebar a{display:block;padding:14px 16px;margin:6px 0;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600;color:#4a1a7a;transition:background .2s}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.3);z-index:98;display:none}
+.overlay.open{display:block}
+
+/* Confetti */
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease forwards}
+@keyframes confettiFall{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+
+@media(max-width:500px){
+    h1{font-size:1.5rem;margin-top:50px}
+    .card{padding:20px}
+    .reaction-box{width:160px;height:160px;font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+    <a href="maths.html">🧮 Maths</a>
+    <a href="kindness.html">🫂 Be Kind</a>
+    <a href="games.html" class="active">🎮 Games</a>
+    <a href="sos.html">🚨 SOS Police</a>
+</div>
+
+<h1>⚡ Reaction Speed</h1>
+<p class="subtitle">Tap the circle as fast as you can when it turns GREEN!</p>
+
+<div class="card">
+    <div class="player-select" id="player-select"></div>
+    <div class="reaction-box waiting" id="circle" onclick="reactionClick()">Tap to Start</div>
+    <div class="bonus" id="bonus"></div>
+    <div class="results" id="results"></div>
+    <a href="games.html" class="back-link">← Back to Games</a>
+</div>
+
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+function toggleMenu(){
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+
+// Audio
+function makeWav(freq,duration,type){
+    const sr=8000,samples=Math.floor(sr*duration),buffer=new ArrayBuffer(44+samples*2),v=new DataView(buffer);
+    const s=(str,o)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i))};
+    s('RIFF',0);v.setUint32(4,36+samples*2,true);s('WAVE',8);s('fmt ',12);v.setUint32(16,16,true);
+    v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);
+    v.setUint16(32,2,true);v.setUint16(34,16,true);s('data',36);v.setUint32(40,samples*2,true);
+    for(let i=0;i<samples;i++){const t=i/sr;const env=Math.max(0,1-t/duration);
+    let val=type==='sine'?Math.sin(2*Math.PI*freq*t):0;v.setInt16(44+i*2,val*env*16000,true);}
+    return URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}));
+}
+const dingAudio=new Audio(makeWav(1000,.25,'sine'));
+const boopAudio=new Audio(makeWav(180,.2,'sine'));
+const fanfareAudios=[new Audio(makeWav(523,.35,'sine')),new Audio(makeWav(659,.35,'sine')),new Audio(makeWav(784,.35,'sine')),new Audio(makeWav(1047,.4,'sine'))];
+function playDing(){dingAudio.currentTime=0;dingAudio.play().catch(()=>{});}
+function playBoop(){boopAudio.currentTime=0;boopAudio.play().catch(()=>{});}
+function playFanfare(){fanfareAudios.forEach((a,i)=>{setTimeout(()=>{a.currentTime=0;a.play().catch(()=>{})},i*120)});}
+
+function fireConfetti(){
+    const c=document.getElementById('confetti'),colors=['#667eea','#764ba2','#f093fb','#43e97b','#ffd700','#ff5252'];
+    for(let i=0;i<25;i++){const p=document.createElement('div');p.className='confetti-piece';
+    p.style.left=(30+Math.random()*40)+'%';p.style.top=(20+Math.random()*30)+'%';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.setProperty('--dx',(Math.random()*250-125)+'px');p.style.setProperty('--dy',(Math.random()*350+100)+'px');
+    c.appendChild(p);}setTimeout(()=>{c.innerHTML=''},1600);
+}
+
+// Data
+const kids=JSON.parse(localStorage.getItem('quest_kids')||'[]');
+const avatars=JSON.parse(localStorage.getItem('quest_avatars')||'{}');
+let db=JSON.parse(localStorage.getItem('quest_data')||'{}');
+let history=JSON.parse(localStorage.getItem('quest_history')||'{}');
+let streaks=JSON.parse(localStorage.getItem('quest_streaks')||'{}');
+let reactionBest=JSON.parse(localStorage.getItem('quest_reaction_best')||'{}');
+
+function todayStr(){return new Date().toISOString().slice(0,10)}
+function updateStreak(k){const today=todayStr();if(!streaks[k])streaks[k]={last:'',count:0};const y=new Date(Date.now()-86400000).toISOString().slice(0,10);if(streaks[k].last===today)return;if(streaks[k].last===y)streaks[k].count++;else streaks[k].count=1;streaks[k].last=today;localStorage.setItem('quest_streaks',JSON.stringify(streaks));}
+function recordHistory(k){const today=todayStr();if(!history[k])history[k]={};history[k][today]=db[k];localStorage.setItem('quest_history',JSON.stringify(history));}
+function awardPoints(k,pts){if(db[k]===undefined)db[k]=0;db[k]+=pts;updateStreak(k);recordHistory(k);localStorage.setItem('quest_data',JSON.stringify(db));}
+
+// Player selector
+const sel=document.getElementById('player-select');
+if(kids.length>=2){
+    sel.innerHTML=`<label style="font-weight:bold;color:#4a1a7a;font-size:13px">Playing as: </label>
+    <select id="player">${kids.map(k=>`<option value="${k}">${avatars[k]||'⭐'} ${k}</option>`).join('')}</select>`;
+} else {
+    sel.innerHTML='<p style="color:#e74c3c;font-size:13px">Set up Adventure Quest first to earn points!</p>';
+}
+function getPlayer(){const s=document.getElementById('player');return s?s.value:null;}
+
+// Game
+let state='idle',timeout=null,startTime=0;
+
+function renderBests(){
+    let h='';
+    kids.forEach(k=>{if(reactionBest[k])h+=`<div>${avatars[k]||'⭐'} ${k}: <span class="best">${reactionBest[k]}ms</span></div>`});
+    document.getElementById('results').innerHTML=h||'<div style="color:#888">No records yet</div>';
+}
+renderBests();
+
+function reactionClick(){
+    const circle=document.getElementById('circle');
+    const bonus=document.getElementById('bonus');
+    if(state==='idle'){
+        state='waiting';circle.className='reaction-box waiting';circle.textContent='Wait for green...';bonus.textContent='';
+        timeout=setTimeout(()=>{state='ready';startTime=Date.now();circle.className='reaction-box ready';circle.textContent='TAP NOW!'},1500+Math.random()*3000);
+    } else if(state==='waiting'){
+        clearTimeout(timeout);circle.className='reaction-box clicked';circle.textContent='❌ Too early! Tap to retry';playBoop();state='idle';
+    } else if(state==='ready'){
+        const time=Date.now()-startTime;const player=getPlayer();
+        circle.className='reaction-box clicked';circle.textContent=time+'ms!';playDing();
+        if(player&&(!reactionBest[player]||time<reactionBest[player])){
+            reactionBest[player]=time;localStorage.setItem('quest_reaction_best',JSON.stringify(reactionBest));
+            circle.textContent=time+'ms! 🎉 New Best!';playFanfare();fireConfetti();
+        }
+        let pts=0;
+        if(time<250)pts=3;else if(time<400)pts=2;else if(time<600)pts=1;
+        if(pts>0&&player){awardPoints(player,pts);bonus.textContent=`+${pts}⭐ for ${player}!`;}else{bonus.textContent='';}
+        renderBests();state='idle';
+        setTimeout(()=>{circle.className='reaction-box waiting';circle.textContent='Tap to Play Again'},1500);
+    }
+}
+</script>
+</body>
+</html>

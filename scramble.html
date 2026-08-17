@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🔤 Word Scramble</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+    background-attachment:fixed;
+    margin:0;padding:15px;min-height:100vh;
+}
+h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0,.3);margin:60px 0 10px}
+.subtitle{text-align:center;color:rgba(255,255,255,.8);font-size:.9rem;margin-bottom:20px}
+.card{
+    background:rgba(255,255,255,.92);backdrop-filter:blur(15px);border-radius:24px;
+    padding:30px;margin:0 auto;max-width:550px;
+    box-shadow:0 10px 40px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.5);
+    text-align:center;animation:fadeInUp .5s ease forwards;
+}
+.card h3{color:#4a1a7a;margin-bottom:10px}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.player-select{margin:15px 0}
+.player-select select{padding:10px 16px;border-radius:12px;border:2px solid #e0d4f5;font-size:15px;background:#fff}
+
+.scramble-word{
+    font-size:2.5rem;letter-spacing:8px;font-weight:bold;color:#764ba2;
+    margin:25px 0;font-family:monospace;
+}
+.scramble-input{
+    padding:14px 20px;font-size:18px;border:2px solid #e0d4f5;border-radius:14px;
+    width:80%;max-width:300px;text-align:center;background:#fff;transition:border-color .3s;
+}
+.scramble-input:focus{outline:none;border-color:#764ba2;box-shadow:0 0 0 4px rgba(118,75,162,.15)}
+.hint{color:#888;font-size:13px;margin-top:10px;font-style:italic}
+.score{margin-top:15px;font-size:14px;color:#4a1a7a;font-weight:bold}
+.bonus{color:#27ae60;font-weight:bold;font-size:16px;margin-top:8px}
+
+button{border:none;border-radius:12px;padding:10px 16px;margin:6px;font-size:13px;font-weight:600;cursor:pointer;transition:transform .2s}
+button:hover{transform:scale(1.05)}
+.skip-btn{background:linear-gradient(135deg,#ff5252,#f48fb1);color:#fff;margin-top:12px}
+.again-btn{background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a5c3a;margin-top:12px}
+.back-link{
+    display:inline-block;margin-top:20px;padding:10px 20px;
+    background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
+    border-radius:12px;text-decoration:none;font-weight:bold;font-size:14px;transition:transform .2s;
+}
+.back-link:hover{transform:scale(1.05)}
+
+/* Sidebar */
+.menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.9);border:none;border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s}
+.menu-toggle:hover{transform:scale(1.1)}
+.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);z-index:99;padding:70px 20px 20px;box-shadow:4px 0 30px rgba(0,0,0,.15);transition:left .3s ease;border-radius:0 20px 20px 0}
+.sidebar.open{left:0}
+.sidebar a{display:block;padding:14px 16px;margin:6px 0;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600;color:#4a1a7a;transition:background .2s}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.3);z-index:98;display:none}
+.overlay.open{display:block}
+
+/* Confetti */
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease forwards}
+@keyframes confettiFall{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+
+@media(max-width:500px){h1{font-size:1.5rem;margin-top:50px}.card{padding:20px}.scramble-word{font-size:1.8rem;letter-spacing:5px}}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+    <a href="maths.html">🧮 Maths</a>
+    <a href="kindness.html">🫂 Be Kind</a>
+    <a href="games.html" class="active">🎮 Games</a>
+    <a href="sos.html">🚨 SOS Police</a>
+</div>
+
+<h1>🔤 Word Scramble</h1>
+<p class="subtitle">Unscramble the letters to reveal good character words!</p>
+
+<div class="card">
+    <div class="player-select" id="player-select"></div>
+    <div id="game-area"></div>
+    <a href="games.html" class="back-link">← Back to Games</a>
+</div>
+
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+function toggleMenu(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
+
+// Audio
+function makeWav(freq,duration){
+    const sr=8000,samples=Math.floor(sr*duration),buffer=new ArrayBuffer(44+samples*2),v=new DataView(buffer);
+    const s=(str,o)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i))};
+    s('RIFF',0);v.setUint32(4,36+samples*2,true);s('WAVE',8);s('fmt ',12);v.setUint32(16,16,true);
+    v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);
+    v.setUint16(32,2,true);v.setUint16(34,16,true);s('data',36);v.setUint32(40,samples*2,true);
+    for(let i=0;i<samples;i++){const t=i/sr;const env=Math.max(0,1-t/duration);
+    v.setInt16(44+i*2,Math.sin(2*Math.PI*freq*t)*env*16000,true);}
+    return URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}));
+}
+const dingAudio=new Audio(makeWav(1000,.25));
+const boopAudio=new Audio(makeWav(180,.2));
+function playDing(){dingAudio.currentTime=0;dingAudio.play().catch(()=>{});}
+function playBoop(){boopAudio.currentTime=0;boopAudio.play().catch(()=>{});}
+
+function fireConfetti(){
+    const c=document.getElementById('confetti'),colors=['#667eea','#764ba2','#f093fb','#43e97b','#ffd700','#ff5252'];
+    for(let i=0;i<25;i++){const p=document.createElement('div');p.className='confetti-piece';
+    p.style.left=(30+Math.random()*40)+'%';p.style.top=(20+Math.random()*30)+'%';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.setProperty('--dx',(Math.random()*250-125)+'px');p.style.setProperty('--dy',(Math.random()*350+100)+'px');
+    c.appendChild(p);}setTimeout(()=>{c.innerHTML=''},1600);
+}
+
+// Data
+const kids=JSON.parse(localStorage.getItem('quest_kids')||'[]');
+const avatars=JSON.parse(localStorage.getItem('quest_avatars')||'{}');
+let db=JSON.parse(localStorage.getItem('quest_data')||'{}');
+let history=JSON.parse(localStorage.getItem('quest_history')||'{}');
+let streaks=JSON.parse(localStorage.getItem('quest_streaks')||'{}');
+
+function todayStr(){return new Date().toISOString().slice(0,10)}
+function updateStreak(k){const today=todayStr();if(!streaks[k])streaks[k]={last:'',count:0};const y=new Date(Date.now()-86400000).toISOString().slice(0,10);if(streaks[k].last===today)return;if(streaks[k].last===y)streaks[k].count++;else streaks[k].count=1;streaks[k].last=today;localStorage.setItem('quest_streaks',JSON.stringify(streaks));}
+function recordHistory(k){const today=todayStr();if(!history[k])history[k]={};history[k][today]=db[k];localStorage.setItem('quest_history',JSON.stringify(history));}
+function awardPoints(k,pts){if(db[k]===undefined)db[k]=0;db[k]+=pts;updateStreak(k);recordHistory(k);localStorage.setItem('quest_data',JSON.stringify(db));}
+
+// Player selector
+const sel=document.getElementById('player-select');
+if(kids.length>=2){
+    sel.innerHTML=`<label style="font-weight:bold;color:#4a1a7a;font-size:13px">Playing as: </label>
+    <select id="player">${kids.map(k=>`<option value="${k}">${avatars[k]||'⭐'} ${k}</option>`).join('')}</select>`;
+}
+function getPlayer(){const s=document.getElementById('player');return s?s.value:null;}
+
+// Game
+const words=[
+    {word:'KINDNESS',hint:'Being nice to others'},{word:'PATIENCE',hint:'Waiting calmly'},
+    {word:'HONESTY',hint:'Always telling the truth'},{word:'COURAGE',hint:'Being brave'},
+    {word:'RESPECT',hint:'Treating others well'},{word:'SHARING',hint:'Giving to others'},
+    {word:'HELPFUL',hint:'Lending a hand'},{word:'POLITE',hint:'Good manners'},
+    {word:'GENTLE',hint:'Soft and careful'},{word:'FRIEND',hint:'Someone you play with'},
+    {word:'CLEAN',hint:'Tidy and neat'},{word:'LISTEN',hint:'Using your ears'},
+    {word:'PRAYER',hint:'Talking to Allah'},{word:'FAMILY',hint:'People you love at home'},
+    {word:'SMILE',hint:'A happy face'},{word:'THANKS',hint:'Being grateful'},
+    {word:'BRAVE',hint:'Not afraid'},{word:'TRUTH',hint:'What is real and honest'}
+];
+
+let current=null,score=0,used=[];
+
+function shuffle(word){
+    let arr=word.split('');
+    for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+    if(arr.join('')===word&&word.length>1)return shuffle(word);
+    return arr.join('');
+}
+
+function nextWord(){
+    const available=words.filter(w=>!used.includes(w.word));
+    if(!available.length){
+        document.getElementById('game-area').innerHTML=`
+            <div style="font-size:48px;margin:20px 0">🎉</div>
+            <h3 style="color:#27ae60">All words complete!</h3>
+            <div class="score">Final Score: ${score} words solved</div>
+            <button class="again-btn" onclick="score=0;used=[];nextWord()">🔄 Play Again</button>`;
+        return;
+    }
+    current=available[Math.floor(Math.random()*available.length)];
+    const scrambled=shuffle(current.word);
+    document.getElementById('game-area').innerHTML=`
+        <div class="scramble-word">${scrambled}</div>
+        <input type="text" class="scramble-input" id="guess" placeholder="Type the word..."
+            maxlength="${current.word.length}" oninput="checkGuess()" autocomplete="off" autocapitalize="characters">
+        <div class="hint">💡 Hint: ${current.hint}</div>
+        <div class="score">Solved: ${score} | Remaining: ${available.length}</div>
+        <div class="bonus" id="bonus"></div>
+        <button class="skip-btn" onclick="skipWord()">Skip →</button>`;
+    document.getElementById('guess').focus();
+}
+
+function checkGuess(){
+    const guess=document.getElementById('guess').value.toUpperCase().trim();
+    if(guess===current.word){
+        playDing();score++;used.push(current.word);
+        const player=getPlayer();
+        if(player)awardPoints(player,2);
+        document.getElementById('game-area').innerHTML=`
+            <div style="font-size:48px;margin:20px 0">✅</div>
+            <h3 style="color:#27ae60">Correct! "${current.word}"</h3>
+            ${player?`<div class="bonus">+2⭐ for ${player}!</div>`:''}
+            <div class="score">Solved: ${score}</div>`;
+        fireConfetti();
+        setTimeout(nextWord,1500);
+    }
+}
+
+function skipWord(){
+    playBoop();used.push(current.word);
+    document.getElementById('game-area').innerHTML=`
+        <div style="font-size:48px;margin:20px 0">⏭️</div>
+        <h3>The word was: <strong style="color:#764ba2">${current.word}</strong></h3>`;
+    setTimeout(nextWord,1200);
+}
+
+nextWord();
+</script>
+</body>
+</html>
