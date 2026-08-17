@@ -543,7 +543,7 @@ function renderStreakBar(){
 
 function editName(){
     const current=localStorage.getItem('games_player_name')||'Player';
-    const name=prompt('What\\'s your name?',current);
+    const name=prompt('What\'s your name?',current);
     if(name&&name.trim()){
         localStorage.setItem('games_player_name',name.trim());
         renderStreakBar();
