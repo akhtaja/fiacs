@@ -41,6 +41,22 @@ button:hover{transform:scale(1.05)}
 .skip-btn{background:linear-gradient(135deg,#ff5252,#f48fb1);color:#fff;margin-top:12px}
 .again-btn{background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a5c3a;margin-top:12px}
 
+/* Player bar */
+.player-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 16px;margin-bottom:14px;max-width:550px;margin-left:auto;margin-right:auto;
+    background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.06);
+    border-radius:12px;
+}
+.player-name{font-size:13px;font-weight:600;color:#4a1a7a}
+.stats-link-sm{
+    font-size:12px;font-weight:700;color:#764ba2;text-decoration:none;
+    padding:5px 12px;border-radius:8px;
+    background:rgba(118,75,162,.08);border:1px solid rgba(118,75,162,.2);
+    transition:all .2s;
+}
+.stats-link-sm:hover{background:rgba(118,75,162,.15)}
+
 /* Fixed back button */
 .back-btn{
     position:fixed;top:15px;right:15px;z-index:100;
@@ -91,6 +107,11 @@ button:hover{transform:scale(1.05)}
 
 <h1>🔤 Word Scramble</h1>
 <p class="subtitle">Unscramble the letters to reveal good character words!</p>
+
+<div class="player-bar">
+    <span class="player-name" id="player-name"></span>
+    <a href="stats.html" class="stats-link-sm">🏆 Stats</a>
+</div>
 
 <div class="card">
     <div id="game-area"></div>
@@ -256,6 +277,7 @@ function skipWord(){
     setTimeout(nextWord,1200);
 }
 
+document.getElementById('player-name').textContent='👋 '+(localStorage.getItem('games_player_name')||'Player');
 nextWord();
 </script>
 

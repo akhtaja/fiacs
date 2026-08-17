@@ -100,6 +100,22 @@ h1{
 .session-stat-val{font-size:1.2rem;font-weight:700;color:#fff}
 .session-stat-label{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
 
+/* Player bar */
+.player-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 16px;margin-bottom:14px;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;backdrop-filter:blur(10px);
+}
+.player-name{font-size:13px;font-weight:600;color:rgba(255,255,255,.7)}
+.stats-link-sm{
+    font-size:12px;font-weight:700;color:#ffd700;text-decoration:none;
+    padding:5px 12px;border-radius:8px;
+    background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);
+    transition:all .2s;
+}
+.stats-link-sm:hover{background:rgba(255,215,0,.15)}
+
 /* Fixed back button */
 .back-btn{
     position:fixed;top:15px;right:15px;z-index:100;
@@ -160,6 +176,10 @@ h1{
 <p class="subtitle">Tap when it turns GREEN — how fast are you?</p>
 
 <div class="container">
+    <div class="player-bar">
+        <span class="player-name" id="player-name"></span>
+        <a href="stats.html" class="stats-link-sm">🏆 Stats</a>
+    </div>
     <div class="card">
         <div class="reaction-box waiting" id="circle" onclick="reactionClick()">Tap to Start</div>
         <div class="your-time" id="your-time">
@@ -397,6 +417,7 @@ const stats=getStats();
 if(stats.reaction.bestTime){
     document.getElementById('time-best').innerHTML='🏆 Best: <span>'+stats.reaction.bestTime+'ms</span>';
 }
+document.getElementById('player-name').textContent='👋 '+getPlayerName();
 </script>
 
 <div class="container" style="margin-top:10px">
