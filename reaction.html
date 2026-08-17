@@ -137,6 +137,80 @@ function fireConfetti(){
 // Data
 let reactionBest=JSON.parse(localStorage.getItem('quest_reaction_best')||'{}');
 
+// --- STATS & ACHIEVEMENTS SYSTEM ---
+function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0},"rps":{"wins":0,"losses":0,"draws":0,"winStreak":0,"bestWinStreak":0,"gamesPlayed":0}}')}
+function saveStats(s){localStorage.setItem('games_stats',JSON.stringify(s))}
+function getHighscores(){return JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}')}
+function saveHighscores(h){localStorage.setItem('games_highscores',JSON.stringify(h))}
+function getAchievements(){return JSON.parse(localStorage.getItem('games_achievements')||'[]')}
+function unlockAchievement(id){
+    const achs=getAchievements();
+    if(achs.find(a=>a.id===id))return;
+    achs.push({id,unlockedAt:new Date().toISOString().slice(0,10)});
+    localStorage.setItem('games_achievements',JSON.stringify(achs));
+    showAchievementPopup(id);
+}
+function getStreak(){return JSON.parse(localStorage.getItem('games_streak')||'{"lastPlayedDate":null,"currentStreak":0,"bestStreak":0,"history":[]}')}
+function updatePlayStreak(){
+    const s=getStreak();const today=new Date().toISOString().slice(0,10);
+    if(s.lastPlayedDate===today)return;
+    const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    if(s.lastPlayedDate===yesterday){s.currentStreak++;}
+    else if(s.lastPlayedDate!==today){s.currentStreak=1;}
+    s.lastPlayedDate=today;
+    if(s.currentStreak>s.bestStreak)s.bestStreak=s.currentStreak;
+    if(!s.history)s.history=[];
+    if(!s.history.includes(today))s.history.push(today);
+    if(s.history.length>30)s.history=s.history.slice(-30);
+    localStorage.setItem('games_streak',JSON.stringify(s));
+    // Streak achievements
+    if(s.currentStreak>=3)unlockAchievement('streak_3');
+    if(s.currentStreak>=7)unlockAchievement('streak_7');
+    if(s.currentStreak>=14)unlockAchievement('streak_14');
+    if(s.currentStreak>=30)unlockAchievement('streak_30');
+}
+
+function showAchievementPopup(id){
+    const names={first_game:'🎮 First Steps!',speed_demon:'⚡ Speed Demon!',lightning:'🌩️ Lightning!',reaction_10:'🎯 Practice!',reaction_50:'🏅 Focused!',all_games:'🎯 Well Rounded!',streak_3:'🔥 On Fire!',streak_7:'💥 Dedicated!',streak_14:'🌟 Committed!',streak_30:'💎 Legend!'};
+    const name=names[id]||'🏆 Achievement Unlocked!';
+    const popup=document.createElement('div');
+    popup.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);color:#ffd700;padding:12px 24px;border-radius:14px;font-weight:bold;font-size:14px;z-index:1000;backdrop-filter:blur(10px);animation:fadeInUp .4s ease';
+    popup.textContent=name;
+    document.body.appendChild(popup);
+    setTimeout(()=>popup.remove(),3000);
+}
+
+function recordReactionScore(time){
+    const stats=getStats();
+    stats.reaction.totalReactions++;
+    stats.reaction.gamesPlayed++;
+    if(!stats.reaction.bestTime||time<stats.reaction.bestTime)stats.reaction.bestTime=time;
+    saveStats(stats);
+
+    // High scores (top 5 fastest)
+    const hs=getHighscores();
+    hs.reaction.push({value:time,date:new Date().toISOString().slice(0,10)});
+    hs.reaction.sort((a,b)=>a.value-b.value);
+    hs.reaction=hs.reaction.slice(0,5);
+    saveHighscores(hs);
+
+    // Achievements
+    unlockAchievement('first_game');
+    if(time<300)unlockAchievement('speed_demon');
+    if(time<200)unlockAchievement('lightning');
+    if(stats.reaction.totalReactions>=10)unlockAchievement('reaction_10');
+    if(stats.reaction.totalReactions>=50)unlockAchievement('reaction_50');
+    checkAllGames(stats);
+
+    // Streak
+    updatePlayStreak();
+}
+
+function checkAllGames(stats){
+    if(stats.reaction.gamesPlayed>0&&stats.scramble.gamesPlayed>0&&stats.rps.gamesPlayed>0)
+        unlockAchievement('all_games');
+}
+
 // Game
 let state='idle',timeout=null,startTime=0;
 let attempts=0;
@@ -162,6 +236,7 @@ function reactionClick(){
         const time=Date.now()-startTime;
         circle.className='reaction-box clicked';circle.textContent=time+'ms!';playDing();
         attempts++;
+        recordReactionScore(time);
 
         // Save best per session
         const key='Player';

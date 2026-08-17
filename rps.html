@@ -142,6 +142,76 @@ function fireConfetti(){
     c.appendChild(p);}setTimeout(()=>{c.innerHTML=''},1600);
 }
 
+// --- STATS & ACHIEVEMENTS SYSTEM ---
+function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0},"rps":{"wins":0,"losses":0,"draws":0,"winStreak":0,"bestWinStreak":0,"gamesPlayed":0}}')}
+function saveStats(s){localStorage.setItem('games_stats',JSON.stringify(s))}
+function getHighscores(){return JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}')}
+function saveHighscores(h){localStorage.setItem('games_highscores',JSON.stringify(h))}
+function getAchievements(){return JSON.parse(localStorage.getItem('games_achievements')||'[]')}
+function unlockAchievement(id){
+    const achs=getAchievements();
+    if(achs.find(a=>a.id===id))return;
+    achs.push({id,unlockedAt:new Date().toISOString().slice(0,10)});
+    localStorage.setItem('games_achievements',JSON.stringify(achs));
+    showAchievementPopup(id);
+}
+function getStreak(){return JSON.parse(localStorage.getItem('games_streak')||'{"lastPlayedDate":null,"currentStreak":0,"bestStreak":0,"history":[]}')}
+function updatePlayStreak(){
+    const s=getStreak();const today=new Date().toISOString().slice(0,10);
+    if(s.lastPlayedDate===today)return;
+    const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    if(s.lastPlayedDate===yesterday){s.currentStreak++;}
+    else if(s.lastPlayedDate!==today){s.currentStreak=1;}
+    s.lastPlayedDate=today;
+    if(s.currentStreak>s.bestStreak)s.bestStreak=s.currentStreak;
+    if(!s.history)s.history=[];
+    if(!s.history.includes(today))s.history.push(today);
+    if(s.history.length>30)s.history=s.history.slice(-30);
+    localStorage.setItem('games_streak',JSON.stringify(s));
+    if(s.currentStreak>=3)unlockAchievement('streak_3');
+    if(s.currentStreak>=7)unlockAchievement('streak_7');
+    if(s.currentStreak>=14)unlockAchievement('streak_14');
+    if(s.currentStreak>=30)unlockAchievement('streak_30');
+}
+function showAchievementPopup(id){
+    const names={first_game:'🎮 First Steps!',rps_champ:'🏆 RPS Champion!',unbeatable:'👑 Unbeatable!',rps_10:'✊ Fighter!',all_games:'🎯 Well Rounded!',streak_3:'🔥 On Fire!',streak_7:'💥 Dedicated!',streak_14:'🌟 Committed!',streak_30:'💎 Legend!'};
+    const name=names[id]||'🏆 Achievement Unlocked!';
+    const popup=document.createElement('div');
+    popup.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);color:#ffd700;padding:12px 24px;border-radius:14px;font-weight:bold;font-size:14px;z-index:1000;backdrop-filter:blur(10px);animation:fadeInUp .4s ease';
+    popup.textContent=name;
+    document.body.appendChild(popup);
+    setTimeout(()=>popup.remove(),3000);
+}
+function recordRPSGame(result){
+    const stats=getStats();
+    stats.rps.gamesPlayed++;
+    if(result==='win'){
+        stats.rps.wins++;
+        stats.rps.winStreak++;
+        if(stats.rps.winStreak>stats.rps.bestWinStreak)stats.rps.bestWinStreak=stats.rps.winStreak;
+    } else if(result==='lose'){
+        stats.rps.losses++;
+        stats.rps.winStreak=0;
+    } else {
+        stats.rps.draws++;
+    }
+    saveStats(stats);
+    // High scores
+    const hs=getHighscores();
+    hs.rps.push({value:result==='win'?'Win':'Loss',date:new Date().toISOString().slice(0,10)});
+    hs.rps=hs.rps.filter(h=>h.value==='Win').slice(0,5);
+    if(hs.rps.length===0)hs.rps=getHighscores().rps;// keep as-is if no wins
+    saveHighscores(hs);
+    // Achievements
+    unlockAchievement('first_game');
+    if(stats.rps.wins>=5)unlockAchievement('rps_champ');
+    if(stats.rps.winStreak>=3)unlockAchievement('unbeatable');
+    if(stats.rps.gamesPlayed>=10)unlockAchievement('rps_10');
+    if(stats.reaction.gamesPlayed>0&&stats.scramble.gamesPlayed>0&&stats.rps.gamesPlayed>0)
+        unlockAchievement('all_games');
+    updatePlayStreak();
+}
+
 // Game
 const emojis=['🪨','📄','✂️'];
 let pScore=0,cScore=0,round=0;const bestOf=5;
@@ -169,9 +239,9 @@ function play(choice){
     if(round>=bestOf){
         setTimeout(()=>{
             let msg='';
-            if(pScore>cScore){msg=`🏆 You won ${pScore}-${cScore}!`;playFanfare();fireConfetti();}
-            else if(pScore<cScore){msg=`😢 Computer won ${cScore}-${pScore}. Try again!`;}
-            else{msg=`🤝 It's a tie ${pScore}-${cScore}!`;}
+            if(pScore>cScore){msg=`🏆 You won ${pScore}-${cScore}!`;playFanfare();fireConfetti();recordRPSGame('win');}
+            else if(pScore<cScore){msg=`😢 Computer won ${cScore}-${pScore}. Try again!`;recordRPSGame('lose');}
+            else{msg=`🤝 It's a tie ${pScore}-${cScore}!`;recordRPSGame('draw');}
             el.innerHTML=msg;
             document.getElementById('choices').innerHTML=`<button class="again-btn" onclick="resetGame()">🔄 Play Again</button>`;
         },800);

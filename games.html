@@ -269,6 +269,43 @@ h1{
     font-size:12px;
 }
 
+/* Streak & Daily Challenge */
+.streak-bar{
+    display:flex;align-items:center;justify-content:center;gap:20px;
+    padding:14px 20px;margin-bottom:15px;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;backdrop-filter:blur(10px);flex-wrap:wrap;
+}
+.streak-item{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.8);font-size:14px;font-weight:600}
+.streak-item .num{font-size:20px;font-weight:800;color:#ffd700}
+.streak-item .label{font-size:11px;color:rgba(255,255,255,.4)}
+
+.daily-challenge{
+    background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.02));
+    border:1px solid rgba(255,215,0,.2);border-radius:16px;
+    padding:16px 20px;margin-bottom:20px;text-align:center;
+}
+.daily-challenge h3{color:#ffd700;font-size:14px;margin-bottom:6px}
+.daily-challenge p{color:rgba(255,255,255,.6);font-size:13px}
+.daily-challenge .challenge-game{
+    display:inline-block;margin-top:8px;padding:6px 14px;
+    background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);
+    border-radius:10px;color:#ffd700;font-size:12px;font-weight:bold;text-decoration:none;
+    transition:background .2s;
+}
+.daily-challenge .challenge-game:hover{background:rgba(255,215,0,.2)}
+.daily-challenge .completed{color:#43e97b;border-color:rgba(67,233,123,.3);background:rgba(67,233,123,.1)}
+
+/* Stats link */
+.stats-link{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:14px 28px;border-radius:14px;
+    background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);
+    color:#ffd700;text-decoration:none;font-weight:bold;font-size:14px;
+    transition:all .2s;
+}
+.stats-link:hover{background:rgba(255,215,0,.15);transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,215,0,.1)}
+
 @media(max-width:500px){
     h1{font-size:2rem;margin-top:50px}
     .games-grid{grid-template-columns:1fr}
@@ -305,6 +342,12 @@ h1{
 
 <h1>🎮 Games Hub</h1>
 <p class="subtitle">Pick a game and have fun!</p>
+
+<!-- Streak & Daily Challenge bar -->
+<div class="category-section">
+    <div class="streak-bar" id="streak-bar"></div>
+    <div class="daily-challenge" id="daily-challenge"></div>
+</div>
 
 <div class="category-section">
     <div class="category-label">🧠 Brain Games</div>
@@ -379,6 +422,10 @@ h1{
 
 
 
+<div class="category-section" style="text-align:center;margin-top:30px">
+    <a href="stats.html" class="stats-link">🏆 View Stats & Achievements →</a>
+</div>
+
 <div class="footer">Made with ❤️ for Hamzah & Yahya</div>
 
 <script>
@@ -399,6 +446,65 @@ for(let i = 0; i < 20; i++){
     p.style.height = p.style.width;
     body.appendChild(p);
 }
+
+// --- STREAK & DAILY CHALLENGE ---
+function getStreak(){return JSON.parse(localStorage.getItem('games_streak')||'{"lastPlayedDate":null,"currentStreak":0,"bestStreak":0,"history":[]}')}
+function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0},"rps":{"wins":0,"losses":0,"draws":0,"winStreak":0,"bestWinStreak":0,"gamesPlayed":0}}')}
+function getAchievements(){return JSON.parse(localStorage.getItem('games_achievements')||'[]')}
+
+function renderStreakBar(){
+    const streak=getStreak();
+    const stats=getStats();
+    const totalGames=(stats.reaction.gamesPlayed||0)+(stats.scramble.gamesPlayed||0)+(stats.rps.gamesPlayed||0);
+    const achievements=getAchievements();
+
+    document.getElementById('streak-bar').innerHTML=`
+        <div class="streak-item">🔥 <span class="num">${streak.currentStreak}</span> <span class="label">Day Streak</span></div>
+        <div class="streak-item">🎮 <span class="num">${totalGames}</span> <span class="label">Games</span></div>
+        <div class="streak-item">🏅 <span class="num">${achievements.length}</span> <span class="label">Achievements</span></div>
+        <div class="streak-item">⚡ <span class="num">${stats.reaction.bestTime?stats.reaction.bestTime+'ms':'—'}</span> <span class="label">Best</span></div>
+    `;
+}
+
+function renderDailyChallenge(){
+    const today=new Date().toISOString().slice(0,10);
+    const daily=JSON.parse(localStorage.getItem('games_daily')||'{}');
+    
+    // Generate deterministic daily challenge from date
+    const seed=parseInt(today.replace(/-/g,''));
+    const challenges=[
+        {game:'reaction',text:'Get a reaction time under 400ms',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.bestTime&&s.reaction.bestTime<400}},
+        {game:'scramble',text:'Solve 5 words in Word Scramble',link:'scramble.html',check:()=>{const s=getStats();return s.scramble.wordsGuessed>=5}},
+        {game:'rps',text:'Win a Rock Paper Scissors match',link:'rps.html',check:()=>{const s=getStats();return s.rps.wins>=1}},
+        {game:'reaction',text:'Play 5 rounds of Reaction Speed',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.totalReactions>=5}},
+        {game:'scramble',text:'Guess 3 words without skipping',link:'scramble.html',check:()=>{const s=getStats();return s.scramble.wordsGuessed>=3}},
+        {game:'rps',text:'Play 3 RPS matches',link:'rps.html',check:()=>{const s=getStats();return s.rps.gamesPlayed>=3}},
+        {game:'reaction',text:'Get a reaction time under 300ms',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.bestTime&&s.reaction.bestTime<300}},
+    ];
+    
+    const todayChallenge=challenges[seed%challenges.length];
+    const isCompleted=daily.date===today&&daily.completed;
+    
+    // Check if challenge is met
+    if(!isCompleted&&todayChallenge.check()){
+        daily.date=today;daily.completed=true;
+        localStorage.setItem('games_daily',JSON.stringify(daily));
+    }
+    
+    const completed=daily.date===today&&daily.completed;
+    
+    document.getElementById('daily-challenge').innerHTML=`
+        <h3>⭐ Daily Challenge</h3>
+        <p>${todayChallenge.text}</p>
+        ${completed
+            ?'<span class="challenge-game completed">✅ Completed!</span>'
+            :`<a href="${todayChallenge.link}" class="challenge-game">Play ${todayChallenge.game==='reaction'?'⚡ Reaction':todayChallenge.game==='scramble'?'🔤 Scramble':'✊ RPS'} →</a>`
+        }
+    `;
+}
+
+renderStreakBar();
+renderDailyChallenge();
 </script>
 </body>
 </html>

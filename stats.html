@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🏆 Stats & Achievements</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%);
+    background-attachment:fixed;
+    margin:0;padding:15px;min-height:100vh;overflow-x:hidden;
+}
+.bg-glow{
+    position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
+    background:
+        radial-gradient(ellipse 500px 500px at 25% 25%, rgba(255,215,0,.12) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 400px at 75% 70%, rgba(102,126,234,.15) 0%, transparent 70%);
+    animation:glowShift 8s ease-in-out infinite alternate;
+}
+@keyframes glowShift{0%{opacity:.7;transform:scale(1)}100%{opacity:1;transform:scale(1.05)}}
+
+h1{
+    position:relative;z-index:1;text-align:center;font-size:2.5rem;margin:60px 0 8px;
+    background:linear-gradient(135deg,#ffd700,#fff,#ffd700);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    font-weight:800;letter-spacing:-1px;
+}
+.subtitle{position:relative;z-index:1;text-align:center;color:rgba(255,255,255,.5);font-size:.9rem;margin-bottom:30px}
+
+.container{max-width:700px;margin:0 auto;position:relative;z-index:1}
+
+/* Cards */
+.card{
+    background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border-radius:22px;
+    padding:25px;margin-bottom:20px;border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 10px 40px rgba(0,0,0,.2);
+}
+.card h2{color:#fff;font-size:1.2rem;margin-bottom:15px;display:flex;align-items:center;gap:8px}
+
+/* Streak */
+.streak-display{
+    display:flex;align-items:center;justify-content:center;gap:20px;
+    padding:20px;
+}
+.streak-number{font-size:4rem;font-weight:800;color:#ffd700;text-shadow:0 0 20px rgba(255,215,0,.4)}
+.streak-info{text-align:left}
+.streak-label{color:rgba(255,255,255,.5);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.streak-best{color:rgba(255,255,255,.7);font-size:13px;margin-top:4px}
+.streak-calendar{display:flex;gap:4px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+.streak-day{
+    width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:bold;
+}
+.streak-day.active{background:rgba(255,215,0,.2);color:#ffd700;border:1px solid rgba(255,215,0,.3)}
+.streak-day.today{background:rgba(67,233,123,.2);color:#43e97b;border:1px solid rgba(67,233,123,.4)}
+.streak-day.inactive{background:rgba(255,255,255,.05);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.05)}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.stat-box{
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;padding:16px;text-align:center;
+}
+.stat-value{font-size:1.8rem;font-weight:800;color:#fff;display:block}
+.stat-label{font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.stat-value.gold{color:#ffd700}
+.stat-value.green{color:#43e97b}
+.stat-value.purple{color:#a78bfa}
+
+/* Achievements */
+.achievements-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.achievement{
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;padding:14px;text-align:center;transition:all .2s;
+}
+.achievement.unlocked{
+    border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.05);
+}
+.achievement.locked{opacity:.4}
+.achievement-emoji{font-size:28px;display:block;margin-bottom:6px}
+.achievement-name{font-size:12px;font-weight:bold;color:#fff;margin-bottom:3px}
+.achievement-desc{font-size:10px;color:rgba(255,255,255,.4)}
+.achievement-date{font-size:9px;color:rgba(255,215,0,.6);margin-top:4px}
+
+/* High scores */
+.highscore-list{list-style:none}
+.highscore-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 14px;margin:6px 0;border-radius:12px;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+}
+.highscore-item:first-child{border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.06)}
+.highscore-rank{font-size:16px;font-weight:bold;width:30px;color:rgba(255,255,255,.5)}
+.highscore-item:first-child .highscore-rank{color:#ffd700}
+.highscore-value{font-size:14px;font-weight:bold;color:#fff}
+.highscore-date{font-size:11px;color:rgba(255,255,255,.3)}
+.highscore-game{font-size:12px;color:rgba(255,255,255,.5)}
+
+/* Back button */
+.back-btn{
+    position:fixed;top:15px;right:15px;z-index:100;
+    display:inline-flex;align-items:center;gap:6px;padding:10px 18px;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;border-radius:12px;text-decoration:none;font-weight:bold;font-size:14px;
+    backdrop-filter:blur(10px);box-shadow:0 4px 15px rgba(0,0,0,.2);transition:transform .2s,background .2s;
+}
+.back-btn:hover{transform:scale(1.05);background:rgba(255,255,255,.15)}
+
+/* Sidebar */
+.menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.2);transition:transform .2s,background .2s;backdrop-filter:blur(10px)}
+.menu-toggle:hover{transform:scale(1.1);background:rgba(255,255,255,.15)}
+.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:rgba(15,12,41,.97);backdrop-filter:blur(20px);z-index:99;padding:70px 20px 20px;box-shadow:4px 0 30px rgba(0,0,0,.4);transition:left .3s ease;border-radius:0 20px 20px 0;border-right:1px solid rgba(255,255,255,.1)}
+.sidebar.open{left:0}
+.sidebar a{display:block;padding:14px 16px;margin:6px 0;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600;color:rgba(255,255,255,.7);transition:background .2s,color .2s}
+.sidebar a:hover{background:rgba(255,255,255,.08);color:#fff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:98;display:none}
+.overlay.open{display:block}
+
+.empty-state{color:rgba(255,255,255,.4);font-size:13px;text-align:center;padding:20px}
+
+/* Particles */
+.particle{position:fixed;width:3px;height:3px;border-radius:50%;background:#fff;opacity:0;pointer-events:none;z-index:0;animation:particleFloat linear infinite}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh)}10%{opacity:.3}90%{opacity:.3}100%{opacity:0;transform:translateY(-20px)}}
+
+@media(max-width:500px){
+    h1{font-size:2rem;margin-top:50px}
+    .card{padding:18px}
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+    .achievements-grid{grid-template-columns:repeat(2,1fr)}
+    .streak-number{font-size:3rem}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<a href="games.html" class="back-btn">← Games</a>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+    <a href="maths.html">🧮 Maths</a>
+    <a href="kindness.html">🫂 Be Kind</a>
+    <a href="games.html">🎮 Games</a>
+    <a href="sos.html">🚨 SOS Police</a>
+</div>
+
+<h1>🏆 Stats & Achievements</h1>
+<p class="subtitle">Your gaming journey so far!</p>
+
+<div class="container" id="content"></div>
+
+<script>
+function toggleMenu(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
+
+// Particles
+for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.animationDelay=Math.random()*10+'s';p.style.width=(2+Math.random()*2)+'px';p.style.height=p.style.width;document.body.appendChild(p)}
+
+// --- DATA ---
+function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0},"rps":{"wins":0,"losses":0,"draws":0,"winStreak":0,"bestWinStreak":0,"gamesPlayed":0}}')}
+function getAchievements(){return JSON.parse(localStorage.getItem('games_achievements')||'[]')}
+function getStreak(){return JSON.parse(localStorage.getItem('games_streak')||'{"lastPlayedDate":null,"currentStreak":0,"bestStreak":0,"history":[]}')}
+function getHighscores(){return JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}')}
+
+function todayStr(){return new Date().toISOString().slice(0,10)}
+
+// --- ACHIEVEMENTS DEFINITIONS ---
+const allAchievements=[
+    {id:'first_game',emoji:'🎮',name:'First Steps',desc:'Play your first game'},
+    {id:'speed_demon',emoji:'⚡',name:'Speed Demon',desc:'Reaction time under 300ms'},
+    {id:'lightning',emoji:'🌩️',name:'Lightning',desc:'Reaction time under 200ms'},
+    {id:'word_master',emoji:'📖',name:'Word Master',desc:'Guess 10 words total'},
+    {id:'vocabulary',emoji:'🎓',name:'Vocabulary Pro',desc:'Guess 50 words total'},
+    {id:'rps_champ',emoji:'🏆',name:'RPS Champion',desc:'Win 5 RPS games'},
+    {id:'unbeatable',emoji:'👑',name:'Unbeatable',desc:'Win 3 RPS games in a row'},
+    {id:'streak_3',emoji:'🔥',name:'On Fire',desc:'3-day play streak'},
+    {id:'streak_7',emoji:'💥',name:'Dedicated',desc:'7-day play streak'},
+    {id:'streak_14',emoji:'🌟',name:'Committed',desc:'14-day play streak'},
+    {id:'streak_30',emoji:'💎',name:'Legend',desc:'30-day play streak'},
+    {id:'all_games',emoji:'🎯',name:'Well Rounded',desc:'Play all 3 game types'},
+    {id:'reaction_10',emoji:'🎯',name:'Practice',desc:'Play 10 reaction rounds'},
+    {id:'reaction_50',emoji:'🏅',name:'Focused',desc:'Play 50 reaction rounds'},
+    {id:'rps_10',emoji:'✊',name:'Fighter',desc:'Play 10 RPS matches'},
+];
+
+function render(){
+    const stats=getStats();
+    const achievements=getAchievements();
+    const streak=getStreak();
+    const highscores=getHighscores();
+
+    let html='';
+
+    // --- STREAK ---
+    html+=`<div class="card">
+        <h2>🔥 Daily Streak</h2>
+        <div class="streak-display">
+            <div class="streak-number">${streak.currentStreak}</div>
+            <div class="streak-info">
+                <div class="streak-label">Day Streak</div>
+                <div class="streak-best">Best: ${streak.bestStreak} days</div>
+            </div>
+        </div>
+        <div class="streak-calendar">${renderStreakCalendar(streak)}</div>
+    </div>`;
+
+    // --- STATS ---
+    const totalGames=(stats.reaction.gamesPlayed||0)+(stats.scramble.gamesPlayed||0)+(stats.rps.gamesPlayed||0);
+    const rpsWinRate=stats.rps.gamesPlayed>0?Math.round((stats.rps.wins/stats.rps.gamesPlayed)*100):0;
+
+    html+=`<div class="card">
+        <h2>📊 Player Stats</h2>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="stat-value">${totalGames}</span>
+                <span class="stat-label">Games Played</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value gold">${stats.reaction.bestTime?stats.reaction.bestTime+'ms':'—'}</span>
+                <span class="stat-label">Best Reaction</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value green">${stats.scramble.wordsGuessed}</span>
+                <span class="stat-label">Words Guessed</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value purple">${rpsWinRate}%</span>
+                <span class="stat-label">RPS Win Rate</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value">${stats.rps.bestWinStreak}</span>
+                <span class="stat-label">Best Win Streak</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value">${stats.reaction.totalReactions}</span>
+                <span class="stat-label">Total Reactions</span>
+            </div>
+        </div>
+    </div>`;
+
+    // --- HIGH SCORES ---
+    html+=`<div class="card">
+        <h2>🥇 High Scores</h2>`;
+
+    if(highscores.reaction.length>0){
+        html+=`<h3 style="color:rgba(255,255,255,.5);font-size:12px;margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">⚡ Reaction Speed (Fastest)</h3>
+        <ul class="highscore-list">`;
+        highscores.reaction.slice(0,5).forEach((entry,i)=>{
+            html+=`<li class="highscore-item">
+                <span class="highscore-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
+                <span class="highscore-value">${entry.value}ms</span>
+                <span class="highscore-date">${entry.date}</span>
+            </li>`;
+        });
+        html+=`</ul>`;
+    }
+
+    if(highscores.scramble.length>0){
+        html+=`<h3 style="color:rgba(255,255,255,.5);font-size:12px;margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">🔤 Word Scramble (Most Solved)</h3>
+        <ul class="highscore-list">`;
+        highscores.scramble.slice(0,5).forEach((entry,i)=>{
+            html+=`<li class="highscore-item">
+                <span class="highscore-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
+                <span class="highscore-value">${entry.value} words</span>
+                <span class="highscore-date">${entry.date}</span>
+            </li>`;
+        });
+        html+=`</ul>`;
+    }
+
+    if(highscores.rps.length>0){
+        html+=`<h3 style="color:rgba(255,255,255,.5);font-size:12px;margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">✊ Rock Paper Scissors (Wins)</h3>
+        <ul class="highscore-list">`;
+        highscores.rps.slice(0,5).forEach((entry,i)=>{
+            html+=`<li class="highscore-item">
+                <span class="highscore-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
+                <span class="highscore-value">${entry.value}</span>
+                <span class="highscore-date">${entry.date}</span>
+            </li>`;
+        });
+        html+=`</ul>`;
+    }
+
+    if(highscores.reaction.length===0&&highscores.scramble.length===0&&highscores.rps.length===0){
+        html+=`<div class="empty-state">Play some games to set high scores!</div>`;
+    }
+    html+=`</div>`;
+
+    // --- ACHIEVEMENTS ---
+    html+=`<div class="card">
+        <h2>🏅 Achievements (${achievements.length}/${allAchievements.length})</h2>
+        <div class="achievements-grid">`;
+
+    allAchievements.forEach(a=>{
+        const unlocked=achievements.find(u=>u.id===a.id);
+        if(unlocked){
+            html+=`<div class="achievement unlocked">
+                <span class="achievement-emoji">${a.emoji}</span>
+                <div class="achievement-name">${a.name}</div>
+                <div class="achievement-desc">${a.desc}</div>
+                <div class="achievement-date">✓ ${unlocked.unlockedAt}</div>
+            </div>`;
+        } else {
+            html+=`<div class="achievement locked">
+                <span class="achievement-emoji">🔒</span>
+                <div class="achievement-name">${a.name}</div>
+                <div class="achievement-desc">${a.desc}</div>
+            </div>`;
+        }
+    });
+
+    html+=`</div></div>`;
+
+    document.getElementById('content').innerHTML=html;
+}
+
+function renderStreakCalendar(streak){
+    const today=new Date();
+    let html='';
+    for(let i=6;i>=0;i--){
+        const d=new Date(today);
+        d.setDate(d.getDate()-i);
+        const dateStr=d.toISOString().slice(0,10);
+        const dayName=['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()];
+        const isToday=i===0;
+        const wasPlayed=streak.history&&streak.history.includes(dateStr);
+        let cls='streak-day ';
+        if(isToday&&wasPlayed) cls+='today';
+        else if(wasPlayed) cls+='active';
+        else cls+='inactive';
+        html+=`<div class="${cls}">${dayName}</div>`;
+    }
+    return html;
+}
+
+render();
+</script>
+</body>
+</html>
