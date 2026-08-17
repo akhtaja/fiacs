@@ -183,10 +183,14 @@ const allAchievements=[
     {id:'streak_7',emoji:'💥',name:'Dedicated',desc:'7-day play streak'},
     {id:'streak_14',emoji:'🌟',name:'Committed',desc:'14-day play streak'},
     {id:'streak_30',emoji:'💎',name:'Legend',desc:'30-day play streak'},
-    {id:'all_games',emoji:'🎯',name:'Well Rounded',desc:'Play all 3 game types'},
+    {id:'all_games',emoji:'🎯',name:'Well Rounded',desc:'Play all 3 original games'},
     {id:'reaction_10',emoji:'🎯',name:'Practice',desc:'Play 10 reaction rounds'},
     {id:'reaction_50',emoji:'🏅',name:'Focused',desc:'Play 50 reaction rounds'},
     {id:'rps_10',emoji:'✊',name:'Fighter',desc:'Play 10 RPS matches'},
+    {id:'math_racer',emoji:'🏎️',name:'Math Racer',desc:'Solve 10+ in Math Race'},
+    {id:'math_legend',emoji:'🧮',name:'Math Legend',desc:'Solve 20+ in Math Race'},
+    {id:'pattern_pro',emoji:'🔴',name:'Pattern Pro',desc:'Get a 10 streak in Pattern Match'},
+    {id:'word_finder',emoji:'🔍',name:'Word Finder',desc:'Complete a Word Search puzzle'},
 ];
 
 function render(){
@@ -213,6 +217,8 @@ function render(){
     // --- STATS ---
     const totalGames=(stats.reaction.gamesPlayed||0)+(stats.scramble.gamesPlayed||0)+(stats.rps.gamesPlayed||0);
     const rpsWinRate=stats.rps.gamesPlayed>0?Math.round((stats.rps.wins/stats.rps.gamesPlayed)*100):0;
+    const mathRaceBest=JSON.parse(localStorage.getItem('mathrace_best')||'{}');
+    const mathRaceTopScore=Math.max(mathRaceBest.easy||0,mathRaceBest.medium||0,mathRaceBest.hard||0);
 
     html+=`<div class="card">
         <h2>📊 Player Stats</h2>
@@ -240,6 +246,18 @@ function render(){
             <div class="stat-box">
                 <span class="stat-value">${stats.reaction.totalReactions}</span>
                 <span class="stat-label">Total Reactions</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value gold">${mathRaceTopScore||'—'}</span>
+                <span class="stat-label">Math Race Best</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value green">${mathRaceBest.easy||'—'}</span>
+                <span class="stat-label">Race Easy</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value purple">${mathRaceBest.hard||'—'}</span>
+                <span class="stat-label">Race Hard</span>
             </div>
         </div>
     </div>`;
@@ -290,6 +308,33 @@ function render(){
     if(highscores.reaction.length===0&&highscores.scramble.length===0&&highscores.rps.length===0){
         html+=`<div class="empty-state">Play some games to set high scores!</div>`;
     }
+
+    // Math Race bests
+    const mrBest=JSON.parse(localStorage.getItem('mathrace_best')||'{}');
+    if(mrBest.easy||mrBest.medium||mrBest.hard){
+        html+=`<h3 style="color:rgba(255,255,255,.5);font-size:12px;margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">🔢 Math Race (Problems Solved in 30s)</h3>
+        <ul class="highscore-list">`;
+        if(mrBest.easy)html+=`<li class="highscore-item"><span class="highscore-rank">😊</span><span class="highscore-game">Easy</span><span class="highscore-value">${mrBest.easy} solved</span></li>`;
+        if(mrBest.medium)html+=`<li class="highscore-item"><span class="highscore-rank">🤔</span><span class="highscore-game">Medium</span><span class="highscore-value">${mrBest.medium} solved</span></li>`;
+        if(mrBest.hard)html+=`<li class="highscore-item"><span class="highscore-rank">🔥</span><span class="highscore-game">Hard</span><span class="highscore-value">${mrBest.hard} solved</span></li>`;
+        html+=`</ul>`;
+    }
+
+    // Reaction leaderboard
+    const reactionLB=JSON.parse(localStorage.getItem('reaction_leaderboard')||'[]');
+    if(reactionLB.length>0){
+        html+=`<h3 style="color:rgba(255,255,255,.5);font-size:12px;margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">⚡ Reaction Leaderboard</h3>
+        <ul class="highscore-list">`;
+        reactionLB.slice(0,5).forEach((entry,i)=>{
+            html+=`<li class="highscore-item">
+                <span class="highscore-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
+                <span class="highscore-game">${entry.name}</span>
+                <span class="highscore-value">${entry.time}ms</span>
+            </li>`;
+        });
+        html+=`</ul>`;
+    }
+
     html+=`</div>`;
 
     // --- ACHIEVEMENTS ---
