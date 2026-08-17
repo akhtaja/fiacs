@@ -23,9 +23,6 @@ h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0
 .card h3{color:#4a1a7a;margin-bottom:10px}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-.player-select{margin:15px 0}
-.player-select select{padding:10px 16px;border-radius:12px;border:2px solid #e0d4f5;font-size:15px;background:#fff}
-
 .scramble-word{
     font-size:2.5rem;letter-spacing:8px;font-weight:bold;color:#764ba2;
     margin:25px 0;font-family:monospace;
@@ -43,12 +40,20 @@ button{border:none;border-radius:12px;padding:10px 16px;margin:6px;font-size:13p
 button:hover{transform:scale(1.05)}
 .skip-btn{background:linear-gradient(135deg,#ff5252,#f48fb1);color:#fff;margin-top:12px}
 .again-btn{background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a5c3a;margin-top:12px}
-.back-link{
-    display:inline-block;margin-top:20px;padding:10px 20px;
-    background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
-    border-radius:12px;text-decoration:none;font-weight:bold;font-size:14px;transition:transform .2s;
+
+/* Fixed back button */
+.back-btn{
+    position:fixed;top:15px;right:15px;z-index:100;
+    display:inline-flex;align-items:center;gap:6px;
+    padding:10px 18px;
+    background:rgba(255,255,255,.9);
+    color:#4a1a7a;
+    border-radius:12px;
+    text-decoration:none;font-weight:bold;font-size:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+    transition:transform .2s, box-shadow .2s;
 }
-.back-link:hover{transform:scale(1.05)}
+.back-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(0,0,0,.2)}
 
 /* Sidebar */
 .menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.9);border:none;border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s}
@@ -71,6 +76,8 @@ button:hover{transform:scale(1.05)}
 </head>
 <body>
 
+<a href="games.html" class="back-btn">← Games</a>
+
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <div class="sidebar" id="sidebar">
@@ -86,9 +93,7 @@ button:hover{transform:scale(1.05)}
 <p class="subtitle">Unscramble the letters to reveal good character words!</p>
 
 <div class="card">
-    <div class="player-select" id="player-select"></div>
     <div id="game-area"></div>
-    <a href="games.html" class="back-link">← Back to Games</a>
 </div>
 
 <div class="confetti-container" id="confetti"></div>
@@ -121,26 +126,6 @@ function fireConfetti(){
     c.appendChild(p);}setTimeout(()=>{c.innerHTML=''},1600);
 }
 
-// Data
-const kids=JSON.parse(localStorage.getItem('quest_kids')||'[]');
-const avatars=JSON.parse(localStorage.getItem('quest_avatars')||'{}');
-let db=JSON.parse(localStorage.getItem('quest_data')||'{}');
-let history=JSON.parse(localStorage.getItem('quest_history')||'{}');
-let streaks=JSON.parse(localStorage.getItem('quest_streaks')||'{}');
-
-function todayStr(){return new Date().toISOString().slice(0,10)}
-function updateStreak(k){const today=todayStr();if(!streaks[k])streaks[k]={last:'',count:0};const y=new Date(Date.now()-86400000).toISOString().slice(0,10);if(streaks[k].last===today)return;if(streaks[k].last===y)streaks[k].count++;else streaks[k].count=1;streaks[k].last=today;localStorage.setItem('quest_streaks',JSON.stringify(streaks));}
-function recordHistory(k){const today=todayStr();if(!history[k])history[k]={};history[k][today]=db[k];localStorage.setItem('quest_history',JSON.stringify(history));}
-function awardPoints(k,pts){if(db[k]===undefined)db[k]=0;db[k]+=pts;updateStreak(k);recordHistory(k);localStorage.setItem('quest_data',JSON.stringify(db));}
-
-// Player selector
-const sel=document.getElementById('player-select');
-if(kids.length>=2){
-    sel.innerHTML=`<label style="font-weight:bold;color:#4a1a7a;font-size:13px">Playing as: </label>
-    <select id="player">${kids.map(k=>`<option value="${k}">${avatars[k]||'⭐'} ${k}</option>`).join('')}</select>`;
-}
-function getPlayer(){const s=document.getElementById('player');return s?s.value:null;}
-
 // Game
 const words=[
     {word:'KINDNESS',hint:'Being nice to others'},{word:'PATIENCE',hint:'Waiting calmly'},
@@ -169,7 +154,7 @@ function nextWord(){
         document.getElementById('game-area').innerHTML=`
             <div style="font-size:48px;margin:20px 0">🎉</div>
             <h3 style="color:#27ae60">All words complete!</h3>
-            <div class="score">Final Score: ${score} words solved</div>
+            <div class="score">Final Score: ${score}/${words.length} words solved</div>
             <button class="again-btn" onclick="score=0;used=[];nextWord()">🔄 Play Again</button>`;
         return;
     }
@@ -181,7 +166,6 @@ function nextWord(){
             maxlength="${current.word.length}" oninput="checkGuess()" autocomplete="off" autocapitalize="characters">
         <div class="hint">💡 Hint: ${current.hint}</div>
         <div class="score">Solved: ${score} | Remaining: ${available.length}</div>
-        <div class="bonus" id="bonus"></div>
         <button class="skip-btn" onclick="skipWord()">Skip →</button>`;
     document.getElementById('guess').focus();
 }
@@ -190,12 +174,9 @@ function checkGuess(){
     const guess=document.getElementById('guess').value.toUpperCase().trim();
     if(guess===current.word){
         playDing();score++;used.push(current.word);
-        const player=getPlayer();
-        if(player)awardPoints(player,2);
         document.getElementById('game-area').innerHTML=`
             <div style="font-size:48px;margin:20px 0">✅</div>
             <h3 style="color:#27ae60">Correct! "${current.word}"</h3>
-            ${player?`<div class="bonus">+2⭐ for ${player}!</div>`:''}
             <div class="score">Solved: ${score}</div>`;
         fireConfetti();
         setTimeout(nextWord,1500);

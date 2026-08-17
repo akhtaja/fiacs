@@ -22,11 +22,6 @@ h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0
 }
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-.player-select{margin:15px 0}
-.player-select select{padding:10px 16px;border-radius:12px;border:2px solid #e0d4f5;font-size:15px;background:#fff}
-
-.char-points{font-size:14px;color:#667eea;font-weight:bold;margin:10px 0}
-
 .character-display{
     width:180px;height:220px;margin:15px auto;position:relative;
     background:linear-gradient(135deg,#e8dfff,#f5f0ff);border-radius:20px;
@@ -52,12 +47,22 @@ h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0
 .shop-item.equipped{border-color:#764ba2;box-shadow:0 0 0 3px rgba(118,75,162,.3)}
 .shop-item.locked{opacity:.5;cursor:not-allowed}
 
-.back-link{
-    display:inline-block;margin-top:25px;padding:10px 20px;
-    background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
-    border-radius:12px;text-decoration:none;font-weight:bold;font-size:14px;transition:transform .2s;
+.info-text{font-size:13px;color:#888;margin:12px 0}
+.coins{font-size:16px;color:#667eea;font-weight:bold;margin:10px 0}
+
+/* Fixed back button */
+.back-btn{
+    position:fixed;top:15px;right:15px;z-index:100;
+    display:inline-flex;align-items:center;gap:6px;
+    padding:10px 18px;
+    background:rgba(255,255,255,.9);
+    color:#4a1a7a;
+    border-radius:12px;
+    text-decoration:none;font-weight:bold;font-size:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+    transition:transform .2s, box-shadow .2s;
 }
-.back-link:hover{transform:scale(1.05)}
+.back-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(0,0,0,.2)}
 
 /* Sidebar */
 .menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.9);border:none;border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s}
@@ -75,6 +80,8 @@ h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0
 </head>
 <body>
 
+<a href="games.html" class="back-btn">← Games</a>
+
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <div class="sidebar" id="sidebar">
@@ -87,12 +94,10 @@ h1{text-align:center;color:#fff;font-size:2rem;text-shadow:0 2px 10px rgba(0,0,0
 </div>
 
 <h1>🎨 Build-a-Character</h1>
-<p class="subtitle">Spend your earned points on cool accessories!</p>
+<p class="subtitle">Customize your character with cool accessories!</p>
 
 <div class="card">
-    <div class="player-select" id="player-select"></div>
     <div id="shop-area"></div>
-    <a href="games.html" class="back-link">← Back to Games</a>
 </div>
 
 <script>
@@ -114,31 +119,9 @@ const boopAudio=new Audio(makeWav(180,.2));
 function playDing(){dingAudio.currentTime=0;dingAudio.play().catch(()=>{});}
 function playBoop(){boopAudio.currentTime=0;boopAudio.play().catch(()=>{});}
 
-// Data
-const kids=JSON.parse(localStorage.getItem('quest_kids')||'[]');
-const avatars=JSON.parse(localStorage.getItem('quest_avatars')||'{}');
-let db=JSON.parse(localStorage.getItem('quest_data')||'{}');
-let history=JSON.parse(localStorage.getItem('quest_history')||'{}');
-let charData=JSON.parse(localStorage.getItem('quest_character')||'{}');
-
-function todayStr(){return new Date().toISOString().slice(0,10)}
-function allTimeTotal(k){
-    let total=db[k]||0;
-    if(history[k]){Object.values(history[k]).forEach(v=>{total+=v});}
-    const today=todayStr();
-    if(history[k]&&history[k][today])total-=history[k][today];
-    return total;
-}
-
-// Player selector
-const sel=document.getElementById('player-select');
-if(kids.length>=2){
-    sel.innerHTML=`<label style="font-weight:bold;color:#4a1a7a;font-size:13px">Playing as: </label>
-    <select id="player" onchange="renderShop()">${kids.map(k=>`<option value="${k}">${avatars[k]||'⭐'} ${k}</option>`).join('')}</select>`;
-} else {
-    sel.innerHTML='<p style="color:#e74c3c;font-size:13px">Set up <a href="kids.html">Adventure Quest</a> first!</p>';
-}
-function getPlayer(){const s=document.getElementById('player');return s?s.value:null;}
+// Data - uses local coins system (no link to kids.html)
+let charData=JSON.parse(localStorage.getItem('quest_character_standalone')||'{}');
+let coins=parseInt(localStorage.getItem('quest_character_coins')||'50');
 
 // Shop data
 const shop={
@@ -168,54 +151,46 @@ const shop={
     ]
 };
 
-function getData(player){
-    if(!charData[player])charData[player]={owned:[],hat:null,pet:null,bg:null};
-    return charData[player];
+function getData(){
+    if(!charData.owned)charData={owned:[],hat:null,pet:null,bg:null};
+    return charData;
 }
-function saveData(){localStorage.setItem('quest_character',JSON.stringify(charData));}
-
-function getSpent(data){
-    let spent=0;
-    data.owned.forEach(id=>{Object.values(shop).forEach(cat=>{const item=cat.find(i=>i.id===id);if(item)spent+=item.cost;});});
-    return spent;
+function saveData(){
+    localStorage.setItem('quest_character_standalone',JSON.stringify(charData));
+    localStorage.setItem('quest_character_coins',coins.toString());
 }
 
 function renderShop(){
-    const player=getPlayer();
-    if(!player){document.getElementById('shop-area').innerHTML='';return;}
-    const data=getData(player);
-    const totalPts=allTimeTotal(player);
-    const available=totalPts-getSpent(data);
-    const avatar=avatars[player]||'🦁';
+    const data=getData();
     const bgItem=data.bg?shop.backgrounds.find(b=>b.id===data.bg):null;
     const bgStyle=bgItem?`background:${bgItem.color}`:'';
 
     let html=`
-        <div class="char-points">${avatars[player]||'⭐'} ${player} — 💰 ${available} points to spend (${totalPts} total earned)</div>
+        <div class="coins">💰 ${coins} coins to spend</div>
+        <p class="info-text">You start with 50 coins. Tap items to buy & equip!</p>
         <div class="character-display">
             <div class="char-bg" style="${bgStyle}"></div>
             ${data.hat?`<span class="char-accessory char-hat">${shop.hats.find(h=>h.id===data.hat)?.emoji||''}</span>`:''}
-            <span class="char-body">${avatar}</span>
+            <span class="char-body">🦁</span>
             ${data.pet?`<span class="char-accessory char-pet">${shop.pets.find(p=>p.id===data.pet)?.emoji||''}</span>`:''}
         </div>`;
 
-    html+=renderSection('🎩 Hats',shop.hats,'hats',data,available);
-    html+=renderSection('🐾 Pets',shop.pets,'pets',data,available);
-    html+=renderSection('🎨 Backgrounds',shop.backgrounds,'backgrounds',data,available);
+    html+=renderSection('🎩 Hats',shop.hats,'hats',data);
+    html+=renderSection('🐾 Pets',shop.pets,'pets',data);
+    html+=renderSection('🎨 Backgrounds',shop.backgrounds,'backgrounds',data);
 
     document.getElementById('shop-area').innerHTML=html;
 }
 
-function renderSection(title,items,category,data,available){
+function renderSection(title,items,category,data){
     let html=`<div class="category">${title}</div><div class="shop">`;
     items.forEach(item=>{
         const owned=data.owned.includes(item.id);
         const equipped=(category==='hats'&&data.hat===item.id)||(category==='pets'&&data.pet===item.id)||(category==='backgrounds'&&data.bg===item.id);
-        const canAfford=available>=item.cost;
-        let cls='shop-item',label=`${item.emoji} ${item.name} (${item.cost}⭐)`,action='';
+        let cls='shop-item',label=`${item.emoji} ${item.name} (${item.cost}💰)`,action='';
         if(equipped){cls+=' equipped owned';label=`${item.emoji} ${item.name} ✓`;action=`onclick="unequip('${category}','${item.id}')"`;}
         else if(owned){cls+=' owned';label=`${item.emoji} ${item.name}`;action=`onclick="equip('${category}','${item.id}')"`;}
-        else if(!canAfford){cls+=' locked';label=`🔒 ${item.name} (${item.cost}⭐)`;}
+        else if(coins<item.cost){cls+=' locked';label=`🔒 ${item.name} (${item.cost}💰)`;}
         else{action=`onclick="buy('${category}','${item.id}',${item.cost})"`;} 
         html+=`<button class="${cls}" ${action}>${label}</button>`;
     });
@@ -223,10 +198,9 @@ function renderSection(title,items,category,data,available){
 }
 
 function buy(category,itemId,cost){
-    const player=getPlayer();if(!player)return;
-    const data=getData(player);
-    const available=allTimeTotal(player)-getSpent(data);
-    if(available<cost){playBoop();return;}
+    if(coins<cost){playBoop();return;}
+    const data=getData();
+    coins-=cost;
     data.owned.push(itemId);
     if(category==='hats')data.hat=itemId;
     else if(category==='pets')data.pet=itemId;
@@ -235,8 +209,7 @@ function buy(category,itemId,cost){
 }
 
 function equip(category,itemId){
-    const player=getPlayer();if(!player)return;
-    const data=getData(player);
+    const data=getData();
     if(category==='hats')data.hat=itemId;
     else if(category==='pets')data.pet=itemId;
     else if(category==='backgrounds')data.bg=itemId;
@@ -244,15 +217,14 @@ function equip(category,itemId){
 }
 
 function unequip(category,itemId){
-    const player=getPlayer();if(!player)return;
-    const data=getData(player);
+    const data=getData();
     if(category==='hats')data.hat=null;
     else if(category==='pets')data.pet=null;
     else if(category==='backgrounds')data.bg=null;
     saveData();renderShop();
 }
 
-if(kids.length>=2)renderShop();
+renderShop();
 </script>
 </body>
 </html>
