@@ -291,19 +291,7 @@ h1{
     background:linear-gradient(135deg,rgba(102,126,234,.3),rgba(240,147,251,.3));
     border:2px solid rgba(255,255,255,.15);
     display:flex;align-items:center;justify-content:center;font-size:24px;
-    cursor:pointer;transition:transform .2s,box-shadow .2s;
-    overflow:hidden;position:relative;
-}
-.profile-avatar:hover{transform:scale(1.1);box-shadow:0 4px 15px rgba(102,126,234,.3)}
-.profile-avatar::after{
-    content:'📷';
-    position:absolute;bottom:-2px;right:-2px;
-    width:20px;height:20px;border-radius:50%;
-    background:linear-gradient(135deg,#667eea,#764ba2);
-    display:flex;align-items:center;justify-content:center;
-    font-size:10px;
-    border:2px solid rgba(255,255,255,.8);
-    box-shadow:0 2px 6px rgba(0,0,0,.2);
+    overflow:hidden;
 }
 
 .profile-name{
@@ -336,6 +324,72 @@ h1{
     transition:all .2s;
 }
 .profile-edit:hover{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.05);transform:none}
+
+/* Edit Profile Panel */
+.edit-panel{
+    background:rgba(255,255,255,.06);backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.1);border-radius:20px;
+    padding:24px;margin-top:15px;
+    animation:fadeInUp .3s ease;
+}
+.edit-panel h3{color:#fff;font-size:15px;font-weight:700;margin-bottom:16px;text-align:center}
+.edit-panel-section{margin-bottom:18px}
+.edit-panel-label{font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.edit-name-input{
+    width:100%;padding:12px 16px;border-radius:12px;font-size:15px;font-weight:600;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+    color:#fff;outline:none;transition:border-color .2s;
+}
+.edit-name-input:focus{border-color:rgba(102,126,234,.5);box-shadow:0 0 10px rgba(102,126,234,.15)}
+.avatar-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.avatar-option{
+    width:44px;height:44px;font-size:22px;
+    border:2px solid rgba(255,255,255,.1);border-radius:12px;
+    background:rgba(255,255,255,.04);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .2s;
+}
+.avatar-option:hover{border-color:rgba(102,126,234,.5);background:rgba(102,126,234,.1);transform:scale(1.1)}
+.avatar-option.selected{border-color:#667eea;background:rgba(102,126,234,.2);box-shadow:0 0 10px rgba(102,126,234,.3)}
+.upload-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:10px 18px;border-radius:12px;font-size:13px;font-weight:600;
+    background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
+    border:none;cursor:pointer;margin-top:10px;transition:transform .2s;
+}
+.upload-btn:hover{transform:scale(1.03)}
+.edit-panel-actions{display:flex;gap:10px;justify-content:center;margin-top:18px}
+.edit-save-btn{
+    padding:12px 28px;border-radius:12px;font-size:14px;font-weight:700;
+    background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a5c3a;
+    border:none;cursor:pointer;transition:transform .2s;
+}
+.edit-save-btn:hover{transform:scale(1.05)}
+.edit-cancel-btn{
+    padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+    color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;
+}
+.edit-cancel-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.edit-preview{
+    width:64px;height:64px;border-radius:50%;margin:0 auto 12px;
+    background:linear-gradient(135deg,rgba(102,126,234,.3),rgba(240,147,251,.3));
+    border:3px solid rgba(255,255,255,.15);
+    display:flex;align-items:center;justify-content:center;font-size:32px;
+    overflow:hidden;
+}
+
+/* Light theme overrides for edit panel */
+body.light-theme .edit-panel{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.06);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+body.light-theme .edit-panel h3{color:#4a1a7a}
+body.light-theme .edit-panel-label{color:#888}
+body.light-theme .edit-name-input{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.1);color:#4a1a7a}
+body.light-theme .edit-name-input:focus{border-color:rgba(102,126,234,.4)}
+body.light-theme .avatar-option{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.08)}
+body.light-theme .avatar-option:hover{border-color:rgba(102,126,234,.4);background:rgba(102,126,234,.06)}
+body.light-theme .avatar-option.selected{border-color:#667eea;background:rgba(102,126,234,.1)}
+body.light-theme .edit-cancel-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:#666}
+body.light-theme .edit-preview{border-color:rgba(0,0,0,.1)}
 
 /* Streak & Daily Challenge */
 .daily-challenge{
@@ -647,7 +701,7 @@ function renderStreakBar(){
 
     document.getElementById('player-profile').innerHTML=`
         <div class="profile-greeting">
-            <div class="profile-avatar" onclick="changeAvatar()" title="Tap to change avatar">${avatarHTML}</div>
+            <div class="profile-avatar">${avatarHTML}</div>
             <div class="profile-name">Hi, ${playerName}!
                 <span>Keep playing to level up!</span>
             </div>
@@ -675,85 +729,112 @@ function renderStreakBar(){
 }
 
 function editName(){
-    const current=localStorage.getItem('games_player_name')||'Player';
-    const name=prompt('What\'s your name?',current);
-    if(name&&name.trim()){
-        localStorage.setItem('games_player_name',name.trim());
-        renderStreakBar();
-    }
+    showEditPanel();
 }
 
 function changeAvatar(){
-    // Show avatar picker
-    const modal=document.createElement('div');
-    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px';
-    modal.onclick=function(e){if(e.target===modal)modal.remove()};
-    
-    const emojis=['👋','😊','😎','🦁','🐸','🦄','🐱','🐶','🦊','🐼','🦋','🐯','🦸','🧙','👑','🚀','⭐','🎮','🏆','💎'];
-    
-    modal.innerHTML=`
-        <div style="background:#fff;border-radius:20px;padding:24px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-            <h3 style="color:#4a1a7a;margin-bottom:15px;font-size:16px">Choose Avatar</h3>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:15px">
-                ${emojis.map(e=>`<button onclick="setEmojiAvatar('${e}')" style="width:44px;height:44px;font-size:24px;border:2px solid #e0d4f5;border-radius:12px;background:#faf8ff;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#764ba2';this.style.transform='scale(1.1)'" onmouseout="this.style.borderColor='#e0d4f5';this.style.transform='scale(1)'">${e}</button>`).join('')}
-            </div>
-            <div style="border-top:1px solid #eee;padding-top:15px;margin-top:10px">
-                <p style="color:#888;font-size:12px;margin-bottom:10px">Or upload a photo:</p>
-                <label style="display:inline-block;padding:10px 20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:12px;font-size:13px;font-weight:bold;cursor:pointer">
-                    📷 Upload Photo
-                    <input type="file" accept="image/*" onchange="uploadAvatar(event)" style="display:none">
-                </label>
-            </div>
-            <button onclick="removeAvatar()" style="display:block;margin:12px auto 0;padding:8px 16px;border:none;background:none;color:#888;font-size:12px;cursor:pointer;text-decoration:underline">Remove avatar</button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    window._avatarModal=modal;
+    showEditPanel();
 }
 
-function setEmojiAvatar(emoji){
-    // Draw emoji to canvas and save as data URL
+function showEditPanel(){
+    const playerName=localStorage.getItem('games_player_name')||'Player';
+    const avatarData=localStorage.getItem('games_avatar');
+    const emojis=['😊','😎','🦁','🐸','🦄','🐱','🐶','🦊','🐼','🦋','🐯','🦸','🧙','👑','🚀','⭐','🎮','🏆','💎','🌟'];
+    
+    let previewHTML=avatarData
+        ?`<img src="${avatarData}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`
+        :'👋';
+
+    const panel=document.createElement('div');
+    panel.className='edit-panel';
+    panel.id='edit-panel';
+    panel.innerHTML=`
+        <h3>✏️ Edit Profile</h3>
+        <div class="edit-preview" id="edit-preview">${previewHTML}</div>
+        
+        <div class="edit-panel-section">
+            <div class="edit-panel-label">Your Name</div>
+            <input type="text" class="edit-name-input" id="edit-name" value="${playerName}" maxlength="20" placeholder="Enter your name">
+        </div>
+        
+        <div class="edit-panel-section">
+            <div class="edit-panel-label">Choose Avatar</div>
+            <div class="avatar-grid">
+                ${emojis.map(e=>`<button class="avatar-option" onclick="selectEmoji(this,'${e}')">${e}</button>`).join('')}
+            </div>
+            <div style="text-align:center">
+                <label class="upload-btn">
+                    📷 Upload Photo
+                    <input type="file" accept="image/*" onchange="uploadAvatarInline(event)" style="display:none">
+                </label>
+            </div>
+        </div>
+        
+        <div class="edit-panel-actions">
+            <button class="edit-cancel-btn" onclick="closeEditPanel()">Cancel</button>
+            <button class="edit-save-btn" onclick="saveProfile()">✓ Save</button>
+        </div>
+    `;
+
+    // Insert after profile card
+    const existing=document.getElementById('edit-panel');
+    if(existing)existing.remove();
+    
+    const profileSection=document.getElementById('player-profile').parentElement;
+    profileSection.after(panel);
+    document.getElementById('edit-name').focus();
+}
+
+function selectEmoji(btn,emoji){
+    document.querySelectorAll('.avatar-option').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    // Draw emoji to canvas
     const canvas=document.createElement('canvas');
     canvas.width=96;canvas.height=96;
     const ctx=canvas.getContext('2d');
-    ctx.font='64px serif';
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
+    ctx.font='64px serif';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(emoji,48,52);
-    localStorage.setItem('games_avatar',canvas.toDataURL('image/png'));
-    if(window._avatarModal)window._avatarModal.remove();
-    renderStreakBar();
+    window._pendingAvatar=canvas.toDataURL('image/png');
+    document.getElementById('edit-preview').innerHTML=emoji;
+    document.getElementById('edit-preview').style.fontSize='32px';
 }
 
-function uploadAvatar(event){
+function uploadAvatarInline(event){
     const file=event.target.files[0];
     if(!file)return;
     const reader=new FileReader();
     reader.onload=function(e){
         const img=new Image();
         img.onload=function(){
-            // Resize to 96x96
             const canvas=document.createElement('canvas');
             canvas.width=96;canvas.height=96;
             const ctx=canvas.getContext('2d');
-            // Crop to square
             const size=Math.min(img.width,img.height);
-            const x=(img.width-size)/2;
-            const y=(img.height-size)/2;
+            const x=(img.width-size)/2,y=(img.height-size)/2;
             ctx.drawImage(img,x,y,size,size,0,0,96,96);
-            localStorage.setItem('games_avatar',canvas.toDataURL('image/jpeg',0.8));
-            if(window._avatarModal)window._avatarModal.remove();
-            renderStreakBar();
+            window._pendingAvatar=canvas.toDataURL('image/jpeg',0.8);
+            document.getElementById('edit-preview').innerHTML=`<img src="${window._pendingAvatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
         };
         img.src=e.target.result;
     };
     reader.readAsDataURL(file);
 }
 
-function removeAvatar(){
-    localStorage.removeItem('games_avatar');
-    if(window._avatarModal)window._avatarModal.remove();
+function saveProfile(){
+    const name=document.getElementById('edit-name').value.trim();
+    if(name)localStorage.setItem('games_player_name',name);
+    if(window._pendingAvatar){
+        localStorage.setItem('games_avatar',window._pendingAvatar);
+        window._pendingAvatar=null;
+    }
+    closeEditPanel();
     renderStreakBar();
+}
+
+function closeEditPanel(){
+    const panel=document.getElementById('edit-panel');
+    if(panel)panel.remove();
+    window._pendingAvatar=null;
 }
 
 function renderDailyChallenge(){
