@@ -291,7 +291,10 @@ h1{
     background:linear-gradient(135deg,rgba(102,126,234,.3),rgba(240,147,251,.3));
     border:2px solid rgba(255,255,255,.15);
     display:flex;align-items:center;justify-content:center;font-size:24px;
+    cursor:pointer;transition:transform .2s,box-shadow .2s;
+    overflow:hidden;
 }
+.profile-avatar:hover{transform:scale(1.1);box-shadow:0 4px 15px rgba(102,126,234,.3)}
 
 .profile-name{
     font-size:16px;font-weight:700;color:#fff;
@@ -625,12 +628,16 @@ function renderStreakBar(){
     const highscores=JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}');
     const totalHighscores=highscores.reaction.length+highscores.scramble.length+highscores.rps.length;
 
-    // Player name
+    // Player name & avatar
     let playerName=localStorage.getItem('games_player_name')||'Player';
+    let avatarData=localStorage.getItem('games_avatar');
+    let avatarHTML=avatarData
+        ?`<img src="${avatarData}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`
+        :'👋';
 
     document.getElementById('player-profile').innerHTML=`
         <div class="profile-greeting">
-            <div class="profile-avatar">👋</div>
+            <div class="profile-avatar" onclick="changeAvatar()" title="Tap to change avatar">${avatarHTML}</div>
             <div class="profile-name">Hi, ${playerName}!
                 <span>Keep playing to level up!</span>
             </div>
@@ -664,6 +671,79 @@ function editName(){
         localStorage.setItem('games_player_name',name.trim());
         renderStreakBar();
     }
+}
+
+function changeAvatar(){
+    // Show avatar picker
+    const modal=document.createElement('div');
+    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px';
+    modal.onclick=function(e){if(e.target===modal)modal.remove()};
+    
+    const emojis=['👋','😊','😎','🦁','🐸','🦄','🐱','🐶','🦊','🐼','🦋','🐯','🦸','🧙','👑','🚀','⭐','🎮','🏆','💎'];
+    
+    modal.innerHTML=`
+        <div style="background:#fff;border-radius:20px;padding:24px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+            <h3 style="color:#4a1a7a;margin-bottom:15px;font-size:16px">Choose Avatar</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:15px">
+                ${emojis.map(e=>`<button onclick="setEmojiAvatar('${e}')" style="width:44px;height:44px;font-size:24px;border:2px solid #e0d4f5;border-radius:12px;background:#faf8ff;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#764ba2';this.style.transform='scale(1.1)'" onmouseout="this.style.borderColor='#e0d4f5';this.style.transform='scale(1)'">${e}</button>`).join('')}
+            </div>
+            <div style="border-top:1px solid #eee;padding-top:15px;margin-top:10px">
+                <p style="color:#888;font-size:12px;margin-bottom:10px">Or upload a photo:</p>
+                <label style="display:inline-block;padding:10px 20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:12px;font-size:13px;font-weight:bold;cursor:pointer">
+                    📷 Upload Photo
+                    <input type="file" accept="image/*" onchange="uploadAvatar(event)" style="display:none">
+                </label>
+            </div>
+            <button onclick="removeAvatar()" style="display:block;margin:12px auto 0;padding:8px 16px;border:none;background:none;color:#888;font-size:12px;cursor:pointer;text-decoration:underline">Remove avatar</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    window._avatarModal=modal;
+}
+
+function setEmojiAvatar(emoji){
+    // Draw emoji to canvas and save as data URL
+    const canvas=document.createElement('canvas');
+    canvas.width=96;canvas.height=96;
+    const ctx=canvas.getContext('2d');
+    ctx.font='64px serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(emoji,48,52);
+    localStorage.setItem('games_avatar',canvas.toDataURL('image/png'));
+    if(window._avatarModal)window._avatarModal.remove();
+    renderStreakBar();
+}
+
+function uploadAvatar(event){
+    const file=event.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(e){
+        const img=new Image();
+        img.onload=function(){
+            // Resize to 96x96
+            const canvas=document.createElement('canvas');
+            canvas.width=96;canvas.height=96;
+            const ctx=canvas.getContext('2d');
+            // Crop to square
+            const size=Math.min(img.width,img.height);
+            const x=(img.width-size)/2;
+            const y=(img.height-size)/2;
+            ctx.drawImage(img,x,y,size,size,0,0,96,96);
+            localStorage.setItem('games_avatar',canvas.toDataURL('image/jpeg',0.8));
+            if(window._avatarModal)window._avatarModal.remove();
+            renderStreakBar();
+        };
+        img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeAvatar(){
+    localStorage.removeItem('games_avatar');
+    if(window._avatarModal)window._avatarModal.remove();
+    renderStreakBar();
 }
 
 function renderDailyChallenge(){
