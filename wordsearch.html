@@ -79,6 +79,33 @@ h1{position:relative;z-index:1;text-align:center;font-size:2.2rem;margin:60px 0 
 }
 .stats-link-sm:hover{background:rgba(255,215,0,.15)}
 
+/* Theme toggle */
+.theme-toggle{position:fixed;top:15px;right:120px;z-index:100;padding:8px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;backdrop-filter:blur(10px);cursor:pointer;font-size:13px;font-weight:600;color:rgba(255,255,255,.7);transition:all .2s}
+.theme-toggle:hover{background:rgba(255,255,255,.15);color:#fff;transform:scale(1.05)}
+body.light-theme{background:linear-gradient(135deg,#f5f7fa 0%,#e8edf5 50%,#f0e6ff 100%)}
+body.light-theme .bg-glow{opacity:.3}
+body.light-theme h1{background:linear-gradient(135deg,#4a1a7a,#667eea,#27ae60);-webkit-background-clip:text;background-clip:text}
+body.light-theme .subtitle{color:#666}
+body.light-theme .card{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.06);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+body.light-theme .ws-stats{color:#666}
+body.light-theme .ws-stats strong{color:#4a1a7a}
+body.light-theme .word-tag{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:#4a1a7a}
+body.light-theme .word-tag.found{background:rgba(67,233,123,.08);border-color:rgba(67,233,123,.2);color:#27ae60}
+body.light-theme .cell{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.08);color:#4a1a7a}
+body.light-theme .cell:hover{background:rgba(102,126,234,.08);border-color:rgba(102,126,234,.2)}
+body.light-theme .cell.selected{background:rgba(102,126,234,.15);border-color:rgba(102,126,234,.4);color:#4a1a7a}
+body.light-theme .cell.found{background:rgba(67,233,123,.1);border-color:rgba(67,233,123,.3);color:#27ae60}
+body.light-theme .new-game-btn{background:linear-gradient(135deg,#667eea,#764ba2)}
+body.light-theme .back-btn{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);color:#4a1a7a}
+body.light-theme .menu-toggle{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08)}
+body.light-theme .sidebar{background:rgba(255,255,255,.98);border-right-color:rgba(0,0,0,.06)}
+body.light-theme .sidebar a{color:#4a1a7a}
+body.light-theme .sidebar a:hover{background:#f0e6ff}
+body.light-theme .theme-toggle{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.1);color:#666}
+body.light-theme .player-bar{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08)}
+body.light-theme .player-name{color:#4a1a7a}
+body.light-theme .stats-link-sm{color:#764ba2;background:rgba(118,75,162,.08);border-color:rgba(118,75,162,.2)}
+
 .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
 .confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease forwards}
 @keyframes confettiFall{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
@@ -89,6 +116,7 @@ h1{position:relative;z-index:1;text-align:center;font-size:2.2rem;margin:60px 0 
 <body>
 <div class="bg-glow"></div>
 <a href="games.html" class="back-btn">← Games</a>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <div class="sidebar" id="sidebar">
@@ -132,6 +160,9 @@ h1{position:relative;z-index:1;text-align:center;font-size:2.2rem;margin:60px 0 
 
 <script>
 function toggleMenu(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
+function toggleTheme(){const l=document.body.classList.toggle('light-theme');localStorage.setItem('games_theme',l?'light':'dark');updThemeBtn()}
+function updThemeBtn(){document.getElementById('theme-toggle').textContent=document.body.classList.contains('light-theme')?'🌙 Dark':'☀️ Light'}
+(function(){if(localStorage.getItem('games_theme')!=='dark')document.body.classList.add('light-theme');updThemeBtn()})();
 function fireConfetti(){const c=document.getElementById('confetti'),colors=['#667eea','#764ba2','#43e97b','#ffd700','#a78bfa'];for(let i=0;i<25;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=(30+Math.random()*40)+'%';p.style.top=(20+Math.random()*30)+'%';p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.setProperty('--dx',(Math.random()*250-125)+'px');p.style.setProperty('--dy',(Math.random()*350+100)+'px');c.appendChild(p)}setTimeout(()=>{c.innerHTML=''},1600)}
 
 const SIZE=10;

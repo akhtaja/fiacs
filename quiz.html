@@ -219,9 +219,45 @@ h1{
     .quiz-card{padding:22px 18px}
     .question{font-size:1.05rem}
 }
+
+/* Player bar */
+.player-bar{
+    position:fixed;bottom:15px;left:15px;z-index:100;
+    display:flex;align-items:center;gap:10px;
+    padding:8px 14px;
+    background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.08);
+    border-radius:12px;backdrop-filter:blur(10px);
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+.player-name{font-size:12px;font-weight:600;color:#4a1a7a}
+.stats-link-sm{
+    font-size:11px;font-weight:700;color:#764ba2;text-decoration:none;
+    padding:4px 10px;border-radius:8px;
+    background:rgba(118,75,162,.08);border:1px solid rgba(118,75,162,.2);
+    transition:all .2s;
+}
+.stats-link-sm:hover{background:rgba(118,75,162,.15)}
+
+/* Theme toggle */
+.theme-toggle{position:fixed;top:15px;right:15px;z-index:100;padding:8px 14px;background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.08);border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;color:#666;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.theme-toggle:hover{transform:scale(1.05);color:#4a1a7a}
+body.light-theme{background:linear-gradient(135deg,#f5f7fa 0%,#e8edf5 50%,#e6f9f0 100%)}
+body.light-theme h1{color:#4a1a7a;text-shadow:none}
+body.light-theme .info{color:#666}
+body.light-theme .menu-toggle{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);box-shadow:0 2px 10px rgba(0,0,0,.08)}
+body.light-theme .sidebar{background:rgba(255,255,255,.98);border-right-color:rgba(0,0,0,.06)}
+body.light-theme .sidebar a{color:#4a1a7a}
+body.light-theme .sidebar a:hover{background:#f0e6ff}
 </style>
 </head>
 <body>
+
+<div class="player-bar">
+    <span class="player-name" id="player-name"></span>
+    <a href="stats.html" class="stats-link-sm">🏆 Stats</a>
+</div>
+
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
 
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -434,6 +470,24 @@ function fireConfetti(){
 
 // Start
 startQuiz();
+document.getElementById('player-name').textContent='👋 '+(localStorage.getItem('games_player_name')||'Player');
+
+// Theme
+function toggleTheme(){const l=document.body.classList.toggle('light-theme');localStorage.setItem('games_theme',l?'light':'dark');updThemeBtn()}
+function updThemeBtn(){document.getElementById('theme-toggle').textContent=document.body.classList.contains('light-theme')?'🌙 Dark':'☀️ Light'}
+(function(){if(localStorage.getItem('games_theme')!=='dark')document.body.classList.add('light-theme');updThemeBtn()})();
 </script>
+
+<div style="max-width:500px;margin:20px auto;padding:0 15px">
+    <div style="background:rgba(255,255,255,.92);border-radius:20px;padding:20px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.1)">
+        <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🎮 You might also like</div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <a href="scramble.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🔤</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Word Scramble</div></a>
+            <a href="maths.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🧮</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Maths Fun</div></a>
+            <a href="pattern.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🔴</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Pattern Match</div></a>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

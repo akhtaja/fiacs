@@ -59,6 +59,19 @@ button:hover{transform:scale(1.05)}
 }
 .stats-link-sm:hover{background:rgba(118,75,162,.15)}
 
+/* Theme toggle */
+.theme-toggle{position:fixed;top:15px;right:120px;z-index:100;padding:8px 14px;background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.08);border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;color:#666;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.theme-toggle:hover{transform:scale(1.05);color:#4a1a7a}
+body.light-theme{background:linear-gradient(135deg,#f5f7fa 0%,#e8edf5 50%,#f0e6ff 100%)}
+body.light-theme .card{background:rgba(255,255,255,.92);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+body.light-theme h1{color:#4a1a7a;text-shadow:none}
+body.light-theme .subtitle{color:#666}
+body.light-theme .scramble-word{color:#764ba2}
+body.light-theme .menu-toggle{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);box-shadow:0 2px 10px rgba(0,0,0,.08)}
+body.light-theme .sidebar{background:rgba(255,255,255,.98);border-right-color:rgba(0,0,0,.06)}
+body.light-theme .sidebar a{color:#4a1a7a}
+body.light-theme .sidebar a:hover{background:#f0e6ff}
+
 /* Fixed back button */
 .back-btn{
     position:fixed;top:15px;right:15px;z-index:100;
@@ -95,6 +108,7 @@ button:hover{transform:scale(1.05)}
 <body>
 
 <a href="games.html" class="back-btn">← Games</a>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
 
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -123,6 +137,9 @@ button:hover{transform:scale(1.05)}
 
 <script>
 function toggleMenu(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
+function toggleTheme(){const l=document.body.classList.toggle('light-theme');localStorage.setItem('games_theme',l?'light':'dark');updThemeBtn()}
+function updThemeBtn(){document.getElementById('theme-toggle').textContent=document.body.classList.contains('light-theme')?'🌙 Dark':'☀️ Light'}
+(function(){if(localStorage.getItem('games_theme')!=='dark')document.body.classList.add('light-theme');updThemeBtn()})();
 
 // Audio
 function makeWav(freq,duration){
