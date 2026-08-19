@@ -150,15 +150,15 @@ body.light-theme .stats-link-sm{color:#764ba2;background:rgba(118,75,162,.08);bo
     <div class="card" id="game-area">
         <div class="start-screen" id="start-screen">
             <div style="font-size:48px;margin-bottom:10px">🏎️</div>
-            <div style="color:#fff;font-size:16px;font-weight:bold;margin-bottom:5px">Ready to race?</div>
-            <div style="color:rgba(255,255,255,.5);font-size:13px;margin-bottom:15px">Type answers as fast as you can!</div>
+            <div style="color:#4a1a7a;font-size:16px;font-weight:bold;margin-bottom:5px">Ready to race?</div>
+            <div style="color:#888;font-size:13px;margin-bottom:15px">Type answers as fast as you can!</div>
             <div class="mode-btns">
                 <button class="mode-btn active" onclick="setMode('easy')">😊 Easy (30s)</button>
                 <button class="mode-btn" onclick="setMode('medium')">🤔 Medium (30s)</button>
                 <button class="mode-btn" onclick="setMode('hard')">🔥 Hard (30s)</button>
             </div>
             <button class="start-btn" onclick="startRace()">🏁 Start Race!</button>
-            <div style="margin-top:15px;font-size:13px;color:rgba(255,255,255,.4)" id="best-display"></div>
+            <div style="margin-top:15px;font-size:13px;color:#888" id="best-display"></div>
         </div>
         <div id="race-screen" style="display:none">
             <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
@@ -306,10 +306,10 @@ function endRace(){
     document.getElementById('end-screen').style.display='block';
     document.getElementById('end-screen').innerHTML=`
         <div style="font-size:48px;margin-bottom:10px">${isNewBest?'🏆':'🏁'}</div>
-        <div style="color:rgba(255,255,255,.5);font-size:12px;text-transform:uppercase;letter-spacing:1px">Problems Solved</div>
+        <div style="color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px">Problems Solved</div>
         <div class="end-score">${correct}</div>
         <div class="end-msg">${msg}</div>
-        ${isNewBest?'<div class="best-badge">🎉 New Personal Best!</div>':'<div style="color:rgba(255,255,255,.4);font-size:13px;margin-top:5px">Best: '+getBest()[mode]+'</div>'}
+        ${isNewBest?'<div class="best-badge">🎉 New Personal Best!</div>':'<div style="color:#888;font-size:13px;margin-top:5px">Best: '+getBest()[mode]+'</div>'}
         <button class="start-btn" onclick="startRace()" style="margin-top:20px">🔄 Race Again</button>
     `;
 }
