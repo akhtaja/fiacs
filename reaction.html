@@ -130,16 +130,17 @@ h1{
 
 /* Light theme */
 body.light-theme{background:linear-gradient(135deg,#f5f7fa 0%,#e8edf5 50%,#f0e6ff 100%)}
-body.light-theme .bg-glow{background:radial-gradient(ellipse 500px 500px at 50% 30%,rgba(102,126,234,.06) 0%,transparent 70%)}
+body.light-theme .bg-glow{opacity:.3}
 body.light-theme h1{background:linear-gradient(135deg,#4a1a7a,#667eea,#764ba2);-webkit-background-clip:text;background-clip:text}
 body.light-theme .subtitle{color:#666}
-body.light-theme .card{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.06);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+body.light-theme .card{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.06);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+body.light-theme .reaction-box{color:#fff}
 body.light-theme .time-label{color:#888}
 body.light-theme .time-value{color:#4a1a7a}
 body.light-theme .time-value.fast{color:#27ae60}
 body.light-theme .time-value.medium{color:#d4a000}
 body.light-theme .time-value.slow{color:#e74c3c}
-body.light-theme .time-best{color:#888}
+body.light-theme .time-best{color:#666}
 body.light-theme .time-best span{color:#d4a000}
 body.light-theme .time-msg{color:#4a1a7a}
 body.light-theme .time-msg.fast{color:#27ae60}
@@ -147,13 +148,17 @@ body.light-theme .time-msg.medium{color:#d4a000}
 body.light-theme .session-stats{border-top-color:rgba(0,0,0,.08)}
 body.light-theme .session-stat-val{color:#4a1a7a}
 body.light-theme .session-stat-label{color:#888}
-body.light-theme .lb-title{color:#888;border-bottom-color:rgba(0,0,0,.08)}
+body.light-theme .lb-title{color:#666;border-bottom-color:rgba(0,0,0,.08)}
 body.light-theme .lb-row{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.06)}
 body.light-theme .lb-row.gold{background:rgba(255,215,0,.06);border-color:rgba(255,215,0,.2)}
+body.light-theme .lb-row.silver{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.06)}
+body.light-theme .lb-row.bronze{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.06)}
 body.light-theme .lb-row.you{background:rgba(102,126,234,.06);border-color:rgba(102,126,234,.2)}
+body.light-theme .lb-rank{color:#666}
 body.light-theme .lb-name{color:#4a1a7a}
 body.light-theme .lb-time{color:#666}
 body.light-theme .lb-row.gold .lb-time{color:#d4a000}
+body.light-theme .lb-row.gold .lb-rank{color:#d4a000}
 body.light-theme .empty-lb{color:#aaa}
 body.light-theme .back-btn{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);color:#4a1a7a;box-shadow:0 2px 10px rgba(0,0,0,.08)}
 body.light-theme .menu-toggle{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);color:#4a1a7a;box-shadow:0 2px 10px rgba(0,0,0,.08)}
@@ -481,22 +486,22 @@ document.getElementById('player-name').textContent='👋 '+getPlayerName();
 
 <div class="container" style="margin-top:10px">
     <div class="card" style="text-align:center">
-        <div style="font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🎮 You might also like</div>
+        <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🎮 You might also like</div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <a href="scramble.html" style="flex:1;min-width:120px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-decoration:none;transition:all .2s;display:block">
                 <div style="font-size:28px;margin-bottom:4px">🔤</div>
-                <div style="font-size:13px;font-weight:700;color:#fff">Word Scramble</div>
-                <div style="font-size:10px;color:rgba(255,255,255,.4)">Test your vocab</div>
+                <div style="font-size:13px;font-weight:700;color:#4a1a7a">Word Scramble</div>
+                <div style="font-size:10px;color:#888">Test your vocab</div>
             </a>
             <a href="rps.html" style="flex:1;min-width:120px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-decoration:none;transition:all .2s;display:block">
                 <div style="font-size:28px;margin-bottom:4px">✊</div>
-                <div style="font-size:13px;font-weight:700;color:#fff">Rock Paper Scissors</div>
-                <div style="font-size:10px;color:rgba(255,255,255,.4)">Beat the computer</div>
+                <div style="font-size:13px;font-weight:700;color:#4a1a7a">Rock Paper Scissors</div>
+                <div style="font-size:10px;color:#888">Beat the computer</div>
             </a>
             <a href="maths.html" style="flex:1;min-width:120px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-decoration:none;transition:all .2s;display:block">
                 <div style="font-size:28px;margin-bottom:4px">🧮</div>
-                <div style="font-size:13px;font-weight:700;color:#fff">Maths Fun</div>
-                <div style="font-size:10px;color:rgba(255,255,255,.4)">Quick maths!</div>
+                <div style="font-size:13px;font-weight:700;color:#4a1a7a">Maths Fun</div>
+                <div style="font-size:10px;color:#888">Quick maths!</div>
             </a>
         </div>
     </div>
