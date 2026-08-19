@@ -351,6 +351,100 @@ h1{
 }
 .stats-link:hover{background:rgba(255,215,0,.15);transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,215,0,.1)}
 
+/* Theme toggle */
+.theme-toggle{
+    position:fixed;top:15px;right:60px;z-index:100;
+    display:flex;align-items:center;gap:6px;
+    padding:8px 14px;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    border-radius:12px;backdrop-filter:blur(10px);
+    cursor:pointer;transition:all .2s;
+    font-size:13px;font-weight:600;color:rgba(255,255,255,.7);
+}
+.theme-toggle:hover{background:rgba(255,255,255,.15);color:#fff;transform:scale(1.05)}
+
+/* ===== LIGHT THEME ===== */
+body.light-theme{
+    background:linear-gradient(135deg,#f5f7fa 0%,#e8edf5 50%,#f0e6ff 100%);
+}
+body.light-theme .bg-glow{
+    background:
+        radial-gradient(ellipse 600px 600px at 20% 20%, rgba(102,126,234,.08) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 500px at 80% 80%, rgba(240,147,251,.06) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 400px at 60% 30%, rgba(67,233,123,.05) 0%, transparent 70%);
+}
+body.light-theme h1{
+    background:linear-gradient(135deg,#4a1a7a,#667eea,#764ba2);
+    -webkit-background-clip:text;background-clip:text;
+}
+body.light-theme .subtitle{color:#666}
+body.light-theme .category-label{color:#888}
+body.light-theme .category-label::after{background:linear-gradient(to right,rgba(0,0,0,.1),transparent)}
+
+body.light-theme .game-card{
+    background:rgba(255,255,255,.85);
+    border:1px solid rgba(0,0,0,.06);
+    box-shadow:0 4px 20px rgba(0,0,0,.06);
+}
+body.light-theme .game-card::before{
+    background:linear-gradient(135deg,rgba(102,126,234,.15),rgba(240,147,251,.1),rgba(67,233,123,.1));
+}
+body.light-theme .game-card::after{
+    background:conic-gradient(from 0deg,transparent,rgba(0,0,0,.02),transparent 30%);
+}
+body.light-theme .game-card:hover{
+    box-shadow:0 12px 40px rgba(102,126,234,.12);
+    border-color:rgba(102,126,234,.2);
+}
+body.light-theme .game-title{color:#4a1a7a}
+body.light-theme .game-desc{color:#666}
+body.light-theme .game-icon{filter:none}
+
+body.light-theme .game-badge{border-color:transparent}
+body.light-theme .badge-puzzle{background:rgba(240,147,251,.12);color:#9b59b6}
+body.light-theme .badge-quiz{background:rgba(67,233,123,.12);color:#27ae60}
+body.light-theme .badge-memory{background:rgba(102,126,234,.12);color:#667eea}
+body.light-theme .badge-speed{background:rgba(255,154,158,.12);color:#e74c3c}
+body.light-theme .badge-words{background:rgba(161,140,209,.12);color:#764ba2}
+body.light-theme .badge-fun{background:rgba(255,215,0,.12);color:#d4a000}
+
+body.light-theme .player-profile{
+    background:rgba(255,255,255,.8);border-color:rgba(0,0,0,.06);
+    box-shadow:0 2px 12px rgba(0,0,0,.04);
+}
+body.light-theme .profile-name{color:#4a1a7a}
+body.light-theme .profile-name span{color:#888}
+body.light-theme .profile-stat-value{color:#4a1a7a}
+body.light-theme .profile-stat-label{color:#888}
+body.light-theme .profile-avatar{background:linear-gradient(135deg,rgba(102,126,234,.15),rgba(240,147,251,.15));border-color:rgba(0,0,0,.08)}
+body.light-theme .profile-edit{border-color:rgba(0,0,0,.12);color:#888}
+body.light-theme .profile-edit:hover{border-color:#764ba2;color:#764ba2;background:rgba(118,75,162,.05)}
+
+body.light-theme .daily-challenge{
+    background:linear-gradient(135deg,rgba(255,215,0,.06),rgba(255,215,0,.02));
+    border-color:rgba(255,215,0,.2);
+}
+body.light-theme .daily-challenge h3{color:#d4a000}
+body.light-theme .daily-challenge p{color:#666}
+body.light-theme .daily-challenge .challenge-game{color:#d4a000;background:rgba(255,215,0,.08);border-color:rgba(255,215,0,.2)}
+body.light-theme .daily-challenge .completed{color:#27ae60;border-color:rgba(39,174,96,.2);background:rgba(39,174,96,.06)}
+
+body.light-theme .stats-link{background:rgba(118,75,162,.06);border-color:rgba(118,75,162,.15);color:#764ba2}
+body.light-theme .stats-link:hover{background:rgba(118,75,162,.1)}
+
+body.light-theme .menu-toggle{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);color:#4a1a7a;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+body.light-theme .sidebar{background:rgba(255,255,255,.98);border-right-color:rgba(0,0,0,.06);box-shadow:4px 0 20px rgba(0,0,0,.08)}
+body.light-theme .sidebar a{color:#4a1a7a}
+body.light-theme .sidebar a:hover{background:#f0e6ff}
+body.light-theme .overlay{background:rgba(0,0,0,.2)}
+
+body.light-theme .theme-toggle{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.1);color:#666}
+body.light-theme .theme-toggle:hover{background:rgba(0,0,0,.08);color:#4a1a7a}
+
+body.light-theme .footer{color:#aaa}
+body.light-theme .floater{opacity:.08}
+body.light-theme .particle{background:#764ba2}
+
 @media(max-width:500px){
     h1{font-size:2rem;margin-top:50px}
     .games-grid{grid-template-columns:1fr}
@@ -364,6 +458,7 @@ h1{
 <div class="bg-glow"></div>
 
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <div class="sidebar" id="sidebar">
     <a href="kids.html">🏝️ Adventure Quest</a>
@@ -503,6 +598,26 @@ function toggleMenu(){
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('open');
 }
+
+// --- THEME ---
+function toggleTheme(){
+    const isLight=document.body.classList.toggle('light-theme');
+    localStorage.setItem('games_theme',isLight?'light':'dark');
+    updateThemeBtn();
+}
+
+function updateThemeBtn(){
+    const btn=document.getElementById('theme-toggle');
+    const isLight=document.body.classList.contains('light-theme');
+    btn.textContent=isLight?'☀️ Light':'🌙 Dark';
+}
+
+// Apply saved theme on load
+(function(){
+    const saved=localStorage.getItem('games_theme');
+    if(saved==='light')document.body.classList.add('light-theme');
+    updateThemeBtn();
+})();
 
 // Generate floating particles
 const body = document.body;
