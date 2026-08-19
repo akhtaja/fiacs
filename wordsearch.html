@@ -106,6 +106,17 @@ body.light-theme .player-bar{background:rgba(255,255,255,.9);border-color:rgba(0
 body.light-theme .player-name{color:#4a1a7a}
 body.light-theme .stats-link-sm{color:#764ba2;background:rgba(118,75,162,.08);border-color:rgba(118,75,162,.2)}
 
+/* Recommend section */
+.recommend-title{font-size:13px;font-weight:700;color:#fff}
+.recommend-desc{font-size:10px;color:rgba(255,255,255,.5)}
+.recommend-label{font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.recommend-card{flex:1;min-width:120px;padding:14px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);text-decoration:none;display:block;transition:all .2s}
+.recommend-card:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+body.light-theme .recommend-title{color:#4a1a7a}
+body.light-theme .recommend-desc{color:#888}
+body.light-theme .recommend-label{color:#888}
+body.light-theme .recommend-card{background:rgba(118,75,162,.04);border-color:rgba(118,75,162,.1)}
+
 .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
 .confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease forwards}
 @keyframes confettiFall{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
@@ -149,11 +160,11 @@ body.light-theme .stats-link-sm{color:#764ba2;background:rgba(118,75,162,.08);bo
 
 <div class="container" style="margin-top:10px">
     <div class="card" style="text-align:center">
-        <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🎮 You might also like</div>
+        <div class="recommend-label">🎮 You might also like</div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-            <a href="scramble.html" style="flex:1;min-width:120px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🔤</div><div style="font-size:13px;font-weight:700;color:#4a1a7a">Word Scramble</div><div style="font-size:10px;color:#888">Unscramble words</div></a>
-            <a href="pattern.html" style="flex:1;min-width:120px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🔴</div><div style="font-size:13px;font-weight:700;color:#4a1a7a">Pattern Match</div><div style="font-size:10px;color:#888">Find sequences</div></a>
-            <a href="memory.html" style="flex:1;min-width:120px;padding:14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🃏</div><div style="font-size:13px;font-weight:700;color:#4a1a7a">Memory Match</div><div style="font-size:10px;color:#888">Find pairs</div></a>
+            <a href="scramble.html" class="recommend-card"><div style="font-size:28px;margin-bottom:4px">🔤</div><div class="recommend-title">Word Scramble</div><div class="recommend-desc">Unscramble words</div></a>
+            <a href="pattern.html" class="recommend-card"><div style="font-size:28px;margin-bottom:4px">🔴</div><div class="recommend-title">Pattern Match</div><div class="recommend-desc">Find sequences</div></a>
+            <a href="memory.html" class="recommend-card"><div style="font-size:28px;margin-bottom:4px">🃏</div><div class="recommend-title">Memory Match</div><div class="recommend-desc">Find pairs</div></a>
         </div>
     </div>
 </div>
