@@ -615,7 +615,7 @@ function updateThemeBtn(){
 // Apply saved theme on load
 (function(){
     const saved=localStorage.getItem('games_theme');
-    if(saved==='light')document.body.classList.add('light-theme');
+    if(saved!=='dark')document.body.classList.add('light-theme');
     updateThemeBtn();
 })();
 
