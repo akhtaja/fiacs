@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📚 Learning</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(135deg,#f5f7fa 0%,#e8edf5 50%,#f0e6ff 100%);
+    background-attachment:fixed;
+    margin:0;padding:15px;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+h1{
+    position:relative;z-index:1;
+    text-align:center;
+    font-size:2.5rem;
+    margin:60px 0 8px;
+    background:linear-gradient(135deg,#4a1a7a,#667eea,#764ba2);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    font-weight:800;
+    letter-spacing:-1px;
+}
+
+.subtitle{
+    position:relative;z-index:1;
+    text-align:center;
+    color:#666;
+    font-size:1rem;
+    margin-bottom:35px;
+}
+
+.container{
+    max-width:700px;
+    margin:0 auto;
+    position:relative;z-index:1;
+}
+
+.games-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
+.game-card{
+    background:rgba(255,255,255,.85);
+    border:1px solid rgba(0,0,0,.06);
+    border-radius:22px;
+    padding:35px 24px;
+    text-align:center;
+    text-decoration:none;
+    display:block;
+    cursor:pointer;
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+    box-shadow:0 4px 20px rgba(0,0,0,.06);
+}
+
+.game-card:hover{
+    transform:translateY(-8px) scale(1.02);
+    box-shadow:0 12px 40px rgba(102,126,234,.12);
+    border-color:rgba(102,126,234,.2);
+}
+
+.game-icon{
+    font-size:64px;
+    display:block;
+    margin-bottom:15px;
+}
+
+.game-card:hover .game-icon{
+    animation:bounce .5s ease;
+}
+
+@keyframes bounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-8px)}
+}
+
+.game-title{
+    font-size:1.3rem;
+    font-weight:700;
+    color:#4a1a7a;
+    margin-bottom:8px;
+}
+
+.game-desc{
+    font-size:.9rem;
+    color:#666;
+    line-height:1.5;
+}
+
+.game-badge{
+    display:inline-block;
+    margin-top:14px;
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.badge-quiz{background:rgba(67,233,123,.12);color:#27ae60}
+.badge-maths{background:rgba(102,126,234,.12);color:#667eea}
+
+/* Sidebar */
+.menu-toggle{
+    position:fixed;top:15px;left:15px;z-index:100;
+    background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.08);border-radius:12px;
+    width:44px;height:44px;font-size:22px;cursor:pointer;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);transition:transform .2s;
+}
+.menu-toggle:hover{transform:scale(1.1)}
+
+.sidebar{
+    position:fixed;top:0;left:-260px;width:250px;height:100%;
+    background:rgba(255,255,255,.98);backdrop-filter:blur(20px);
+    z-index:99;padding:70px 20px 20px;
+    box-shadow:4px 0 20px rgba(0,0,0,.08);
+    transition:left .3s ease;border-radius:0 20px 20px 0;
+    border-right:1px solid rgba(0,0,0,.06);
+}
+.sidebar.open{left:0}
+.sidebar a{
+    display:block;padding:14px 16px;margin:6px 0;
+    border-radius:12px;text-decoration:none;
+    font-size:15px;font-weight:600;color:#4a1a7a;
+    transition:background .2s;
+}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.2);z-index:98;display:none;
+}
+.overlay.open{display:block}
+
+/* Floaters */
+.floaters{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.floater{position:absolute;opacity:.08;animation:floatAcross linear infinite}
+@keyframes floatAcross{from{transform:translateX(-60px) rotate(0deg)}to{transform:translateX(calc(100vw + 60px)) rotate(360deg)}}
+
+.footer{
+    text-align:center;
+    margin-top:40px;
+    padding:20px;
+    color:#aaa;
+    font-size:12px;
+}
+
+@media(max-width:500px){
+    h1{font-size:2rem;margin-top:50px}
+    .games-grid{grid-template-columns:1fr}
+    .game-card{padding:28px 20px}
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="kids.html">🏝️ Adventure Quest</a>
+    <a href="counting.html">🔢 Counting</a>
+    <a href="learning.html" class="active">📚 Learning</a>
+    <a href="kindness.html">🫂 Be Kind</a>
+    <a href="games.html">🎮 Games</a>
+    <a href="sos.html">🚨 SOS Police</a>
+</div>
+
+<div class="floaters">
+    <div class="floater" style="top:10%;animation-duration:24s;font-size:28px">📖</div>
+    <div class="floater" style="top:30%;animation-duration:30s;animation-delay:4s;font-size:24px">✨</div>
+    <div class="floater" style="top:55%;animation-duration:26s;animation-delay:9s;font-size:26px">🌟</div>
+    <div class="floater" style="top:75%;animation-duration:22s;animation-delay:12s;font-size:22px">📚</div>
+    <div class="floater" style="top:40%;animation-duration:34s;animation-delay:6s;font-size:20px">💡</div>
+</div>
+
+<h1>📚 Learning</h1>
+<p class="subtitle">Learn and have fun at the same time!</p>
+
+<div class="container">
+    <div class="games-grid">
+        <a href="quiz.html" class="game-card">
+            <span class="game-icon">🕌</span>
+            <div class="game-title">Islamic Quiz</div>
+            <div class="game-desc">Test your knowledge about Islam with fun questions!</div>
+            <span class="game-badge badge-quiz">📚 Learn & Play</span>
+        </a>
+
+        <a href="maths.html" class="game-card">
+            <span class="game-icon">🧮</span>
+            <div class="game-title">Maths Fun</div>
+            <div class="game-desc">Practice addition, subtraction, multiplication & division!</div>
+            <span class="game-badge badge-maths">🧠 Learn & Play</span>
+        </a>
+    </div>
+</div>
+
+<div class="footer">Made with ❤️ for Hamzah & Yahya</div>
+
+<script>
+function toggleMenu(){
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+</script>
+</body>
+</html>
