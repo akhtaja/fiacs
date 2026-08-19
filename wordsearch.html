@@ -71,6 +71,8 @@ h1{position:relative;z-index:1;text-align:center;font-size:2.2rem;margin:60px 0 
     border-radius:12px;backdrop-filter:blur(10px);
 }
 .player-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.7)}
+.player-avatar{width:24px;height:24px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);flex-shrink:0}
+.player-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .stats-link-sm{
     font-size:11px;font-weight:700;color:#ffd700;text-decoration:none;
     padding:4px 10px;border-radius:8px;
@@ -143,6 +145,7 @@ body.light-theme .recommend-card{background:rgba(118,75,162,.04);border-color:rg
 <p class="subtitle">Find all the hidden words in the grid!</p>
 
 <div class="player-bar">
+    <span class="player-avatar" id="player-avatar"></span>
     <span class="player-name" id="player-name"></span>
     <a href="stats.html" class="stats-link-sm">🏆 Stats</a>
 </div>
@@ -334,7 +337,8 @@ function endSelect(){
     selectedCells=[];
 }
 
-document.getElementById('player-name').textContent='👋 '+(localStorage.getItem('games_player_name')||'Player');
+document.getElementById('player-name').textContent=localStorage.getItem('games_player_name')||'Player';
+(function(){const av=localStorage.getItem('games_avatar');document.getElementById('player-avatar').innerHTML=av?'<img src="'+av+'">':'👋'})();
 newGame();
 </script>
 </body>

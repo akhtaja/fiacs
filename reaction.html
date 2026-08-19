@@ -109,6 +109,8 @@ h1{
     border-radius:12px;backdrop-filter:blur(10px);
 }
 .player-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.7)}
+.player-avatar{width:24px;height:24px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);flex-shrink:0}
+.player-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .stats-link-sm{
     font-size:11px;font-weight:700;color:#ffd700;text-decoration:none;
     padding:4px 10px;border-radius:8px;
@@ -246,6 +248,7 @@ body.light-theme .particle{background:#764ba2}
 <p class="subtitle">Tap when it turns GREEN — how fast are you?</p>
 
 <div class="player-bar">
+    <span class="player-avatar" id="player-avatar"></span>
     <span class="player-name" id="player-name"></span>
     <a href="stats.html" class="stats-link-sm">🏆 Stats</a>
 </div>
@@ -493,7 +496,8 @@ const stats=getStats();
 if(stats.reaction.bestTime){
     document.getElementById('time-best').innerHTML='🏆 Best: <span>'+stats.reaction.bestTime+'ms</span>';
 }
-document.getElementById('player-name').textContent='👋 '+getPlayerName();
+document.getElementById('player-name').textContent=getPlayerName();
+(function(){const av=localStorage.getItem('games_avatar');document.getElementById('player-avatar').innerHTML=av?'<img src="'+av+'">':'👋'})();
 </script>
 
 <div class="container" style="margin-top:10px">
