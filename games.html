@@ -318,6 +318,14 @@ h1{
     font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;
 }
 
+.xp-level-bar{margin:12px 0;padding:10px 14px;border-radius:12px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15)}
+.xp-level-info{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.xp-level-badge{font-size:13px;font-weight:800;color:#ffd700;background:rgba(255,215,0,.15);padding:3px 10px;border-radius:8px}
+.xp-level-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600}
+.xp-progress-bar{width:100%;height:8px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden}
+.xp-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#ffd700,#ffaa00);transition:width .3s ease}
+.xp-level-next{font-size:10px;color:rgba(255,255,255,.35);margin-top:4px}
+
 .profile-edit{
     background:none;border:1px solid rgba(255,255,255,.15);border-radius:10px;
     padding:6px 12px;color:rgba(255,255,255,.5);font-size:11px;cursor:pointer;
@@ -483,6 +491,11 @@ body.light-theme .profile-name{color:#4a1a7a}
 body.light-theme .profile-name span{color:#888}
 body.light-theme .profile-stat-value{color:#4a1a7a}
 body.light-theme .profile-stat-label{color:#888}
+body.light-theme .xp-level-bar{background:rgba(212,160,0,.06);border-color:rgba(212,160,0,.15)}
+body.light-theme .xp-level-badge{color:#d4a000;background:rgba(212,160,0,.1)}
+body.light-theme .xp-level-text{color:#888}
+body.light-theme .xp-progress-bar{background:rgba(0,0,0,.06)}
+body.light-theme .xp-level-next{color:#aaa}
 body.light-theme .profile-avatar{background:linear-gradient(135deg,rgba(102,126,234,.15),rgba(240,147,251,.15));border-color:rgba(0,0,0,.08)}
 body.light-theme .profile-edit{border-color:rgba(0,0,0,.12);color:#888}
 body.light-theme .profile-edit:hover{border-color:#764ba2;color:#764ba2;background:rgba(118,75,162,.05)}
@@ -672,6 +685,21 @@ for(let i = 0; i < 20; i++){
     body.appendChild(p);
 }
 
+// --- XP SYSTEM ---
+const XP_THRESHOLDS=[0,50,120,200,300,420,560,720,900,1100];
+function getXP(){return parseInt(localStorage.getItem('games_xp')||'0')}
+function calcLevel(xp){
+    let level=1;
+    for(let i=1;i<=100;i++){
+        const thresh=i<=10?XP_THRESHOLDS[i-1]:(XP_THRESHOLDS[9]+((i-10)*(220+(i-10)*20)));
+        if(xp>=thresh)level=i;else break;
+    }
+    const currentThresh=level<=10?XP_THRESHOLDS[level-1]:(XP_THRESHOLDS[9]+((level-10)*(220+(level-10)*20)));
+    const nextThresh=(level+1)<=10?XP_THRESHOLDS[level]:(XP_THRESHOLDS[9]+((level-1+1-10)*(220+(level-1+1-10)*20)));
+    const progress=(xp-currentThresh)/(nextThresh-currentThresh);
+    return{level,xp,currentThresh,nextThresh,progress:Math.min(1,Math.max(0,progress))};
+}
+
 // --- STREAK & DAILY CHALLENGE ---
 function getStreak(){return JSON.parse(localStorage.getItem('games_streak')||'{"lastPlayedDate":null,"currentStreak":0,"bestStreak":0,"history":[]}')}
 function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0}}')}
@@ -698,6 +726,14 @@ function renderStreakBar(){
             <div class="profile-name">Hi, ${playerName}!
                 <span>Keep playing to level up!</span>
             </div>
+        </div>
+        <div class="xp-level-bar">
+            <div class="xp-level-info">
+                <span class="xp-level-badge" id="xp-level-badge">Level ${calcLevel(getXP()).level}</span>
+                <span class="xp-level-text">${getXP()} XP</span>
+            </div>
+            <div class="xp-progress-bar"><div class="xp-progress-fill" style="width:${calcLevel(getXP()).progress*100}%"></div></div>
+            <div class="xp-level-next">${calcLevel(getXP()).nextThresh - getXP()} XP to next level</div>
         </div>
         <div class="profile-stats">
             <div class="profile-stat">
