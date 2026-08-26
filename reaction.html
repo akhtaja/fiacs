@@ -223,7 +223,35 @@ body.light-theme .particle{background:#764ba2}
     .card{padding:20px}
     .reaction-box{width:150px;height:150px;font-size:14px}
     .time-value{font-size:2.5rem}
+    .odd-grid{grid-template-columns:repeat(3,1fr)!important}
+    .odd-cell{width:50px!important;height:50px!important;font-size:24px!important}
 }
+
+/* Mode selector */
+.mode-selector{display:flex;gap:8px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
+.mode-btn{padding:10px 16px;border-radius:12px;font-size:12px;font-weight:bold;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s}
+.mode-btn:hover{border-color:rgba(102,126,234,.4);color:#fff}
+.mode-btn.active{background:rgba(102,126,234,.2);border-color:rgba(102,126,234,.5);color:#fff}
+body.light-theme .mode-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:#666}
+body.light-theme .mode-btn:hover{border-color:rgba(102,126,234,.4)}
+body.light-theme .mode-btn.active{background:rgba(102,126,234,.1);border-color:rgba(102,126,234,.3);color:#4a1a7a}
+
+/* Duck hunt area */
+.duck-area{width:100%;height:200px;border-radius:16px;position:relative;overflow:hidden;background:linear-gradient(to bottom,#87CEEB 0%,#87CEEB 60%,#228B22 60%,#228B22 100%);border:2px solid rgba(255,255,255,.1);cursor:crosshair;margin:15px 0}
+.duck-area .duck{position:absolute;font-size:50px;cursor:pointer;transition:none;user-select:none;animation:duckBob .4s ease infinite alternate}
+.duck-area .decoy{position:absolute;font-size:40px;user-select:none;opacity:.6}
+.duck-area .instruction{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-weight:bold;font-size:16px;text-shadow:0 2px 5px rgba(0,0,0,.5);text-align:center}
+@keyframes duckBob{0%{transform:translateY(0)}100%{transform:translateY(-5px)}}
+body.light-theme .duck-area{border-color:rgba(0,0,0,.1)}
+
+/* Odd one out grid */
+.odd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;justify-items:center;margin:15px 0}
+.odd-cell{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);cursor:pointer;transition:all .15s;user-select:none}
+.odd-cell:hover{transform:scale(1.1);border-color:rgba(102,126,234,.4)}
+.odd-cell.correct{background:rgba(67,233,123,.2)!important;border-color:#43e97b!important;animation:popIn .3s ease}
+.odd-cell.wrong{background:rgba(255,82,82,.2)!important;border-color:#ff5252!important;animation:shake .4s ease}
+@keyframes popIn{0%{transform:scale(.8)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+body.light-theme .odd-cell{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.08)}
 </style>
 </head>
 <body>
@@ -245,7 +273,7 @@ body.light-theme .particle{background:#764ba2}
 </div>
 
 <h1>⚡ Reaction Speed</h1>
-<p class="subtitle">Tap when it turns GREEN — how fast are you?</p>
+<p class="subtitle">Test your reflexes — how fast can you react?</p>
 
 <div class="player-bar">
     <span class="player-avatar" id="player-avatar"></span>
@@ -254,8 +282,28 @@ body.light-theme .particle{background:#764ba2}
 </div>
 
 <div class="container">
+    <div class="mode-selector">
+        <button class="mode-btn active" onclick="setMode('color')">🟢 Color Change</button>
+        <button class="mode-btn" onclick="setMode('duck')">🦆 Duck Hunt</button>
+        <button class="mode-btn" onclick="setMode('odd')">👀 Find the Odd</button>
+    </div>
     <div class="card">
-        <div class="reaction-box waiting" id="circle" onclick="reactionClick()">Tap to Start</div>
+        <!-- Color Change mode -->
+        <div id="mode-color">
+            <div class="reaction-box waiting" id="circle" onclick="reactionClick()">Tap to Start</div>
+        </div>
+        <!-- Duck Hunt mode -->
+        <div id="mode-duck" style="display:none">
+            <div class="duck-area" id="duck-area">
+                <div class="instruction" id="duck-instruction">Tap to Start!</div>
+            </div>
+        </div>
+        <!-- Find the Odd One mode -->
+        <div id="mode-odd" style="display:none">
+            <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:10px" id="odd-instruction">Tap the different one!</div>
+            <div class="odd-grid" id="odd-grid"></div>
+        </div>
+
         <div class="your-time" id="your-time">
             <div class="time-label">Your Time</div>
             <div class="time-value" id="time-value">—</div>
@@ -399,6 +447,45 @@ function renderLeaderboard(highlightTime){
 let state='idle',timeout=null,startTime=0;
 let sessionTimes=[];
 let sessionBest=null;
+let currentMode='color';
+
+function setMode(mode){
+    currentMode=mode;
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.mode-btn').forEach(b=>{if(b.onclick.toString().includes("'"+mode+"'"))b.classList.add('active')});
+    
+    // Show/hide mode areas
+    document.getElementById('mode-color').style.display=mode==='color'?'block':'none';
+    document.getElementById('mode-duck').style.display=mode==='duck'?'block':'none';
+    document.getElementById('mode-odd').style.display=mode==='odd'?'block':'none';
+    
+    // Reset state
+    resetGame();
+    
+    // Auto-start non-color modes
+    if(mode==='odd') setTimeout(startOddRound,300);
+}
+
+function resetGame(){
+    if(timeout)clearTimeout(timeout);
+    if(duckTimeout)clearTimeout(duckTimeout);
+    state='idle';
+    duckState='idle';
+    oddState='idle';
+    document.getElementById('your-time').classList.remove('show');
+    
+    // Reset color mode
+    const circle=document.getElementById('circle');
+    circle.className='reaction-box waiting';circle.textContent='Tap to Start';
+    
+    // Reset duck mode
+    const duckArea=document.getElementById('duck-area');
+    duckArea.innerHTML='<div class="instruction" id="duck-instruction">Tap to Start!</div>';
+    
+    // Reset odd mode
+    document.getElementById('odd-grid').innerHTML='';
+    document.getElementById('odd-instruction').textContent='Tap the different one!';
+}
 
 function updateSessionStats(){
     document.getElementById('s-attempts').textContent=sessionTimes.length;
@@ -409,6 +496,57 @@ function updateSessionStats(){
     }
 }
 
+function showResult(time){
+    sessionTimes.push(time);
+    if(!sessionBest||time<sessionBest)sessionBest=time;
+    updateSessionStats();
+
+    const timeEl=document.getElementById('time-value');
+    const msgEl=document.getElementById('time-msg');
+    timeEl.textContent=time+' ms';
+    timeEl.className='time-value '+(time<300?'fast':time<500?'medium':'slow');
+    document.getElementById('your-time').classList.add('show');
+
+    let msg='',msgCls='';
+    if(time<200){msg='🌩️ Superhuman!';msgCls='fast';}
+    else if(time<300){msg='⚡ Lightning fast!';msgCls='fast';}
+    else if(time<400){msg='🔥 Great reflexes!';msgCls='medium';}
+    else if(time<500){msg='👍 Good job!';msgCls='medium';}
+    else{msg='Keep practicing!';msgCls='';}
+    msgEl.textContent=msg;msgEl.className='time-msg '+msgCls;
+
+    const stats=getStats();
+    const allTimeBest=stats.reaction.bestTime;
+    if(allTimeBest&&allTimeBest<=time){
+        document.getElementById('time-best').innerHTML='🏆 Best: <span>'+allTimeBest+'ms</span>';
+    } else {
+        document.getElementById('time-best').innerHTML='🏆 Best: <span>'+time+'ms</span> — NEW!';
+    }
+
+    // Record stats
+    const st=getStats();
+    st.reaction.totalReactions++;st.reaction.gamesPlayed++;
+    if(!st.reaction.bestTime||time<st.reaction.bestTime)st.reaction.bestTime=time;
+    saveStats(st);
+
+    // Achievements
+    unlockAchievement('first_game');
+    if(time<300)unlockAchievement('speed_demon');
+    if(time<200)unlockAchievement('lightning');
+    if(st.reaction.totalReactions>=10)unlockAchievement('reaction_10');
+    if(st.reaction.totalReactions>=50)unlockAchievement('reaction_50');
+
+    // Leaderboard
+    const playerName=getPlayerName();
+    addToLeaderboard(playerName,time);
+    if(time===getLeaderboard()[0].time&&getLeaderboard()[0].name===playerName){
+        playFanfare();fireConfetti();
+    }
+    renderLeaderboard(time);
+    updatePlayStreak();
+}
+
+// ======= COLOR CHANGE MODE =======
 function reactionClick(){
     const circle=document.getElementById('circle');
     if(state==='idle'){
@@ -429,64 +567,115 @@ function reactionClick(){
         const time=Date.now()-startTime;
         circle.className='reaction-box clicked';circle.textContent=time+'ms';
         playDing();
-
-        // Track session
-        sessionTimes.push(time);
-        if(!sessionBest||time<sessionBest)sessionBest=time;
-        updateSessionStats();
-
-        // Display time
-        const timeEl=document.getElementById('time-value');
-        const msgEl=document.getElementById('time-msg');
-        timeEl.textContent=time+' ms';
-        timeEl.className='time-value '+(time<300?'fast':time<500?'medium':'slow');
-        document.getElementById('your-time').classList.add('show');
-
-        // Message
-        let msg='',msgCls='';
-        if(time<200){msg='🌩️ Superhuman!';msgCls='fast';}
-        else if(time<300){msg='⚡ Lightning fast!';msgCls='fast';}
-        else if(time<400){msg='🔥 Great reflexes!';msgCls='medium';}
-        else if(time<500){msg='👍 Good job!';msgCls='medium';}
-        else{msg='Keep practicing!';msgCls='';}
-        msgEl.textContent=msg;msgEl.className='time-msg '+msgCls;
-
-        // Best time display
-        const stats=getStats();
-        const allTimeBest=stats.reaction.bestTime;
-        if(allTimeBest&&allTimeBest<=time){
-            document.getElementById('time-best').innerHTML='🏆 Best: <span>'+allTimeBest+'ms</span>';
-        } else {
-            document.getElementById('time-best').innerHTML='🏆 Best: <span>'+time+'ms</span> — NEW!';
-        }
-
-        // Record stats
-        const st=getStats();
-        st.reaction.totalReactions++;st.reaction.gamesPlayed++;
-        if(!st.reaction.bestTime||time<st.reaction.bestTime)st.reaction.bestTime=time;
-        saveStats(st);
-
-        // Achievements
-        unlockAchievement('first_game');
-        if(time<300)unlockAchievement('speed_demon');
-        if(time<200)unlockAchievement('lightning');
-        if(st.reaction.totalReactions>=10)unlockAchievement('reaction_10');
-        if(st.reaction.totalReactions>=50)unlockAchievement('reaction_50');
-
-        // Leaderboard
-        const playerName=getPlayerName();
-        addToLeaderboard(playerName,time);
-
-        // New best?
-        if(time===getLeaderboard()[0].time&&getLeaderboard()[0].name===playerName){
-            playFanfare();fireConfetti();
-        }
-
-        renderLeaderboard(time);
-        updatePlayStreak();
-
+        showResult(time);
         state='idle';
         setTimeout(()=>{circle.className='reaction-box waiting';circle.textContent='Tap to Play Again'},1800);
+    }
+}
+
+// ======= DUCK HUNT MODE =======
+let duckTimeout=null;
+let duckState='idle';
+
+function startDuckHunt(){
+    const area=document.getElementById('duck-area');
+    duckState='waiting';
+    area.innerHTML='<div class="instruction">Wait for the duck... 👀</div>';
+    document.getElementById('your-time').classList.remove('show');
+    
+    duckTimeout=setTimeout(()=>{
+        duckState='ready';
+        startTime=Date.now();
+        const x=10+Math.random()*60;
+        const y=10+Math.random()*40;
+        area.innerHTML=`<div class="duck" style="left:${x}%;top:${y}%">🦆</div>`;
+        
+        // Duck flies away after 2 seconds
+        duckTimeout=setTimeout(()=>{
+            if(duckState==='ready'){
+                duckState='idle';
+                area.innerHTML='<div class="instruction">❌ Too slow! Duck flew away!<br><small>Tap to try again</small></div>';
+                playBoop();
+            }
+        },2000);
+    },1500+Math.random()*3500);
+}
+
+document.getElementById('duck-area').addEventListener('click',function(e){
+    if(currentMode!=='duck')return;
+    
+    if(duckState==='idle'){
+        startDuckHunt();
+    } else if(duckState==='waiting'){
+        clearTimeout(duckTimeout);
+        duckState='idle';
+        const area=document.getElementById('duck-area');
+        area.innerHTML='<div class="instruction">❌ No duck yet!<br><small>Tap to try again</small></div>';
+        playBoop();
+    } else if(duckState==='ready'){
+        clearTimeout(duckTimeout);
+        const time=Date.now()-startTime;
+        duckState='idle';
+        const area=document.getElementById('duck-area');
+        area.innerHTML=`<div class="instruction">💥 Got it! ${time}ms<br><small>Tap to play again</small></div>`;
+        playDing();
+        showResult(time);
+    }
+});
+
+// ======= FIND THE ODD ONE MODE =======
+let oddState='idle';
+
+function startOddRound(){
+    oddState='ready';
+    startTime=Date.now();
+    document.getElementById('your-time').classList.remove('show');
+    document.getElementById('odd-instruction').textContent='Tap the different one!';
+    
+    const emojiSets=[
+        {main:'🍎',odd:'🍐'},{main:'🔵',odd:'🟣'},{main:'🐶',odd:'🐱'},
+        {main:'⭐',odd:'🌟'},{main:'🟢',odd:'🟡'},{main:'🌙',odd:'☀️'},
+        {main:'🐸',odd:'🐢'},{main:'🍊',odd:'🍋'},{main:'❤️',odd:'💜'},
+        {main:'🚗',odd:'🚙'},{main:'🌸',odd:'🌺'},{main:'⚽',odd:'🏀'},
+        {main:'🐧',odd:'🐦'},{main:'🍕',odd:'🌮'},{main:'🎵',odd:'🎶'},
+        {main:'🦊',odd:'🐺'},{main:'🍇',odd:'🫐'},{main:'🌻',odd:'🌼'},
+        {main:'🐝',odd:'🐛'},{main:'🎈',odd:'🎀'},{main:'🔴',odd:'🟠'},
+    ];
+    
+    const set=emojiSets[Math.floor(Math.random()*emojiSets.length)];
+    const gridSize=Math.random()>0.5?9:12;
+    const oddIndex=Math.floor(Math.random()*gridSize);
+    
+    const grid=document.getElementById('odd-grid');
+    grid.style.gridTemplateColumns=`repeat(${gridSize<=9?3:4},1fr)`;
+    let html='';
+    for(let i=0;i<gridSize;i++){
+        const isOdd=i===oddIndex;
+        const emoji=isOdd?set.odd:set.main;
+        html+=`<div class="odd-cell" data-odd="${isOdd}" onclick="oddCellClicked(this)">${emoji}</div>`;
+    }
+    grid.innerHTML=html;
+}
+
+function oddCellClicked(cell){
+    if(oddState!=='ready')return;
+    oddState='idle';
+    const isOdd=cell.dataset.odd==='true';
+    
+    if(isOdd){
+        const time=Date.now()-startTime;
+        cell.classList.add('correct');
+        playDing();
+        showResult(time);
+        document.getElementById('odd-instruction').textContent='✨ Correct! '+time+'ms';
+        setTimeout(startOddRound,1500);
+    } else {
+        cell.classList.add('wrong');
+        playBoop();
+        document.getElementById('odd-instruction').textContent='❌ Wrong one!';
+        // Highlight the correct one
+        document.querySelectorAll('.odd-cell[data-odd="true"]').forEach(c=>c.classList.add('correct'));
+        setTimeout(startOddRound,1500);
     }
 }
 

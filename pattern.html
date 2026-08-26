@@ -178,7 +178,13 @@ let score=0,streak=0,level=1,waiting=false;
 function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
 
 function generatePattern(){
-    const type=level<=3?'number':level<=5?'shape':'mixed';
+    // All levels get a mix of pattern types, weighted by level
+    const types=['number','color','shape','emoji','mixed'];
+    let type;
+    if(level<=2) type=types[rand(0,3)];
+    else if(level<=4) type=types[rand(0,4)];
+    else type=types[rand(1,4)];
+
     let sequence=[],answer,label='';
 
     if(type==='number'){
@@ -186,28 +192,64 @@ function generatePattern(){
             ()=>{const start=rand(1,10),step=rand(1,5);label='Add '+step;return{seq:Array.from({length:5},(_,i)=>start+step*i),ans:start+step*5}},
             ()=>{const start=rand(2,5);label='Multiply by '+start;return{seq:Array.from({length:4},(_,i)=>Math.pow(start,i+1)),ans:Math.pow(start,5)}},
             ()=>{const start=rand(20,50),step=rand(2,6);label='Subtract '+step;return{seq:Array.from({length:5},(_,i)=>start-step*i),ans:start-step*5}},
-            ()=>{const start=rand(1,5),step=rand(2,4);label='Add increasing';return{seq:[start,start+step,start+step*2,start+step*3,start+step*4],ans:start+step*5}},
             ()=>{label='Doubles';const s=rand(1,6);return{seq:[s,s*2,s*4,s*8],ans:s*16}},
+            ()=>{const start=rand(1,5),step=rand(2,4);label='Add increasing';return{seq:[start,start+step,start+step*3,start+step*6,start+step*10],ans:start+step*15}},
         ];
-        const p=patterns[rand(0,Math.min(patterns.length-1,level))]();
+        const p=patterns[rand(0,Math.min(patterns.length-1,level+1))]();
         sequence=p.seq;answer=p.ans;
+    } else if(type==='color'){
+        const colorSets=[
+            {seq:['🔴','🔵','🔴','🔵','🔴'],ans:'🔵',label:'Alternating colors'},
+            {seq:['🟢','🟡','🟢','🟡','🟢'],ans:'🟡',label:'Alternating colors'},
+            {seq:['🔴','🟠','🟡','🟢','🔵'],ans:'🟣',label:'Rainbow order'},
+            {seq:['🟣','🔵','🟢','🟡','🟠'],ans:'🔴',label:'Reverse rainbow'},
+            {seq:['🔴','🔴','🔵','🔴','🔴'],ans:'🔵',label:'Every 3rd different'},
+            {seq:['🟢','🟢','🟢','🟡','🟡'],ans:'🟡',label:'Growing pattern'},
+            {seq:['🔵','🟣','🔵','🟣','🔵'],ans:'🟣',label:'Alternating colors'},
+            {seq:['🟡','🟠','🔴','🟡','🟠'],ans:'🔴',label:'Cycle of 3'},
+            {seq:['⚪','🔴','🔴','⚪','🔴'],ans:'🔴',label:'Repeating pattern'},
+            {seq:['🟤','🟠','🟡','🟤','🟠'],ans:'🟡',label:'Cycle of 3'},
+        ];
+        const p=colorSets[rand(0,colorSets.length-1)];
+        sequence=p.seq;answer=p.ans;label=p.label;
     } else if(type==='shape'){
         const shapeSets=[
-            {seq:['🔴','🔵','🔴','🔵','🔴'],ans:'🔵',label:'Alternating'},
-            {seq:['🟢','🟢','🔴','🟢','🟢'],ans:'🔴',label:'Repeating 3'},
-            {seq:['⭐','⭐','🌙','⭐','⭐'],ans:'🌙',label:'Repeating 3'},
-            {seq:['🔺','🔵','🔺','🔵','🔺'],ans:'🔵',label:'Alternating'},
-            {seq:['❤️','💛','💚','❤️','💛'],ans:'💚',label:'Cycle of 3'},
-            {seq:['🌟','🌟','⚡','🌟','🌟'],ans:'⚡',label:'Every 3rd'},
-            {seq:['🔴','🟠','🟡','🟢','🔵'],ans:'🟣',label:'Rainbow'},
+            {seq:['⭐','🌙','⭐','🌙','⭐'],ans:'🌙',label:'Alternating shapes'},
+            {seq:['🔺','🔻','🔺','🔻','🔺'],ans:'🔻',label:'Alternating shapes'},
+            {seq:['◼️','◻️','◼️','◻️','◼️'],ans:'◻️',label:'Alternating shapes'},
+            {seq:['♠️','♥️','♦️','♣️','♠️'],ans:'♥️',label:'Card suits cycle'},
+            {seq:['⬛','⬛','⬜','⬛','⬛'],ans:'⬜',label:'Every 3rd different'},
+            {seq:['🔷','🔶','🔷','🔶','🔷'],ans:'🔶',label:'Alternating shapes'},
+            {seq:['▪️','▪️','▫️','▫️','▪️'],ans:'▪️',label:'2-2 pattern'},
+            {seq:['💠','🔹','🔸','💠','🔹'],ans:'🔸',label:'Cycle of 3'},
+            {seq:['⭕','⭕','✖️','⭕','⭕'],ans:'✖️',label:'Every 3rd different'},
+            {seq:['🔲','🔳','🔲','🔳','🔲'],ans:'🔳',label:'Alternating shapes'},
         ];
         const p=shapeSets[rand(0,shapeSets.length-1)];
         sequence=p.seq;answer=p.ans;label=p.label;
+    } else if(type==='emoji'){
+        const emojiSets=[
+            {seq:['🐶','🐱','🐶','🐱','🐶'],ans:'🐱',label:'Alternating animals'},
+            {seq:['🌞','🌧️','🌞','🌧️','🌞'],ans:'🌧️',label:'Alternating weather'},
+            {seq:['🍎','🍊','🍋','🍎','🍊'],ans:'🍋',label:'Fruit cycle'},
+            {seq:['🚗','🚙','🚕','🚗','🚙'],ans:'🚕',label:'Vehicle cycle'},
+            {seq:['🌸','🌺','🌻','🌸','🌺'],ans:'🌻',label:'Flower cycle'},
+            {seq:['🍕','🍔','🍕','🍔','🍕'],ans:'🍔',label:'Alternating food'},
+            {seq:['🎵','🎶','🎵','🎶','🎵'],ans:'🎶',label:'Alternating music'},
+            {seq:['🌍','🌎','🌏','🌍','🌎'],ans:'🌏',label:'Globe cycle'},
+            {seq:['🦁','🐯','🐻','🦁','🐯'],ans:'🐻',label:'Animal cycle'},
+            {seq:['❄️','☀️','🌈','❄️','☀️'],ans:'🌈',label:'Weather cycle'},
+        ];
+        const p=emojiSets[rand(0,emojiSets.length-1)];
+        sequence=p.seq;answer=p.ans;label=p.label;
     } else {
         const mixedSets=[
-            ()=>{const n=rand(1,4);label='Add '+n+' + shapes';return{seq:['🔴',n,'🔵',n+n,'🔴'],ans:n+n+n}},
-            ()=>{label='Count up + emoji';return{seq:['1⭐','2⭐','3⭐','4⭐'],ans:'5⭐'}},
-            ()=>{const shapes=['🔴','🔵','🟢','🟡','🟣'];label='Growing';return{seq:[shapes[0],shapes.slice(0,2).join(''),shapes.slice(0,3).join('')],ans:shapes.slice(0,4).join('')}},
+            ()=>{label='Color + number';const c=['🔴','🔵','🟢'];return{seq:['1','🔴','2','🔵','3'],ans:'🟢'}},
+            ()=>{label='Growing stars';return{seq:['⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐'],ans:'⭐⭐⭐⭐⭐'}},
+            ()=>{label='Count + emoji';return{seq:['1🔴','2🔵','3🟢','4🟡'],ans:'5🟣'}},
+            ()=>{label='Shape + number';return{seq:['🔺1','🔺2','🔺3','🔺4'],ans:'🔺5'}},
+            ()=>{label='Growing hearts';return{seq:['❤️','❤️❤️','❤️❤️❤️'],ans:'❤️❤️❤️❤️'}},
+            ()=>{const n=rand(1,3);label='Add '+n+' + colors';return{seq:['🔴',n,'🔵',n+n,'🟢'],ans:n+n+n}},
         ];
         const p=mixedSets[rand(0,mixedSets.length-1)]();
         sequence=p.seq;answer=p.ans;
@@ -224,7 +266,11 @@ function generateWrongAnswers(answer){
             if(w!==answer&&w>=0)wrongs.add(w);
         }
     } else {
-        const allOptions=['🔴','🔵','🟢','🟡','🟣','🌙','⭐','⚡','🔺','❤️','💛','💚','🟠'];
+        const allOptions=['🔴','🔵','🟢','🟡','🟣','🌙','⭐','⚡','🔺','❤️','💛','💚','🟠','⚪','🟤',
+            '🔻','◼️','◻️','♠️','♥️','♦️','♣️','⬛','⬜','🔷','🔶','🔹','🔸','💠','⭕','✖️','🔲','🔳',
+            '🐶','🐱','🌞','🌧️','🍎','🍊','🍋','🚗','🚙','🚕','🌸','🌺','🌻','🍕','🍔','🎵','🎶',
+            '🌍','🌎','🌏','🦁','🐯','🐻','❄️','☀️','🌈',
+            '⭐⭐⭐⭐⭐','❤️❤️❤️❤️','5🟣','🔺5','5⭐'];
         const filtered=allOptions.filter(o=>o!==answer);
         while(wrongs.size<3&&filtered.length>0){
             wrongs.add(filtered.splice(rand(0,filtered.length-1),1)[0]);
