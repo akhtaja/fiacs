@@ -236,6 +236,30 @@ body.light-theme .mode-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.0
 body.light-theme .mode-btn:hover{border-color:rgba(102,126,234,.4)}
 body.light-theme .mode-btn.active{background:rgba(102,126,234,.1);border-color:rgba(102,126,234,.3);color:#4a1a7a}
 
+/* Mode selection screen */
+.mode-select-screen{animation:fadeInUp .3s ease}
+.mode-card{display:block;padding:22px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:all .2s;margin-bottom:12px;text-align:left;text-decoration:none}
+.mode-card:hover{background:rgba(255,255,255,.1);transform:translateY(-2px);border-color:rgba(102,126,234,.3)}
+.mode-card-header{display:flex;align-items:center;gap:12px}
+.mode-card-icon{font-size:36px;flex-shrink:0}
+.mode-card-info{flex:1}
+.mode-card-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:3px}
+.mode-card-desc{font-size:12px;color:rgba(255,255,255,.5)}
+.mode-card-best{font-size:12px;font-weight:700;color:#ffd700;margin-top:6px;padding:4px 10px;border-radius:8px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.15);display:inline-block}
+.mode-card-best.no-score{color:rgba(255,255,255,.3);background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)}
+body.light-theme .mode-card{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.08)}
+body.light-theme .mode-card:hover{background:rgba(102,126,234,.06);border-color:rgba(102,126,234,.2)}
+body.light-theme .mode-card-title{color:#4a1a7a}
+body.light-theme .mode-card-desc{color:#888}
+body.light-theme .mode-card-best{color:#d4a000;background:rgba(212,160,0,.06);border-color:rgba(212,160,0,.15)}
+body.light-theme .mode-card-best.no-score{color:#aaa;background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.05)}
+
+/* Back to modes button */
+.back-modes-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:12px;font-size:13px;font-weight:bold;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;margin-bottom:15px}
+.back-modes-btn:hover{background:rgba(255,255,255,.1);color:#fff;transform:scale(1.03)}
+body.light-theme .back-modes-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:#666}
+body.light-theme .back-modes-btn:hover{background:rgba(0,0,0,.06);color:#4a1a7a}
+
 /* Duck hunt area */
 .duck-area{width:100%;height:200px;border-radius:16px;position:relative;overflow:hidden;background:linear-gradient(to bottom,#87CEEB 0%,#87CEEB 60%,#228B22 60%,#228B22 100%);border:2px solid rgba(255,255,255,.1);cursor:crosshair;margin:15px 0}
 .duck-area .duck{position:absolute;font-size:50px;cursor:pointer;transition:none;user-select:none;animation:duckBob .4s ease infinite alternate}
@@ -282,52 +306,88 @@ body.light-theme .odd-cell{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.0
 </div>
 
 <div class="container">
-    <div class="mode-selector">
-        <button class="mode-btn active" onclick="setMode('color')">🟢 Color Change</button>
-        <button class="mode-btn" onclick="setMode('duck')">🦆 Duck Hunt</button>
-        <button class="mode-btn" onclick="setMode('odd')">👀 Find the Odd</button>
-    </div>
-    <div class="card">
-        <!-- Color Change mode -->
-        <div id="mode-color">
-            <div class="reaction-box waiting" id="circle" onclick="reactionClick()">Tap to Start</div>
-        </div>
-        <!-- Duck Hunt mode -->
-        <div id="mode-duck" style="display:none">
-            <div class="duck-area" id="duck-area">
-                <div class="instruction" id="duck-instruction">Tap to Start!</div>
+    <!-- MODE SELECTION SCREEN -->
+    <div id="mode-select-screen" class="mode-select-screen">
+        <div class="card">
+            <div style="font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:15px">Choose your challenge</div>
+            <div class="mode-card" onclick="enterMode('color')">
+                <div class="mode-card-header">
+                    <span class="mode-card-icon">🟢</span>
+                    <div class="mode-card-info">
+                        <div class="mode-card-title">Color Change</div>
+                        <div class="mode-card-desc">Tap when the circle turns green</div>
+                    </div>
+                </div>
+                <div class="mode-card-best no-score" id="best-color">No score yet</div>
             </div>
-        </div>
-        <!-- Find the Odd One mode -->
-        <div id="mode-odd" style="display:none">
-            <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:10px" id="odd-instruction">Tap the different one!</div>
-            <div class="odd-grid" id="odd-grid"></div>
-        </div>
-
-        <div class="your-time" id="your-time">
-            <div class="time-label">Your Time</div>
-            <div class="time-value" id="time-value">—</div>
-            <div class="time-best" id="time-best"></div>
-            <div class="time-msg" id="time-msg"></div>
-        </div>
-        <div class="session-stats">
-            <div class="session-stat">
-                <div class="session-stat-val" id="s-attempts">0</div>
-                <div class="session-stat-label">Attempts</div>
+            <div class="mode-card" onclick="enterMode('duck')">
+                <div class="mode-card-header">
+                    <span class="mode-card-icon">🦆</span>
+                    <div class="mode-card-info">
+                        <div class="mode-card-title">Duck Hunt</div>
+                        <div class="mode-card-desc">Tap the duck before it flies away</div>
+                    </div>
+                </div>
+                <div class="mode-card-best no-score" id="best-duck">No score yet</div>
             </div>
-            <div class="session-stat">
-                <div class="session-stat-val" id="s-best">—</div>
-                <div class="session-stat-label">Session Best</div>
-            </div>
-            <div class="session-stat">
-                <div class="session-stat-val" id="s-avg">—</div>
-                <div class="session-stat-label">Average</div>
+            <div class="mode-card" onclick="enterMode('odd')">
+                <div class="mode-card-header">
+                    <span class="mode-card-icon">👀</span>
+                    <div class="mode-card-info">
+                        <div class="mode-card-title">Find the Odd</div>
+                        <div class="mode-card-desc">Spot the different emoji in the grid</div>
+                    </div>
+                </div>
+                <div class="mode-card-best no-score" id="best-odd">No score yet</div>
             </div>
         </div>
     </div>
 
-    <div class="card">
-        <div class="leaderboard" id="leaderboard"></div>
+    <!-- GAME SCREEN (hidden initially) -->
+    <div id="game-screen" style="display:none">
+        <button class="back-modes-btn" onclick="backToModes()">← Back to Modes</button>
+        <div class="card">
+            <!-- Color Change mode -->
+            <div id="mode-color" style="display:none">
+                <div class="reaction-box waiting" id="circle" onclick="reactionClick()">Tap to Start</div>
+            </div>
+            <!-- Duck Hunt mode -->
+            <div id="mode-duck" style="display:none">
+                <div class="duck-area" id="duck-area">
+                    <div class="instruction" id="duck-instruction">Tap to Start!</div>
+                </div>
+            </div>
+            <!-- Find the Odd One mode -->
+            <div id="mode-odd" style="display:none">
+                <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:10px" id="odd-instruction">Tap the different one!</div>
+                <div class="odd-grid" id="odd-grid"></div>
+            </div>
+
+            <div class="your-time" id="your-time">
+                <div class="time-label">Your Time</div>
+                <div class="time-value" id="time-value">—</div>
+                <div class="time-best" id="time-best"></div>
+                <div class="time-msg" id="time-msg"></div>
+            </div>
+            <div class="session-stats">
+                <div class="session-stat">
+                    <div class="session-stat-val" id="s-attempts">0</div>
+                    <div class="session-stat-label">Attempts</div>
+                </div>
+                <div class="session-stat">
+                    <div class="session-stat-val" id="s-best">—</div>
+                    <div class="session-stat-label">Session Best</div>
+                </div>
+                <div class="session-stat">
+                    <div class="session-stat-val" id="s-avg">—</div>
+                    <div class="session-stat-label">Average</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="leaderboard" id="leaderboard"></div>
+        </div>
     </div>
 </div>
 
@@ -449,21 +509,61 @@ let sessionTimes=[];
 let sessionBest=null;
 let currentMode='color';
 
-function setMode(mode){
+// Per-mode best scores
+function getModeBests(){return JSON.parse(localStorage.getItem('reaction_mode_bests')||'{}')}
+function saveModeBest(mode,time){
+    const b=getModeBests();
+    if(!b[mode]||time<b[mode])b[mode]=time;
+    localStorage.setItem('reaction_mode_bests',JSON.stringify(b));
+}
+
+function renderModeSelectBests(){
+    const b=getModeBests();
+    ['color','duck','odd'].forEach(m=>{
+        const el=document.getElementById('best-'+m);
+        if(b[m]){
+            el.textContent='🏆 Best: '+b[m]+'ms';
+            el.className='mode-card-best';
+        } else {
+            el.textContent='No score yet';
+            el.className='mode-card-best no-score';
+        }
+    });
+}
+
+function enterMode(mode){
     currentMode=mode;
-    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.mode-btn').forEach(b=>{if(b.onclick.toString().includes("'"+mode+"'"))b.classList.add('active')});
+    document.getElementById('mode-select-screen').style.display='none';
+    document.getElementById('game-screen').style.display='block';
     
-    // Show/hide mode areas
+    // Show the correct mode area
     document.getElementById('mode-color').style.display=mode==='color'?'block':'none';
     document.getElementById('mode-duck').style.display=mode==='duck'?'block':'none';
     document.getElementById('mode-odd').style.display=mode==='odd'?'block':'none';
     
-    // Reset state
+    // Reset session
+    sessionTimes=[];sessionBest=null;
+    updateSessionStats();
+    document.getElementById('your-time').classList.remove('show');
+    
+    // Reset game states
     resetGame();
     
-    // Auto-start non-color modes
+    // Auto-start odd mode
     if(mode==='odd') setTimeout(startOddRound,300);
+    
+    renderLeaderboard();
+}
+
+function backToModes(){
+    // Stop any active game
+    if(timeout)clearTimeout(timeout);
+    if(duckTimeout)clearTimeout(duckTimeout);
+    state='idle';duckState='idle';oddState='idle';
+    
+    document.getElementById('game-screen').style.display='none';
+    document.getElementById('mode-select-screen').style.display='block';
+    renderModeSelectBests();
 }
 
 function resetGame(){
@@ -493,6 +593,8 @@ function updateSessionStats(){
     if(sessionTimes.length>0){
         const avg=Math.round(sessionTimes.reduce((a,b)=>a+b,0)/sessionTimes.length);
         document.getElementById('s-avg').textContent=avg+'ms';
+    } else {
+        document.getElementById('s-avg').textContent='—';
     }
 }
 
@@ -515,15 +617,17 @@ function showResult(time){
     else{msg='Keep practicing!';msgCls='';}
     msgEl.textContent=msg;msgEl.className='time-msg '+msgCls;
 
-    const stats=getStats();
-    const allTimeBest=stats.reaction.bestTime;
-    if(allTimeBest&&allTimeBest<=time){
-        document.getElementById('time-best').innerHTML='🏆 Best: <span>'+allTimeBest+'ms</span>';
+    // Per-mode best
+    const modeBests=getModeBests();
+    const modeBest=modeBests[currentMode];
+    if(modeBest&&modeBest<=time){
+        document.getElementById('time-best').innerHTML='🏆 Best ('+currentMode+'): <span>'+modeBest+'ms</span>';
     } else {
-        document.getElementById('time-best').innerHTML='🏆 Best: <span>'+time+'ms</span> — NEW!';
+        document.getElementById('time-best').innerHTML='🏆 Best ('+currentMode+'): <span>'+time+'ms</span> — NEW!';
     }
+    saveModeBest(currentMode,time);
 
-    // Record stats
+    // Record global stats
     const st=getStats();
     st.reaction.totalReactions++;st.reaction.gamesPlayed++;
     if(!st.reaction.bestTime||time<st.reaction.bestTime)st.reaction.bestTime=time;
@@ -680,11 +784,7 @@ function oddCellClicked(cell){
 }
 
 // Init
-renderLeaderboard();
-const stats=getStats();
-if(stats.reaction.bestTime){
-    document.getElementById('time-best').innerHTML='🏆 Best: <span>'+stats.reaction.bestTime+'ms</span>';
-}
+renderModeSelectBests();
 document.getElementById('player-name').textContent=getPlayerName();
 (function(){const av=localStorage.getItem('games_avatar');document.getElementById('player-avatar').innerHTML=av?'<img src="'+av+'">':'👋'})();
 </script>
