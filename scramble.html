@@ -170,9 +170,9 @@ function fireConfetti(){
 }
 
 // --- STATS & ACHIEVEMENTS SYSTEM ---
-function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0},"rps":{"wins":0,"losses":0,"draws":0,"winStreak":0,"bestWinStreak":0,"gamesPlayed":0}}')}
+function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0}}')}
 function saveStats(s){localStorage.setItem('games_stats',JSON.stringify(s))}
-function getHighscores(){return JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}')}
+function getHighscores(){return JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[]}')}
 function saveHighscores(h){localStorage.setItem('games_highscores',JSON.stringify(h))}
 function getAchievements(){return JSON.parse(localStorage.getItem('games_achievements')||'[]')}
 function unlockAchievement(id){
@@ -228,7 +228,7 @@ function recordScrambleGame(wordsThisRound){
     hs.scramble.sort((a,b)=>b.value-a.value);
     hs.scramble=hs.scramble.slice(0,5);
     saveHighscores(hs);
-    if(stats.reaction.gamesPlayed>0&&stats.scramble.gamesPlayed>0&&stats.rps.gamesPlayed>0)
+    if(stats.reaction.gamesPlayed>0&&stats.scramble.gamesPlayed>0)
         unlockAchievement('all_games');
 }
 
@@ -312,11 +312,6 @@ nextWord();
                 <div style="font-size:28px;margin-bottom:4px">⚡</div>
                 <div style="font-size:13px;font-weight:700;color:#4a1a7a">Reaction Speed</div>
                 <div style="font-size:10px;color:#888">Test your reflexes</div>
-            </a>
-            <a href="rps.html" style="flex:1;min-width:120px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;transition:all .2s;display:block">
-                <div style="font-size:28px;margin-bottom:4px">✊</div>
-                <div style="font-size:13px;font-weight:700;color:#4a1a7a">Rock Paper Scissors</div>
-                <div style="font-size:10px;color:#888">Beat the computer</div>
             </a>
             <a href="memory.html" style="flex:1;min-width:120px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;transition:all .2s;display:block">
                 <div style="font-size:28px;margin-bottom:4px">🃏</div>

@@ -167,9 +167,14 @@ body.light-theme .recommend-card{background:rgba(118,75,162,.04);border-color:rg
             <div style="font-size:16px;font-weight:bold;margin-bottom:5px" class="recommend-title">Ready to race?</div>
             <div style="font-size:13px;margin-bottom:15px" class="recommend-desc">Type answers as fast as you can!</div>
             <div class="mode-btns">
-                <button class="mode-btn active" onclick="setMode('easy')">😊 Easy (30s)</button>
-                <button class="mode-btn" onclick="setMode('medium')">🤔 Medium (30s)</button>
-                <button class="mode-btn" onclick="setMode('hard')">🔥 Hard (30s)</button>
+                <button class="mode-btn active" onclick="setMode('easy')">😊 Easy</button>
+                <button class="mode-btn" onclick="setMode('medium')">🤔 Medium</button>
+                <button class="mode-btn" onclick="setMode('hard')">🔥 Hard</button>
+            </div>
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px" class="recommend-desc">⏱️ Time</div>
+            <div class="mode-btns">
+                <button class="mode-btn active" id="time-30" onclick="setTime(30)">30 seconds</button>
+                <button class="mode-btn" id="time-60" onclick="setTime(60)">60 seconds</button>
             </div>
             <button class="start-btn" onclick="startRace()">🏁 Start Race!</button>
             <div style="margin-top:15px;font-size:13px;color:#888" id="best-display"></div>
@@ -209,23 +214,32 @@ function updThemeBtn(){document.getElementById('theme-toggle').textContent=docum
 function fireConfetti(){const c=document.getElementById('confetti'),colors=['#667eea','#43e97b','#ffd700','#ff5252','#764ba2'];for(let i=0;i<20;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=(30+Math.random()*40)+'%';p.style.top=(20+Math.random()*30)+'%';p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.setProperty('--dx',(Math.random()*200-100)+'px');p.style.setProperty('--dy',(Math.random()*300+80)+'px');c.appendChild(p)}setTimeout(()=>{c.innerHTML=''},1600)}
 
 let mode='easy',timeLeft=30,timer=null,correct=0,rStreak=0,currentAnswer=0;
-const DURATION=30;
+let DURATION=30;
+
+function setTime(t){
+    DURATION=t;
+    document.getElementById('time-30').classList.toggle('active',t===30);
+    document.getElementById('time-60').classList.toggle('active',t===60);
+    showBest();
+}
 
 // Best scores
 function getBest(){return JSON.parse(localStorage.getItem('mathrace_best')||'{}')}
-function saveBest(mode,score){const b=getBest();if(!b[mode]||score>b[mode])b[mode]=score;localStorage.setItem('mathrace_best',JSON.stringify(b))}
+function saveBest(key,score){const b=getBest();if(!b[key]||score>b[key])b[key]=score;localStorage.setItem('mathrace_best',JSON.stringify(b))}
 
 function setMode(m){
     mode=m;
     document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('.mode-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(m))b.classList.add('active')});
+    document.getElementById('time-'+DURATION).classList.add('active');
     showBest();
 }
 
 function showBest(){
     const b=getBest();
+    const key=mode+'_'+DURATION;
     const el=document.getElementById('best-display');
-    if(b[mode])el.textContent='🏆 Your best: '+b[mode]+' correct';
+    if(b[key])el.textContent='🏆 Your best: '+b[key]+' correct ('+DURATION+'s)';
     else el.textContent='';
 }
 showBest();
@@ -306,9 +320,10 @@ function endRace(){
     document.getElementById('race-screen').style.display='none';
     document.getElementById('answer').removeEventListener('keyup',checkInput);
     
+    const key=mode+'_'+DURATION;
     const best=getBest();
-    const isNewBest=!best[mode]||correct>best[mode];
-    saveBest(mode,correct);
+    const isNewBest=!best[key]||correct>best[key];
+    saveBest(key,correct);
     if(isNewBest)fireConfetti();
 
     let msg='';
@@ -324,7 +339,7 @@ function endRace(){
         <div style="color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px">Problems Solved</div>
         <div class="end-score">${correct}</div>
         <div class="end-msg">${msg}</div>
-        ${isNewBest?'<div class="best-badge">🎉 New Personal Best!</div>':'<div style="color:#888;font-size:13px;margin-top:5px">Best: '+getBest()[mode]+'</div>'}
+        ${isNewBest?'<div class="best-badge">🎉 New Personal Best!</div>':'<div style="color:#888;font-size:13px;margin-top:5px">Best: '+getBest()[key]+'</div>'}
         <button class="start-btn" onclick="startRace()" style="margin-top:20px">🔄 Race Again</button>
     `;
 }

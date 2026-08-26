@@ -617,13 +617,6 @@ body.light-theme .particle{background:#764ba2}
             <span class="game-badge badge-speed">⏱️ Speed</span>
         </a>
 
-        <a href="rps.html" class="game-card">
-            <span class="game-icon">✊</span>
-            <div class="game-title">Rock Paper Scissors</div>
-            <div class="game-desc">Beat the computer in a best of 5 match!</div>
-            <span class="game-badge badge-fun">🎲 Fun</span>
-        </a>
-
         <a href="mathrace.html" class="game-card">
             <span class="game-icon">🔢</span>
             <div class="game-title">Math Race</div>
@@ -681,16 +674,16 @@ for(let i = 0; i < 20; i++){
 
 // --- STREAK & DAILY CHALLENGE ---
 function getStreak(){return JSON.parse(localStorage.getItem('games_streak')||'{"lastPlayedDate":null,"currentStreak":0,"bestStreak":0,"history":[]}')}
-function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0},"rps":{"wins":0,"losses":0,"draws":0,"winStreak":0,"bestWinStreak":0,"gamesPlayed":0}}')}
+function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0}}')}
 function getAchievements(){return JSON.parse(localStorage.getItem('games_achievements')||'[]')}
 
 function renderStreakBar(){
     const streak=getStreak();
     const stats=getStats();
-    const totalGames=(stats.reaction.gamesPlayed||0)+(stats.scramble.gamesPlayed||0)+(stats.rps.gamesPlayed||0);
+    const totalGames=(stats.reaction.gamesPlayed||0)+(stats.scramble.gamesPlayed||0);
     const achievements=getAchievements();
-    const highscores=JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}');
-    const totalHighscores=highscores.reaction.length+highscores.scramble.length+highscores.rps.length;
+    const highscores=JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[]}');
+    const totalHighscores=highscores.reaction.length+highscores.scramble.length;
 
     // Player name & avatar
     let playerName=localStorage.getItem('games_player_name')||'Player';
@@ -846,10 +839,8 @@ function renderDailyChallenge(){
     const challenges=[
         {game:'reaction',text:'Get a reaction time under 400ms',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.bestTime&&s.reaction.bestTime<400}},
         {game:'scramble',text:'Solve 5 words in Word Scramble',link:'scramble.html',check:()=>{const s=getStats();return s.scramble.wordsGuessed>=5}},
-        {game:'rps',text:'Win a Rock Paper Scissors match',link:'rps.html',check:()=>{const s=getStats();return s.rps.wins>=1}},
         {game:'reaction',text:'Play 5 rounds of Reaction Speed',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.totalReactions>=5}},
         {game:'scramble',text:'Guess 3 words without skipping',link:'scramble.html',check:()=>{const s=getStats();return s.scramble.wordsGuessed>=3}},
-        {game:'rps',text:'Play 3 RPS matches',link:'rps.html',check:()=>{const s=getStats();return s.rps.gamesPlayed>=3}},
         {game:'reaction',text:'Get a reaction time under 300ms',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.bestTime&&s.reaction.bestTime<300}},
     ];
     
@@ -869,7 +860,7 @@ function renderDailyChallenge(){
         <p>${todayChallenge.text}</p>
         ${completed
             ?'<span class="challenge-game completed">✅ Completed!</span>'
-            :`<a href="${todayChallenge.link}" class="challenge-game">Play ${todayChallenge.game==='reaction'?'⚡ Reaction':todayChallenge.game==='scramble'?'🔤 Scramble':'✊ RPS'} →</a>`
+            :`<a href="${todayChallenge.link}" class="challenge-game">Play ${todayChallenge.game==='reaction'?'⚡ Reaction':'🔤 Scramble'} →</a>`
         }
     `;
 }

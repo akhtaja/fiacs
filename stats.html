@@ -163,10 +163,10 @@ function toggleMenu(){document.getElementById('sidebar').classList.toggle('open'
 for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.animationDelay=Math.random()*10+'s';p.style.width=(2+Math.random()*2)+'px';p.style.height=p.style.width;document.body.appendChild(p)}
 
 // --- DATA ---
-function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0},"rps":{"wins":0,"losses":0,"draws":0,"winStreak":0,"bestWinStreak":0,"gamesPlayed":0}}')}
+function getStats(){return JSON.parse(localStorage.getItem('games_stats')||'{"reaction":{"bestTime":null,"gamesPlayed":0,"totalReactions":0},"scramble":{"bestStreak":0,"wordsGuessed":0,"gamesPlayed":0}}')}
 function getAchievements(){return JSON.parse(localStorage.getItem('games_achievements')||'[]')}
 function getStreak(){return JSON.parse(localStorage.getItem('games_streak')||'{"lastPlayedDate":null,"currentStreak":0,"bestStreak":0,"history":[]}')}
-function getHighscores(){return JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[],"rps":[]}')}
+function getHighscores(){return JSON.parse(localStorage.getItem('games_highscores')||'{"reaction":[],"scramble":[]}')}
 
 function todayStr(){return new Date().toISOString().slice(0,10)}
 
@@ -177,8 +177,6 @@ const allAchievements=[
     {id:'lightning',emoji:'🌩️',name:'Lightning',desc:'Reaction time under 200ms'},
     {id:'word_master',emoji:'📖',name:'Word Master',desc:'Guess 10 words total'},
     {id:'vocabulary',emoji:'🎓',name:'Vocabulary Pro',desc:'Guess 50 words total'},
-    {id:'rps_champ',emoji:'🏆',name:'RPS Champion',desc:'Win 5 RPS games'},
-    {id:'unbeatable',emoji:'👑',name:'Unbeatable',desc:'Win 3 RPS games in a row'},
     {id:'streak_3',emoji:'🔥',name:'On Fire',desc:'3-day play streak'},
     {id:'streak_7',emoji:'💥',name:'Dedicated',desc:'7-day play streak'},
     {id:'streak_14',emoji:'🌟',name:'Committed',desc:'14-day play streak'},
@@ -186,7 +184,6 @@ const allAchievements=[
     {id:'all_games',emoji:'🎯',name:'Well Rounded',desc:'Play all 3 original games'},
     {id:'reaction_10',emoji:'🎯',name:'Practice',desc:'Play 10 reaction rounds'},
     {id:'reaction_50',emoji:'🏅',name:'Focused',desc:'Play 50 reaction rounds'},
-    {id:'rps_10',emoji:'✊',name:'Fighter',desc:'Play 10 RPS matches'},
     {id:'math_racer',emoji:'🏎️',name:'Math Racer',desc:'Solve 10+ in Math Race'},
     {id:'math_legend',emoji:'🧮',name:'Math Legend',desc:'Solve 20+ in Math Race'},
     {id:'pattern_pro',emoji:'🔴',name:'Pattern Pro',desc:'Get a 10 streak in Pattern Match'},
@@ -215,8 +212,7 @@ function render(){
     </div>`;
 
     // --- STATS ---
-    const totalGames=(stats.reaction.gamesPlayed||0)+(stats.scramble.gamesPlayed||0)+(stats.rps.gamesPlayed||0);
-    const rpsWinRate=stats.rps.gamesPlayed>0?Math.round((stats.rps.wins/stats.rps.gamesPlayed)*100):0;
+    const totalGames=(stats.reaction.gamesPlayed||0)+(stats.scramble.gamesPlayed||0);
     const mathRaceBest=JSON.parse(localStorage.getItem('mathrace_best')||'{}');
     const mathRaceTopScore=Math.max(mathRaceBest.easy||0,mathRaceBest.medium||0,mathRaceBest.hard||0);
     const puzzleStats=JSON.parse(localStorage.getItem('puzzle_stats')||'{"gamesWon":0,"bestMoves":null,"bestTime":null}');
@@ -238,14 +234,6 @@ function render(){
             <div class="stat-box">
                 <span class="stat-value green">${stats.scramble.wordsGuessed}</span>
                 <span class="stat-label">Words Guessed</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-value purple">${rpsWinRate}%</span>
-                <span class="stat-label">RPS Win Rate</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-value">${stats.rps.bestWinStreak}</span>
-                <span class="stat-label">Best Win Streak</span>
             </div>
             <div class="stat-box">
                 <span class="stat-value gold">${mathRaceTopScore||'—'}</span>
@@ -296,20 +284,7 @@ function render(){
         html+=`</ul>`;
     }
 
-    if(highscores.rps.length>0){
-        html+=`<h3 style="color:rgba(255,255,255,.5);font-size:12px;margin:12px 0 8px;text-transform:uppercase;letter-spacing:1px">✊ Rock Paper Scissors (Wins)</h3>
-        <ul class="highscore-list">`;
-        highscores.rps.slice(0,5).forEach((entry,i)=>{
-            html+=`<li class="highscore-item">
-                <span class="highscore-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
-                <span class="highscore-value">${entry.value}</span>
-                <span class="highscore-date">${entry.date}</span>
-            </li>`;
-        });
-        html+=`</ul>`;
-    }
-
-    if(highscores.reaction.length===0&&highscores.scramble.length===0&&highscores.rps.length===0){
+    if(highscores.reaction.length===0&&highscores.scramble.length===0){
         html+=`<div class="empty-state">Play some games to set high scores!</div>`;
     }
 
