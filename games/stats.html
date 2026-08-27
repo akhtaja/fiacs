@@ -138,17 +138,6 @@ h1{
 }
 .back-btn:hover{transform:scale(1.05);background:rgba(255,255,255,.15)}
 
-/* Sidebar */
-.menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.2);transition:transform .2s,background .2s;backdrop-filter:blur(10px)}
-.menu-toggle:hover{transform:scale(1.1);background:rgba(255,255,255,.15)}
-.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:rgba(15,12,41,.97);backdrop-filter:blur(20px);z-index:99;padding:70px 20px 20px;box-shadow:4px 0 30px rgba(0,0,0,.4);transition:left .3s ease;border-radius:0 20px 20px 0;border-right:1px solid rgba(255,255,255,.1)}
-.sidebar.open{left:0}
-.sidebar a{display:block;padding:14px 16px;margin:6px 0;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600;color:rgba(255,255,255,.7);transition:background .2s,color .2s}
-.sidebar a:hover{background:rgba(255,255,255,.08);color:#fff}
-.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:98;display:none}
-.overlay.open{display:block}
-
 .empty-state{color:rgba(255,255,255,.4);font-size:13px;text-align:center;padding:20px}
 
 /* Particles */
@@ -277,20 +266,12 @@ h1{
 
 <a href="/games/" class="back-btn">← Games</a>
 
-<button class="menu-toggle" onclick="toggleMenu()">☰</button>
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-<div class="sidebar" id="sidebar">
-    <a href="/games/">🎮 Games</a>
-    <a href="/games/stats.html" class="active">🏆 Stats</a>
-</div>
-
 <h1>🏆 Stats & Achievements</h1>
 <p class="subtitle">Your gaming journey so far!</p>
 
 <div class="container" id="content"></div>
 
 <script>
-function toggleMenu(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
 
 // Particles
 for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.animationDelay=Math.random()*10+'s';p.style.width=(2+Math.random()*2)+'px';p.style.height=p.style.width;document.body.appendChild(p)}
@@ -688,6 +669,9 @@ function drawRoadmapPath(){
 
     if(points.length<2) return;
 
+    // Reverse points so path goes bottom-to-top: Level 1 (bottom) → Level 10 (top)
+    points.reverse();
+
     // Build smooth cubic bezier path through all points
     let pathD=`M ${points[0].x} ${points[0].y}`;
     for(let i=1;i<points.length;i++){
@@ -707,8 +691,8 @@ function drawRoadmapPath(){
     const xp=getXP();
     const lvlInfo=calcLevel(xp);
     const currentLvl=lvlInfo.level;
-    // Path drawn top-down: Level 10 (start) → Level 1 (end)
-    // Gold fill should appear from Level 1 (end) up to current level
+    // Path now goes bottom-to-top: Level 1 (start) → Level 10 (end)
+    // Gold fill should show from Level 1 up to current level
     const filledFromBottom=(currentLvl-1+lvlInfo.progress)/9;
 
     // Measure path length using the actual SVG path element for accuracy
@@ -721,16 +705,17 @@ function drawRoadmapPath(){
     const pathLen=tempPath.getTotalLength();
     document.body.removeChild(tempSvg);
 
-    // stroke-dasharray = "pathLen" means: pathLen visible, then pathLen gap
-    // stroke-dashoffset > 0 shifts pattern forward, hiding from the START
-    // We want to hide the top portion (unfilled) and show the bottom portion (filled)
-    const hideFromTop=pathLen*(1-filledFromBottom);
+    // dasharray=pathLen makes one full visible dash then gap
+    // dashoffset hides from the START, so we use it to hide the unfilled end
+    // At Level 1: offset = pathLen (nothing visible)
+    // At Level 10: offset = 0 (all visible)
+    const unfilled=pathLen*(1-filledFromBottom);
 
     svg.innerHTML=`<defs><linearGradient id="goldGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffaa00"/></linearGradient></defs>
         <path d="${pathD}" class="roadmap-trail"/>
         <path d="${pathD}" class="roadmap-trail-fill"
             stroke-dasharray="${pathLen}"
-            stroke-dashoffset="${hideFromTop}"/>`;
+            stroke-dashoffset="${unfilled}"/>`;
 }
 
 function toggleCard(id){
