@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📅 Kids Weekly Schedule</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+    background-attachment:fixed;
+    margin:0;padding:15px;min-height:100vh;overflow-x:hidden;
+}
+
+/* Floating background */
+.floaters{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.floater{position:absolute;opacity:.2;animation:floatAcross linear infinite}
+@keyframes floatAcross{from{transform:translateX(-60px) rotate(0deg)}to{transform:translateX(calc(100vw + 60px)) rotate(360deg)}}
+
+/* Sidebar */
+.menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.9);border:none;border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.15);transition:transform .2s}
+.menu-toggle:hover{transform:scale(1.1)}
+.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);z-index:99;padding:70px 20px 20px;box-shadow:4px 0 30px rgba(0,0,0,.15);transition:left .3s ease;border-radius:0 20px 20px 0}
+.sidebar.open{left:0}
+.sidebar a{display:block;padding:14px 16px;margin:6px 0;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600;color:#4a1a7a;transition:background .2s}
+.sidebar a:hover{background:#f0e6ff}
+.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.3);z-index:98;display:none}
+.overlay.open{display:block}
+
+/* Header */
+h1{text-align:center;color:#fff;font-size:1.8rem;margin:55px 0 6px;text-shadow:0 2px 10px rgba(0,0,0,.2);position:relative;z-index:1}
+.subtitle{text-align:center;color:rgba(255,255,255,.8);font-size:.85rem;margin-bottom:18px;position:relative;z-index:1}
+
+/* Container */
+.container{max-width:900px;margin:0 auto;position:relative;z-index:1}
+
+/* Profile bar */
+.profile-bar{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    background:rgba(255,255,255,.95);backdrop-filter:blur(20px);
+    border-radius:16px;padding:10px 14px;margin-bottom:14px;
+    box-shadow:0 4px 20px rgba(0,0,0,.1);
+}
+.profile-chip{
+    display:flex;align-items:center;gap:6px;padding:6px 12px;
+    border-radius:20px;font-size:13px;font-weight:600;
+    cursor:pointer;transition:all .2s;border:2px solid transparent;
+    color:#4a1a7a;background:rgba(118,75,162,.06);
+}
+.profile-chip:hover{background:rgba(118,75,162,.12)}
+.profile-chip.active{border-color:currentColor;background:rgba(118,75,162,.15)}
+.profile-chip .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.profile-chip-all{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-weight:700}
+.profile-chip-all.active{border-color:#fff;box-shadow:0 2px 8px rgba(102,126,234,.4)}
+.profile-add{
+    width:32px;height:32px;border-radius:50%;border:2px dashed rgba(118,75,162,.3);
+    background:none;color:#764ba2;font-size:18px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.profile-add:hover{background:rgba(118,75,162,.1);border-color:#764ba2}
+
+/* Settings button */
+.settings-btn{
+    margin-left:auto;width:32px;height:32px;border-radius:50%;border:none;
+    background:rgba(118,75,162,.08);color:#764ba2;font-size:16px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.settings-btn:hover{background:rgba(118,75,162,.15)}
+
+/* Share button */
+.share-btn-top{
+    width:32px;height:32px;border-radius:50%;border:none;
+    background:rgba(118,75,162,.08);color:#764ba2;font-size:16px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.share-btn-top:hover{background:rgba(118,75,162,.15)}
+
+/* Calendar */
+.calendar-wrap{
+    background:rgba(255,255,255,.95);backdrop-filter:blur(20px);
+    border-radius:20px;padding:0;overflow:hidden;
+    box-shadow:0 8px 30px rgba(0,0,0,.12);
+}
+.calendar-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.calendar{
+    display:grid;
+    grid-template-columns:50px repeat(7,1fr);
+    min-width:650px;
+}
+.cal-header{
+    padding:10px 4px;text-align:center;font-size:11px;font-weight:700;
+    color:#764ba2;text-transform:uppercase;letter-spacing:1px;
+    background:rgba(118,75,162,.04);border-bottom:1px solid rgba(118,75,162,.08);
+}
+.cal-header.today{background:rgba(102,126,234,.1);color:#667eea}
+.cal-header-time{
+    padding:10px 4px;text-align:center;font-size:11px;font-weight:700;
+    color:#764ba2;background:rgba(118,75,162,.04);border-bottom:1px solid rgba(118,75,162,.08);
+}
+.cal-time{
+    padding:2px 6px;font-size:10px;color:#999;text-align:right;
+    border-right:1px solid rgba(118,75,162,.06);
+    border-bottom:1px solid rgba(118,75,162,.04);
+    min-height:48px;display:flex;align-items:flex-start;justify-content:flex-end;
+}
+.cal-cell{
+    position:relative;min-height:48px;
+    border-right:1px solid rgba(118,75,162,.04);
+    border-bottom:1px solid rgba(118,75,162,.04);
+    cursor:pointer;transition:background .15s;
+}
+.cal-cell:hover{background:rgba(102,126,234,.04)}
+.cal-cell.today{background:rgba(102,126,234,.03)}
+
+/* Activity blocks */
+.activity-block{
+    position:absolute;left:2px;right:2px;
+    border-radius:6px;padding:3px 6px;
+    font-size:10px;font-weight:600;color:#fff;
+    overflow:hidden;cursor:pointer;
+    transition:transform .15s,box-shadow .15s;
+    z-index:2;line-height:1.2;
+}
+.activity-block:hover{transform:scale(1.03);box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:3}
+.activity-block .act-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.activity-block .act-time{font-size:9px;opacity:.8}
+.activity-block .act-icons{position:absolute;top:2px;right:3px;font-size:8px}
+.activity-block .act-kid{font-size:9px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* FAB */
+.fab{
+    position:fixed;bottom:25px;right:25px;z-index:50;
+    width:56px;height:56px;border-radius:50%;border:none;
+    background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
+    font-size:28px;cursor:pointer;
+    box-shadow:0 6px 20px rgba(102,126,234,.4);
+    transition:transform .2s,box-shadow .2s;
+    display:flex;align-items:center;justify-content:center;
+}
+.fab:hover{transform:scale(1.1);box-shadow:0 8px 28px rgba(102,126,234,.5)}
+
+/* Modal */
+.modal-overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.4);z-index:200;
+    display:flex;align-items:center;justify-content:center;
+    padding:15px;animation:fadeIn .2s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+    background:#fff;border-radius:20px;padding:24px;
+    max-width:420px;width:100%;max-height:90vh;overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.2);animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-size:18px;font-weight:800;color:#4a1a7a;margin-bottom:16px;text-align:center}
+.modal-label{font-size:12px;font-weight:700;color:#764ba2;text-transform:uppercase;letter-spacing:1px;margin:12px 0 6px}
+.modal-input{
+    width:100%;padding:10px 14px;border:2px solid #e0d4f5;border-radius:12px;
+    font-size:14px;color:#4a1a7a;outline:none;font-family:inherit;transition:border-color .2s;
+}
+.modal-input:focus{border-color:#667eea}
+.modal-input::placeholder{color:#bbb}
+
+/* Day picker */
+.day-picker{display:flex;gap:4px;flex-wrap:wrap}
+.day-btn{
+    flex:1;min-width:38px;padding:8px 4px;border-radius:10px;border:2px solid #e0d4f5;
+    background:#fff;color:#4a1a7a;font-size:12px;font-weight:700;cursor:pointer;
+    text-align:center;transition:all .2s;
+}
+.day-btn:hover{border-color:#667eea;background:#f5f0ff}
+.day-btn.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-color:transparent}
+
+/* Toggle pills */
+.pill-group{display:flex;gap:6px;flex-wrap:wrap}
+.pill{
+    padding:8px 14px;border-radius:20px;border:2px solid #e0d4f5;
+    background:#fff;color:#4a1a7a;font-size:12px;font-weight:600;cursor:pointer;
+    transition:all .2s;
+}
+.pill:hover{border-color:#667eea}
+.pill.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-color:transparent}
+
+/* Color picker */
+.color-picker{display:flex;gap:8px;flex-wrap:wrap}
+.color-dot{
+    width:28px;height:28px;border-radius:50%;cursor:pointer;
+    border:3px solid transparent;transition:all .2s;
+}
+.color-dot:hover{transform:scale(1.15)}
+.color-dot.active{border-color:#4a1a7a;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+
+/* Buttons */
+.btn{
+    padding:10px 20px;border-radius:12px;border:none;font-size:14px;
+    font-weight:700;cursor:pointer;transition:all .2s;
+}
+.btn:hover{transform:scale(1.03)}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;box-shadow:0 4px 12px rgba(102,126,234,.3)}
+.btn-danger{background:#ff5252;color:#fff}
+.btn-ghost{background:rgba(118,75,162,.06);color:#764ba2;border:1px solid rgba(118,75,162,.15)}
+.btn-row{display:flex;gap:8px;margin-top:18px;justify-content:center;flex-wrap:wrap}
+
+/* Share modal */
+.share-modal-qr{margin:12px auto;background:#f5f0ff;border-radius:12px;padding:12px;display:inline-block}
+.share-modal-qr canvas{display:block}
+.share-url-row{display:flex;gap:8px;margin:12px 0}
+.share-url-row input{
+    flex:1;padding:8px 12px;border:2px solid #e0d4f5;border-radius:10px;
+    font-size:12px;color:#4a1a7a;outline:none;font-family:inherit;
+}
+.share-url-row .btn{padding:8px 14px;font-size:12px}
+
+/* Import prompt */
+.import-card{
+    background:rgba(255,255,255,.95);backdrop-filter:blur(20px);
+    border-radius:20px;padding:24px;max-width:420px;width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center;
+}
+.import-title{font-size:18px;font-weight:800;color:#4a1a7a;margin-bottom:8px}
+.import-desc{font-size:13px;color:#666;margin-bottom:18px}
+
+/* Empty state */
+.empty-state{text-align:center;padding:40px 20px;color:#999}
+.empty-state-icon{font-size:48px;margin-bottom:10px}
+.empty-state-text{font-size:14px;font-weight:600;color:#764ba2}
+.empty-state-hint{font-size:12px;color:#999;margin-top:4px}
+
+/* Responsive */
+@media(max-width:600px){
+    h1{font-size:1.5rem;margin-top:50px}
+    .calendar{min-width:500px}
+    .cal-time{font-size:9px;padding:2px 3px}
+    .cal-header{font-size:9px;padding:8px 2px}
+    .activity-block{font-size:9px;padding:2px 4px}
+    .profile-bar{padding:8px 10px;gap:6px}
+    .profile-chip{padding:5px 10px;font-size:12px}
+    .fab{width:48px;height:48px;font-size:24px;bottom:20px;right:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="floaters">
+    <div class="floater" style="top:8%;animation-duration:22s;font-size:30px">📅</div>
+    <div class="floater" style="top:30%;animation-duration:28s;animation-delay:4s;font-size:24px">⭐</div>
+    <div class="floater" style="top:55%;animation-duration:25s;animation-delay:8s;font-size:28px">📚</div>
+    <div class="floater" style="top:75%;animation-duration:30s;animation-delay:2s;font-size:22px">⚽</div>
+</div>
+
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <a href="/kids/">🏝️ Adventure Quest</a>
+    <a href="/kids/counting.html">🔢 Counting</a>
+    <a href="/kids/learning.html">📚 Learning</a>
+    <a href="/kids/kindness.html">🫂 Be Kind</a>
+    <a href="/kids/schedule/" class="active">📅 Schedule</a>
+    <a href="/sos/">🚨 SOS Police</a>
+</div>
+
+<h1>📅 Weekly Schedule</h1>
+<p class="subtitle">Plan activities for your kids</p>
+
+<div class="container">
+    <div class="profile-bar" id="profile-bar"></div>
+    <div class="calendar-wrap">
+        <div class="calendar-scroll">
+            <div class="calendar" id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+<button class="fab" id="fab" onclick="openAddModal()">+</button>
+
+<div id="modal-root"></div>
+
+<script>
+// ===== DATA =====
+var STORAGE_KEY='kids_schedule';
+var DAY_NAMES=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var COLORS=['#667eea','#43e97b','#f093fb','#ff7eb3','#ffd700','#ff5252','#38f9d7','#ff9a9e'];
+var firedAlarms={}; // track fired alarms this session
+
+function getData(){
+    try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||defaultData();}
+    catch(e){return defaultData();}
+}
+function saveData(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
+function defaultData(){return {kids:[],settings:{startHour:8,endHour:20},activities:[]};}
+function genId(){return 'id_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
+
+var data=getData();
+var selectedKid='all'; // 'all' or kid id
+
+// ===== SIDEBAR =====
+function toggleMenu(){
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+}
+
+// ===== PROFILES =====
+function renderProfiles(){
+    var bar=document.getElementById('profile-bar');
+    var html='';
+    // All button
+    html+='<div class="profile-chip profile-chip-all'+(selectedKid==='all'?' active':'')+'" onclick="selectKid(\'all\')">👨‍👩‍👧‍👦 All</div>';
+    // Kid chips
+    data.kids.forEach(function(k){
+        html+='<div class="profile-chip'+(selectedKid===k.id?' active':'')+'" onclick="selectKid(\''+k.id+'\')" style="border-color:'+(selectedKid===k.id?k.color:'transparent')+'">';
+        html+='<span class="dot" style="background:'+k.color+'"></span>'+k.name;
+        html+='</div>';
+    });
+    // Add button
+    html+='<button class="profile-add" onclick="openKidModal()" title="Add kid">+</button>';
+    // Settings
+    html+='<button class="settings-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>';
+    // Share
+    html+='<button class="share-btn-top" onclick="openShareModal()" title="Share schedule">📤</button>';
+    bar.innerHTML=html;
+}
+
+function selectKid(id){
+    selectedKid=id;
+    renderProfiles();
+    renderCalendar();
+}
+
+// ===== CALENDAR =====
+function renderCalendar(){
+    var cal=document.getElementById('calendar');
+    var start=data.settings.startHour;
+    var end=data.settings.endHour;
+    var today=new Date().getDay(); // 0=Sun
+    var todayIdx=(today===0)?6:today-1; // convert to Mon=0
+
+    var html='';
+    // Header row
+    html+='<div class="cal-header-time">⏰</div>';
+    DAY_NAMES.forEach(function(d,i){
+        html+='<div class="cal-header'+(i===todayIdx?' today':'')+'">'+d+'</div>';
+    });
+
+    // Time rows
+    for(var h=start;h<end;h++){
+        var label=(h<10?'0':'')+h+':00';
+        html+='<div class="cal-time">'+label+'</div>';
+        for(var d=0;d<7;d++){
+            html+='<div class="cal-cell'+(d===todayIdx?' today':'')+'" data-day="'+d+'" data-hour="'+h+'" onclick="cellClick('+d+','+h+')"></div>';
+        }
+    }
+    cal.innerHTML=html;
+
+    // Render activities
+    renderActivities();
+}
+
+function renderActivities(){
+    // Remove existing activity blocks
+    document.querySelectorAll('.activity-block').forEach(function(el){el.remove();});
+
+    var start=data.settings.startHour;
+    var end=data.settings.endHour;
+    var cellHeight=48; // matches min-height
+
+    data.activities.forEach(function(act){
+        // Filter by selected kid
+        if(selectedKid!=='all' && act.kidId!==selectedKid) return;
+
+        var kid=data.kids.find(function(k){return k.id===act.kidId;});
+        if(!kid) return;
+
+        var parts=act.startTime.split(':');
+        var actH=parseInt(parts[0]);
+        var actM=parseInt(parts[1]);
+        if(actH<start||actH>=end) return;
+
+        // Find the cell
+        var cells=document.querySelectorAll('.cal-cell[data-day="'+act.day+'"][data-hour="'+actH+'"]');
+        if(cells.length===0) return;
+        var cell=cells[0];
+
+        var topOffset=(actM/60)*cellHeight;
+        var height=(act.duration/60)*cellHeight;
+
+        var icons='';
+        if(act.recurring) icons+='🔄';
+        if(act.alarm && act.alarm>0) icons+='🔔';
+
+        var block=document.createElement('div');
+        block.className='activity-block';
+        block.style.cssText='top:'+topOffset+'px;height:'+Math.max(height,20)+'px;background:'+kid.color+';';
+        block.innerHTML='<div class="act-name">'+act.name+'</div>'
+            +(height>=30?'<div class="act-time">'+act.startTime+' · '+act.duration+'min</div>':'')
+            +(selectedKid==='all' && height>=38?'<div class="act-kid">'+kid.name+'</div>':'')
+            +(icons?'<div class="act-icons">'+icons+'</div>':'');
+        block.onclick=function(e){e.stopPropagation();openEditModal(act.id);};
+        cell.appendChild(block);
+    });
+}
+
+function cellClick(day,hour){
+    openAddModal(day,hour);
+}
+
+// ===== ADD/EDIT MODAL =====
+function openAddModal(preDay,preHour){
+    var kids=data.kids;
+    if(kids.length===0){openKidModal();return;}
+
+    var dayVal=preDay!==undefined?preDay:0;
+    var hourVal=preHour!==undefined?preHour:data.settings.startHour;
+
+    showModal(buildActivityForm(null,{
+        name:'',day:dayVal,startTime:(hourVal<10?'0':'')+hourVal+':00',
+        duration:60,recurring:false,kidId:kids[0].id,alarm:0
+    }));
+}
+
+function openEditModal(actId){
+    var act=data.activities.find(function(a){return a.id===actId;});
+    if(!act) return;
+    showModal(buildActivityForm(actId,act));
+}
+
+function buildActivityForm(editId,vals){
+    var isEdit=!!editId;
+    var html='<div class="modal">';
+    html+='<div class="modal-title">'+(isEdit?'✏️ Edit Activity':'➕ New Activity')+'</div>';
+
+    // Name
+    html+='<div class="modal-label">Activity Name</div>';
+    html+='<input class="modal-input" id="act-name" placeholder="e.g. Tennis Class" value="'+escHtml(vals.name)+'">';
+
+    // Kid
+    html+='<div class="modal-label">For</div>';
+    html+='<div class="pill-group" id="act-kid-pills">';
+    data.kids.forEach(function(k){
+        html+='<div class="pill'+(vals.kidId===k.id?' active':'')+'" data-kid="'+k.id+'" onclick="pickPill(\'act-kid-pills\',this)" style="'+(vals.kidId===k.id?'background:'+k.color+';border-color:'+k.color:'')+'">'+k.name+'</div>';
+    });
+    html+='</div>';
+
+    // Day
+    html+='<div class="modal-label">Day</div>';
+    html+='<div class="day-picker" id="act-day-picker">';
+    DAY_NAMES.forEach(function(d,i){
+        html+='<div class="day-btn'+(vals.day===i?' active':'')+'" data-day="'+i+'" onclick="pickDay(this)">'+d+'</div>';
+    });
+    html+='</div>';
+
+    // Time
+    html+='<div class="modal-label">Start Time</div>';
+    html+='<input class="modal-input" id="act-time" type="time" value="'+vals.startTime+'">';
+
+    // Duration
+    html+='<div class="modal-label">Duration</div>';
+    html+='<div class="pill-group" id="act-dur-pills">';
+    [30,60,90,120].forEach(function(m){
+        var label=m<60?m+'min':(m/60)+(m%60?'.5':'')+'hr';
+        html+='<div class="pill'+(vals.duration===m?' active':'')+'" data-val="'+m+'" onclick="pickPill(\'act-dur-pills\',this)">'+label+'</div>';
+    });
+    html+='</div>';
+
+    // Recurring
+    html+='<div class="modal-label">Repeat</div>';
+    html+='<div class="pill-group" id="act-recur-pills">';
+    html+='<div class="pill'+(!vals.recurring?' active':'')+'" data-val="false" onclick="pickPill(\'act-recur-pills\',this)">One-time</div>';
+    html+='<div class="pill'+(vals.recurring?' active':'')+'" data-val="true" onclick="pickPill(\'act-recur-pills\',this)">🔄 Every week</div>';
+    html+='</div>';
+
+    // Alarm
+    html+='<div class="modal-label">🔔 Alarm</div>';
+    html+='<div class="pill-group" id="act-alarm-pills">';
+    [{v:0,l:'None'},{v:5,l:'5 min'},{v:15,l:'15 min'},{v:30,l:'30 min'},{v:60,l:'1 hour'}].forEach(function(a){
+        html+='<div class="pill'+(vals.alarm===a.v?' active':'')+'" data-val="'+a.v+'" onclick="pickPill(\'act-alarm-pills\',this)">'+a.l+'</div>';
+    });
+    html+='</div>';
+
+    // Buttons
+    html+='<div class="btn-row">';
+    if(isEdit){
+        html+='<button class="btn btn-danger" onclick="deleteActivity(\''+editId+'\')">🗑️ Delete</button>';
+    }
+    html+='<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>';
+    html+='<button class="btn btn-primary" onclick="saveActivity(\''+( editId||'')+'\')">💾 Save</button>';
+    html+='</div>';
+    html+='</div>';
+    return html;
+}
+
+function saveActivity(editId){
+    var name=document.getElementById('act-name').value.trim();
+    if(!name){document.getElementById('act-name').style.borderColor='#ff5252';return;}
+
+    var kidEl=document.querySelector('#act-kid-pills .pill.active');
+    var dayEl=document.querySelector('#act-day-picker .day-btn.active');
+    var durEl=document.querySelector('#act-dur-pills .pill.active');
+    var recurEl=document.querySelector('#act-recur-pills .pill.active');
+    var alarmEl=document.querySelector('#act-alarm-pills .pill.active');
+    var time=document.getElementById('act-time').value;
+
+    if(!kidEl||!dayEl||!time){return;}
+
+    // Request notification permission if alarm is set
+    var alarmVal=parseInt(alarmEl?alarmEl.dataset.val:0);
+    if(alarmVal>0 && 'Notification' in window && Notification.permission==='default'){
+        Notification.requestPermission();
+    }
+
+    var act={
+        id:editId||genId(),
+        kidId:kidEl.dataset.kid,
+        name:name,
+        day:parseInt(dayEl.dataset.day),
+        startTime:time,
+        duration:parseInt(durEl?durEl.dataset.val:60),
+        recurring:recurEl?recurEl.dataset.val==='true':false,
+        alarm:alarmVal
+    };
+
+    if(editId){
+        var idx=data.activities.findIndex(function(a){return a.id===editId;});
+        if(idx>=0) data.activities[idx]=act;
+    } else {
+        data.activities.push(act);
+    }
+    saveData(data);
+    closeModal();
+    renderCalendar();
+}
+
+function deleteActivity(id){
+    var act=data.activities.find(function(a){return a.id===id;});
+    if(!act) return;
+
+    if(act.recurring){
+        showModal('<div class="modal"><div class="modal-title">🗑️ Delete Activity</div>'
+            +'<p style="text-align:center;color:#666;margin:12px 0">This is a recurring activity. Delete just this one or all occurrences?</p>'
+            +'<div class="btn-row">'
+            +'<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>'
+            +'<button class="btn btn-danger" onclick="confirmDelete(\''+id+'\')">Delete All</button>'
+            +'</div></div>');
+    } else {
+        confirmDelete(id);
+    }
+}
+
+function confirmDelete(id){
+    data.activities=data.activities.filter(function(a){return a.id!==id;});
+    saveData(data);
+    closeModal();
+    renderCalendar();
+}
+
+// ===== KID MODAL =====
+function openKidModal(editId){
+    var kid=editId?data.kids.find(function(k){return k.id===editId;}):null;
+    var name=kid?kid.name:'';
+    var color=kid?kid.color:COLORS[data.kids.length%COLORS.length];
+
+    var html='<div class="modal">';
+    html+='<div class="modal-title">'+(kid?'✏️ Edit Kid':'👦 Add Kid')+'</div>';
+    html+='<div class="modal-label">Name</div>';
+    html+='<input class="modal-input" id="kid-name" placeholder="e.g. Hamzah" value="'+escHtml(name)+'">';
+    html+='<div class="modal-label">Color</div>';
+    html+='<div class="color-picker" id="kid-color-picker">';
+    COLORS.forEach(function(c){
+        html+='<div class="color-dot'+(c===color?' active':'')+'" style="background:'+c+'" data-color="'+c+'" onclick="pickColor(this)"></div>';
+    });
+    html+='</div>';
+    html+='<div class="btn-row">';
+    if(kid){
+        html+='<button class="btn btn-danger" onclick="deleteKid(\''+editId+'\')">🗑️ Delete</button>';
+    }
+    html+='<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>';
+    html+='<button class="btn btn-primary" onclick="saveKid(\''+(editId||'')+'\')">💾 Save</button>';
+    html+='</div></div>';
+    showModal(html);
+}
+
+function saveKid(editId){
+    var name=document.getElementById('kid-name').value.trim();
+    if(!name){document.getElementById('kid-name').style.borderColor='#ff5252';return;}
+    var colorEl=document.querySelector('#kid-color-picker .color-dot.active');
+    var color=colorEl?colorEl.dataset.color:COLORS[0];
+
+    if(editId){
+        var kid=data.kids.find(function(k){return k.id===editId;});
+        if(kid){kid.name=name;kid.color=color;}
+    } else {
+        data.kids.push({id:genId(),name:name,color:color});
+    }
+    saveData(data);
+    closeModal();
+    renderProfiles();
+    renderCalendar();
+}
+
+function deleteKid(id){
+    data.kids=data.kids.filter(function(k){return k.id!==id;});
+    data.activities=data.activities.filter(function(a){return a.kidId!==id;});
+    if(selectedKid===id) selectedKid='all';
+    saveData(data);
+    closeModal();
+    renderProfiles();
+    renderCalendar();
+}
+
+// ===== SETTINGS MODAL =====
+function openSettingsModal(){
+    var html='<div class="modal">';
+    html+='<div class="modal-title">⚙️ Settings</div>';
+    html+='<div class="modal-label">Day Start Hour</div>';
+    html+='<input class="modal-input" id="set-start" type="number" min="0" max="23" value="'+data.settings.startHour+'">';
+    html+='<div class="modal-label">Day End Hour</div>';
+    html+='<input class="modal-input" id="set-end" type="number" min="1" max="24" value="'+data.settings.endHour+'">';
+    html+='<div class="btn-row">';
+    html+='<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>';
+    html+='<button class="btn btn-primary" onclick="saveSettings()">💾 Save</button>';
+    html+='</div></div>';
+    showModal(html);
+}
+
+function saveSettings(){
+    var s=parseInt(document.getElementById('set-start').value);
+    var e=parseInt(document.getElementById('set-end').value);
+    if(isNaN(s)||isNaN(e)||s>=e||s<0||e>24) return;
+    data.settings.startHour=s;
+    data.settings.endHour=e;
+    saveData(data);
+    closeModal();
+    renderCalendar();
+}
+
+// ===== SHARE =====
+function encodeSchedule(){
+    return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+function decodeSchedule(hash){
+    try{return JSON.parse(decodeURIComponent(escape(atob(hash))));}catch(e){return null;}
+}
+
+function openShareModal(){
+    var encoded=encodeSchedule();
+    var url=location.origin+'/kids/schedule/#s='+encoded;
+    var html='<div class="modal">';
+    html+='<div class="modal-title">📤 Share Schedule</div>';
+    html+='<p style="text-align:center;color:#666;font-size:13px;margin-bottom:12px">Share this link with the other parent. They can import the schedule.</p>';
+    html+='<div class="share-modal-qr"><canvas id="share-qr-canvas"></canvas></div>';
+    html+='<div class="share-url-row">';
+    html+='<input type="text" value="'+url+'" readonly id="share-url" onclick="this.select()">';
+    html+='<button class="btn btn-primary" id="share-copy-btn" onclick="copyShareUrl()">📋 Copy</button>';
+    html+='</div>';
+    if(navigator.share){
+        html+='<div class="btn-row" style="margin-top:10px"><button class="btn btn-primary" style="width:100%" onclick="nativeShare()">📱 Share</button></div>';
+    }
+    html+='<div class="btn-row"><button class="btn btn-ghost" style="width:100%" onclick="closeModal()">Close</button></div>';
+    html+='</div>';
+    showModal(html);
+
+    // QR
+    setTimeout(function(){
+        var canvas=document.getElementById('share-qr-canvas');
+        if(canvas){
+            var ctx=canvas.getContext('2d');
+            canvas.width=canvas.height=180;
+            ctx.fillStyle='#fff';ctx.fillRect(0,0,180,180);
+            var img=new Image();img.crossOrigin='anonymous';
+            img.onload=function(){ctx.drawImage(img,0,0,180,180);};
+            img.onerror=function(){ctx.fillStyle='#4a1a7a';ctx.fillRect(10,10,160,160);ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText('Copy the link below',90,85);ctx.fillText('to share ↓',90,105);};
+            img.src='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+encodeURIComponent(url);
+        }
+    },100);
+}
+
+function copyShareUrl(){
+    var url=document.getElementById('share-url').value;
+    navigator.clipboard.writeText('📅 Here\'s our kids\' weekly schedule!\n\n'+url).then(function(){
+        var btn=document.getElementById('share-copy-btn');
+        btn.textContent='✅ Copied!';
+        setTimeout(function(){btn.textContent='📋 Copy';},2000);
+    });
+}
+
+function nativeShare(){
+    var url=document.getElementById('share-url').value;
+    navigator.share({
+        title:'📅 Kids Weekly Schedule',
+        text:'📅 Here\'s our kids\' weekly schedule!',
+        url:url
+    }).catch(function(){});
+}
+
+function checkImport(){
+    var hash=location.hash.slice(1);
+    if(!hash||!hash.startsWith('s=')) return;
+    var incoming=decodeSchedule(hash.slice(2));
+    if(!incoming) return;
+
+    // Clear hash
+    history.replaceState(null,null,location.pathname);
+
+    // Show import prompt
+    showModal('<div class="modal">'
+        +'<div class="modal-title">📥 Schedule Received!</div>'
+        +'<p style="text-align:center;color:#666;font-size:13px;margin:12px 0">Someone shared a schedule with you. What would you like to do?</p>'
+        +'<div style="text-align:center;color:#764ba2;font-size:12px;margin-bottom:12px">'
+        +incoming.kids.map(function(k){return k.name;}).join(', ')+' · '+incoming.activities.length+' activities'
+        +'</div>'
+        +'<div class="btn-row">'
+        +'<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>'
+        +'<button class="btn btn-danger" onclick="importReplace()">Replace Mine</button>'
+        +'<button class="btn btn-primary" onclick="importMerge()">Merge</button>'
+        +'</div></div>');
+
+    // Store incoming temporarily
+    window._incomingSchedule=incoming;
+}
+
+function importReplace(){
+    data=window._incomingSchedule;
+    saveData(data);
+    closeModal();
+    renderProfiles();
+    renderCalendar();
+}
+
+function importMerge(){
+    var incoming=window._incomingSchedule;
+    // Merge kids (by name)
+    incoming.kids.forEach(function(ik){
+        var existing=data.kids.find(function(k){return k.name.toLowerCase()===ik.name.toLowerCase();});
+        if(!existing){
+            data.kids.push({id:genId(),name:ik.name,color:ik.color});
+        }
+    });
+    // Merge activities (by name+day+time to avoid dupes)
+    incoming.activities.forEach(function(ia){
+        // Map kid by name
+        var inKid=incoming.kids.find(function(k){return k.id===ia.kidId;});
+        if(!inKid) return;
+        var localKid=data.kids.find(function(k){return k.name.toLowerCase()===inKid.name.toLowerCase();});
+        if(!localKid) return;
+
+        var dupe=data.activities.find(function(a){
+            return a.kidId===localKid.id && a.name===ia.name && a.day===ia.day && a.startTime===ia.startTime;
+        });
+        if(!dupe){
+            data.activities.push({
+                id:genId(),kidId:localKid.id,name:ia.name,
+                day:ia.day,startTime:ia.startTime,duration:ia.duration,
+                recurring:ia.recurring,alarm:ia.alarm
+            });
+        }
+    });
+    saveData(data);
+    closeModal();
+    renderProfiles();
+    renderCalendar();
+}
+
+// ===== ALARM SYSTEM =====
+function checkAlarms(){
+    if(!('Notification' in window) || Notification.permission!=='granted') return;
+
+    var now=new Date();
+    var todayIdx=(now.getDay()===0)?6:now.getDay()-1; // Mon=0
+    var nowMinutes=now.getHours()*60+now.getMinutes();
+
+    data.activities.forEach(function(act){
+        if(!act.alarm||act.alarm<=0) return;
+        // Check if this activity is today (or recurring on today's day)
+        if(act.day!==todayIdx) return;
+
+        var parts=act.startTime.split(':');
+        var actMinutes=parseInt(parts[0])*60+parseInt(parts[1]);
+        var alarmMinutes=actMinutes-act.alarm;
+
+        // Fire if we're at the alarm time (within 1 min window)
+        if(nowMinutes>=alarmMinutes && nowMinutes<alarmMinutes+1){
+            var alarmKey=act.id+'_'+now.toISOString().slice(0,10);
+            if(firedAlarms[alarmKey]) return;
+            firedAlarms[alarmKey]=true;
+
+            var kid=data.kids.find(function(k){return k.id===act.kidId;});
+            var kidName=kid?kid.name:'';
+            var msg=kidName+' — '+act.name+' in '+act.alarm+' minutes!';
+
+            new Notification('🔔 '+msg,{
+                body:'Starting at '+act.startTime,
+                icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📅</text></svg>'
+            });
+        }
+    });
+}
+
+// Check alarms every minute
+setInterval(checkAlarms,60000);
+checkAlarms(); // initial check
+
+// ===== MODAL HELPERS =====
+function showModal(html){
+    var root=document.getElementById('modal-root');
+    root.innerHTML='<div class="modal-overlay" onclick="modalOverlayClick(event)">'+html+'</div>';
+}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
+function modalOverlayClick(e){if(e.target.classList.contains('modal-overlay'))closeModal();}
+
+function pickPill(groupId,el){
+    document.querySelectorAll('#'+groupId+' .pill').forEach(function(p){p.classList.remove('active');p.style.background='';p.style.borderColor='';});
+    el.classList.add('active');
+    // Color kid pills
+    if(groupId==='act-kid-pills'){
+        var kid=data.kids.find(function(k){return k.id===el.dataset.kid;});
+        if(kid){el.style.background=kid.color;el.style.borderColor=kid.color;}
+    }
+}
+function pickDay(el){
+    document.querySelectorAll('.day-picker .day-btn').forEach(function(b){b.classList.remove('active');});
+    el.classList.add('active');
+}
+function pickColor(el){
+    document.querySelectorAll('.color-picker .color-dot').forEach(function(d){d.classList.remove('active');});
+    el.classList.add('active');
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ===== INIT =====
+renderProfiles();
+renderCalendar();
+checkImport();
+</script>
+</body>
+</html>
