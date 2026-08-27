@@ -318,7 +318,8 @@ h1{
     font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;
 }
 
-.xp-level-bar{margin:12px 0;padding:10px 14px;border-radius:12px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15)}
+.xp-level-bar{margin:12px 0;padding:10px 14px;border-radius:12px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15);cursor:pointer;transition:background .2s,border-color .2s;text-decoration:none;display:block}
+.xp-level-bar:hover{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.3)}
 .xp-level-info{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .xp-level-badge{font-size:13px;font-weight:800;color:#ffd700;background:rgba(255,215,0,.15);padding:3px 10px;border-radius:8px}
 .xp-level-text{font-size:11px;color:rgba(255,255,255,.5);font-weight:600}
@@ -492,6 +493,7 @@ body.light-theme .profile-name span{color:#888}
 body.light-theme .profile-stat-value{color:#4a1a7a}
 body.light-theme .profile-stat-label{color:#888}
 body.light-theme .xp-level-bar{background:rgba(212,160,0,.06);border-color:rgba(212,160,0,.15)}
+body.light-theme .xp-level-bar:hover{background:rgba(212,160,0,.12);border-color:rgba(212,160,0,.3)}
 body.light-theme .xp-level-badge{color:#d4a000;background:rgba(212,160,0,.1)}
 body.light-theme .xp-level-text{color:#888}
 body.light-theme .xp-progress-bar{background:rgba(0,0,0,.06)}
@@ -727,14 +729,14 @@ function renderStreakBar(){
                 <span>Keep playing to level up!</span>
             </div>
         </div>
-        <div class="xp-level-bar">
+        <a href="stats.html" class="xp-level-bar">
             <div class="xp-level-info">
                 <span class="xp-level-badge" id="xp-level-badge">Level ${calcLevel(getXP()).level}</span>
                 <span class="xp-level-text">${getXP()} XP</span>
             </div>
             <div class="xp-progress-bar"><div class="xp-progress-fill" style="width:${calcLevel(getXP()).progress*100}%"></div></div>
             <div class="xp-level-next">${calcLevel(getXP()).nextThresh - getXP()} XP to next level</div>
-        </div>
+        </a>
         <div class="profile-stats">
             <div class="profile-stat">
                 <span class="profile-stat-value">${totalGames}</span>
