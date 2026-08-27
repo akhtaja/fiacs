@@ -197,6 +197,95 @@ body.light-theme .particle{background:#764ba2}
 }
 .back-btn:hover{transform:scale(1.05);background:rgba(255,255,255,.15)}
 
+/* Challenge banner */
+.challenge-banner{
+    position:relative;z-index:1;max-width:480px;margin:0 auto 15px;
+    background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,170,0,.06));
+    border:1px solid rgba(255,215,0,.25);border-radius:16px;
+    padding:16px 20px;text-align:center;animation:fadeInUp .4s ease;
+}
+.challenge-banner-title{font-size:15px;font-weight:800;color:#ffd700;margin-bottom:4px}
+.challenge-banner-score{font-size:28px;font-weight:800;color:#fff;margin:6px 0}
+.challenge-banner-detail{font-size:12px;color:rgba(255,255,255,.5)}
+.challenge-banner .challenge-lb{margin-top:12px;text-align:left}
+.challenge-lb-row{display:flex;align-items:center;gap:8px;padding:8px 12px;margin:4px 0;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.challenge-lb-row.winner{background:rgba(255,215,0,.08);border-color:rgba(255,215,0,.2)}
+.challenge-lb-rank{font-size:16px;width:24px;text-align:center}
+.challenge-lb-name{flex:1;font-size:13px;font-weight:600;color:#fff}
+.challenge-lb-score{font-size:13px;font-weight:700;color:rgba(255,255,255,.7)}
+.challenge-lb-row.winner .challenge-lb-score{color:#ffd700}
+
+/* Challenge comparison */
+.challenge-compare{
+    margin-top:15px;padding:16px;border-radius:14px;
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+    animation:fadeInUp .4s ease;
+}
+.challenge-compare-title{font-size:20px;font-weight:800;margin-bottom:12px}
+.challenge-compare-title.win{color:#43e97b}
+.challenge-compare-title.lose{color:#ff5252}
+.challenge-compare-title.tie{color:#ffd700}
+.challenge-vs{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0}
+.challenge-vs-player{text-align:center;flex:1}
+.challenge-vs-name{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:2px}
+.challenge-vs-score{font-size:24px;font-weight:800;color:#fff}
+.challenge-vs-score.winner{color:#43e97b}
+.challenge-vs-score.loser{color:rgba(255,255,255,.4)}
+.challenge-vs-divider{font-size:18px;color:rgba(255,255,255,.3);font-weight:800}
+
+/* Share modal */
+.share-overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.6);z-index:1000;display:flex;align-items:center;justify-content:center;
+    animation:fadeIn .2s ease;padding:15px;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.share-modal{
+    background:linear-gradient(135deg,#1a1540,#2d2460);
+    border:1px solid rgba(255,255,255,.12);border-radius:22px;
+    padding:28px;max-width:380px;width:100%;text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);animation:fadeInUp .3s ease;
+}
+.share-modal-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:4px}
+.share-modal-subtitle{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:18px}
+.share-modal-qr{margin:16px auto;background:#fff;border-radius:12px;padding:12px;display:inline-block}
+.share-modal-qr canvas{display:block}
+.share-modal-url{
+    display:flex;gap:8px;margin:14px 0;
+}
+.share-modal-url input{
+    flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.06);color:#fff;font-size:12px;
+    outline:none;font-family:inherit;
+}
+.share-btn{
+    padding:10px 18px;border-radius:12px;font-size:13px;font-weight:700;
+    cursor:pointer;transition:all .2s;border:none;
+}
+.share-btn:hover{transform:scale(1.03)}
+.share-btn-copy{background:rgba(255,215,0,.15);color:#ffd700;border:1px solid rgba(255,215,0,.3)}
+.share-btn-copy.copied{background:rgba(67,233,123,.15);color:#43e97b;border-color:rgba(67,233,123,.3)}
+.share-btn-native{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;width:100%;margin-top:8px}
+.share-btn-close{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1);width:100%;margin-top:8px}
+.challenge-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:10px 20px;border-radius:14px;font-size:13px;font-weight:700;
+    background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,170,0,.1));
+    border:1px solid rgba(255,215,0,.3);color:#ffd700;
+    cursor:pointer;transition:all .2s;margin-top:10px;
+}
+.challenge-btn:hover{background:linear-gradient(135deg,rgba(255,215,0,.25),rgba(255,170,0,.15));transform:scale(1.03)}
+body.light-theme .challenge-banner{background:linear-gradient(135deg,rgba(212,160,0,.08),rgba(212,160,0,.04));border-color:rgba(212,160,0,.2)}
+body.light-theme .challenge-banner-title{color:#d4a000}
+body.light-theme .challenge-banner-score{color:#4a1a7a}
+body.light-theme .challenge-compare-title.win{color:#27ae60}
+body.light-theme .challenge-compare-title.lose{color:#e74c3c}
+body.light-theme .share-modal{background:linear-gradient(135deg,#f8f6ff,#f0e6ff);border-color:rgba(0,0,0,.1)}
+body.light-theme .share-modal-title{color:#4a1a7a}
+body.light-theme .share-modal-subtitle{color:#888}
+body.light-theme .share-modal-url input{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.1);color:#333}
+body.light-theme .challenge-btn{color:#d4a000;background:linear-gradient(135deg,rgba(212,160,0,.1),rgba(212,160,0,.06));border-color:rgba(212,160,0,.25)}
+
 
 
 /* Confetti */
@@ -280,6 +369,9 @@ body.light-theme .odd-cell{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.0
 <h1>⚡ Reaction Speed</h1>
 <p class="subtitle">Test your reflexes — how fast can you react?</p>
 
+<div id="challenge-banner"></div>
+
+
 <div class="player-bar">
     <span class="player-avatar" id="player-avatar"></span>
     <span class="player-name" id="player-name"></span>
@@ -352,6 +444,8 @@ body.light-theme .odd-cell{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.0
                 <div class="time-best" id="time-best"></div>
                 <div class="time-msg" id="time-msg"></div>
             </div>
+                <div id="challenge-result"></div>
+
             <div class="session-stats">
                 <div class="session-stat">
                     <div class="session-stat-val" id="s-attempts">0</div>
@@ -630,6 +724,16 @@ function showResult(time){
         playFanfare();fireConfetti();
     }
     renderLeaderboard(time);
+
+    // Challenge UI
+    var challengeEl=document.getElementById('challenge-result');
+    if(challengeData){
+        challengeEl.innerHTML=showChallengeComparison(time);
+    } else {
+        challengeEl.innerHTML=showChallengeButton(time);
+    }
+
+
     updatePlayStreak();
 }
 
@@ -789,11 +893,196 @@ function renderXPBar(){
     document.getElementById('xp-bar-fill').style.width=(info.progress*100)+'%';
 }
 
+
+// ======= CHALLENGE A FRIEND SYSTEM =======
+
+// --- Encode/Decode ---
+function encodeChallenge(data){
+    return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+function decodeChallenge(){
+    try{
+        const hash=location.hash.slice(1);
+        if(!hash||!hash.startsWith('c='))return null;
+        const json=decodeURIComponent(escape(atob(hash.slice(2))));
+        return JSON.parse(json);
+    }catch(e){return null;}
+}
+function buildChallengeURL(gameFile,data){
+    const base=location.origin+'/games/'+gameFile;
+    return base+'#c='+encodeChallenge(data);
+}
+
+// --- QR Code Generator (lightweight canvas-based) ---
+function generateQR(text,canvas,size){
+    // Use a small QR via encoding the URL into a pattern
+    // For URLs under ~150 chars, we generate a simple visual code
+    const ctx=canvas.getContext('2d');
+    canvas.width=canvas.height=size;
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,size,size);
+
+    // Hash the text into a deterministic visual pattern as placeholder
+    // Real QR: We use an img-based fallback with chart API
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=function(){ctx.drawImage(img,0,0,size,size);};
+    img.onerror=function(){
+        // Fallback: draw a branded box
+        ctx.fillStyle='#1a1540';
+        ctx.fillRect(10,10,size-20,size-20);
+        ctx.fillStyle='#ffd700';
+        ctx.font='bold 14px sans-serif';
+        ctx.textAlign='center';
+        ctx.fillText('Scan or copy link',size/2,size/2-5);
+        ctx.fillText('below ↓',size/2,size/2+15);
+    };
+    img.src='https://api.qrserver.com/v1/create-qr-code/?size='+size+'x'+size+'&data='+encodeURIComponent(text);
+}
+
+// --- Challenge State ---
+let challengeData=null;
+let isShareBack=false;
+
+function initChallenge(){
+    challengeData=decodeChallenge();
+    if(!challengeData)return;
+    isShareBack=!!(challengeData.p&&challengeData.ps!==null&&challengeData.ps!==undefined);
+
+    const banner=document.getElementById('challenge-banner');
+    let html='<div class="challenge-banner">';
+
+    if(isShareBack){
+        // Share-back: show mini leaderboard
+        const scores=[
+            {name:challengeData.p,score:challengeData.ps},
+            {name:challengeData.n,score:challengeData.s}
+        ];
+        scores.sort((a,b)=>a.score-b.score);
+        html+='<div class="challenge-banner-title">⚔️ Challenge Results</div>';
+        html+='<div class="challenge-lb">';
+        scores.forEach(function(s,i){
+            html+='<div class="challenge-lb-row'+(i===0?' winner':'')+'">';
+            html+='<span class="challenge-lb-rank">'+(i===0?'🥇':'🥈')+'</span>';
+            html+='<span class="challenge-lb-name">'+s.name+'</span>';
+            html+='<span class="challenge-lb-score">'+s.score+'ms</span>';
+            html+='</div>';
+        });
+        html+='</div>';
+        html+='<div class="challenge-banner-detail" style="margin-top:10px">Play to beat them both!</div>';
+    } else {
+        html+='<div class="challenge-banner-title">⚔️ '+challengeData.n+' challenged you!</div>';
+        html+='<div class="challenge-banner-score">'+challengeData.s+'ms</div>';
+        html+='<div class="challenge-banner-detail">Beat their time in '+(challengeData.m||'color')+' mode</div>';
+    }
+    html+='</div>';
+    banner.innerHTML=html;
+
+    // Auto-enter the challenger's mode
+    if(challengeData.m){
+        setTimeout(function(){enterMode(challengeData.m);},300);
+    }
+}
+
+function showChallengeComparison(myTime){
+    if(!challengeData)return '';
+    var theirTime=challengeData.s;
+    var theirName=challengeData.n;
+    var won=myTime<theirTime;
+    var tied=myTime===theirTime;
+
+    var title,titleCls;
+    if(tied){title='🤝 It\'s a Tie!';titleCls='tie';}
+    else if(won){title='🎉 You Won!';titleCls='win';}
+    else{title='😤 They Win!';titleCls='lose';}
+
+    return '<div class="challenge-compare">'
+        +'<div class="challenge-compare-title '+titleCls+'">'+title+'</div>'
+        +'<div class="challenge-vs">'
+        +'<div class="challenge-vs-player"><div class="challenge-vs-name">You</div>'
+        +'<div class="challenge-vs-score '+(won?'winner':'loser')+'">'+myTime+'ms</div></div>'
+        +'<div class="challenge-vs-divider">VS</div>'
+        +'<div class="challenge-vs-player"><div class="challenge-vs-name">'+theirName+'</div>'
+        +'<div class="challenge-vs-score '+(won?'loser':'winner')+'">'+theirTime+'ms</div></div>'
+        +'</div>'
+        +'<button class="challenge-btn" onclick="shareBack('+myTime+')">📤 Share Back</button>'
+        +'</div>';
+}
+
+function showChallengeButton(myTime){
+    return '<button class="challenge-btn" onclick="startChallenge('+myTime+')">⚔️ Challenge a Friend</button>';
+}
+
+function startChallenge(score){
+    var name=getPlayerName();
+    var data={g:'reaction',n:name,s:score,m:currentMode,p:null,ps:null};
+    var url=buildChallengeURL('reaction.html',data);
+    showShareModal(url,name,score+'ms');
+}
+
+function shareBack(myScore){
+    var myName=getPlayerName();
+    var data={
+        g:'reaction',n:myName,s:myScore,m:currentMode,
+        p:challengeData.n,ps:challengeData.s
+    };
+    var url=buildChallengeURL('reaction.html',data);
+    showShareModal(url,myName,myScore+'ms');
+}
+
+function showShareModal(url,name,scoreText){
+    var overlay=document.createElement('div');
+    overlay.className='share-overlay';
+    overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
+
+    var nativeBtn='';
+    if(navigator.share){
+        nativeBtn='<button class="share-btn share-btn-native" id="share-native-btn">📱 Share</button>';
+    }
+
+    overlay.innerHTML='<div class="share-modal">'
+        +'<div class="share-modal-title">⚔️ Challenge a Friend</div>'
+        +'<div class="share-modal-subtitle">'+name+' scored '+scoreText+' — can they beat it?</div>'
+        +'<div class="share-modal-qr"><canvas id="share-qr-canvas"></canvas></div>'
+        +'<div class="share-modal-url">'
+        +'<input type="text" value="'+url+'" readonly id="share-url-input" onclick="this.select()">'
+        +'<button class="share-btn share-btn-copy" id="share-copy-btn">📋 Copy</button>'
+        +'</div>'
+        +nativeBtn
+        +'<button class="share-btn share-btn-close" onclick="this.closest(\'.share-overlay\').remove()">Close</button>'
+        +'</div>';
+
+    document.body.appendChild(overlay);
+
+    // Generate QR
+    var canvas=document.getElementById('share-qr-canvas');
+    try{generateQR(url,canvas,200);}catch(e){canvas.parentElement.style.display='none';}
+
+    // Copy button
+    document.getElementById('share-copy-btn').onclick=function(){
+        navigator.clipboard.writeText(url).then(function(){
+            var btn=document.getElementById('share-copy-btn');
+            btn.textContent='✅ Copied!';btn.classList.add('copied');
+            setTimeout(function(){btn.textContent='📋 Copy';btn.classList.remove('copied');},2000);
+        });
+    };
+
+    // Native share
+    if(navigator.share){
+        document.getElementById('share-native-btn').onclick=function(){
+            navigator.share({title:'⚡ Reaction Speed Challenge',text:name+' scored '+scoreText+' — can you beat it?',url:url}).catch(function(){});
+        };
+    }
+}
+
+
 // Init
 renderXPBar();
 renderModeSelectBests();
 document.getElementById('player-name').textContent=getPlayerName();
 (function(){const av=localStorage.getItem('games_avatar');document.getElementById('player-avatar').innerHTML=av?'<img src="'+av+'">':'👋'})();
+initChallenge();
+
 </script>
 
 <div class="container" style="margin-top:10px">
