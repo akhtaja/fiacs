@@ -711,20 +711,23 @@ function drawRoadmapPath(){
     const xp=getXP();
     const lvlInfo=calcLevel(xp);
     const currentLvl=lvlInfo.level;
-    // Rows are top-down (10→1), path goes from level 10 to level 1
-    // We need to fill from bottom (level 1) up to current level
-    // Since path is drawn top-down, filled portion is from end backwards
+    // Path is drawn top-down: Level 10 (start) → Level 1 (end)
+    // Gold fill should go from Level 1 (bottom) up to current level
+    // Fraction of path to fill from the bottom
     const filledFromBottom=(currentLvl-1+lvlInfo.progress)/9;
-    const filledFromTop=1-filledFromBottom;
 
     // Measure approximate path length
     const pathLen=estimatePathLength(points);
+
+    // Use negative dashoffset to start the visible dash from the END of the path (Level 1)
+    // dashoffset = -(pathLen * (1 - filledFromBottom)) shifts the dash so it only shows at the bottom
+    const offset=pathLen*(1-filledFromBottom);
 
     svg.innerHTML=`<defs><linearGradient id="goldGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffaa00"/></linearGradient></defs>
         <path d="${pathD}" class="roadmap-trail"/>
         <path d="${pathD}" class="roadmap-trail-fill"
             stroke-dasharray="${pathLen}"
-            stroke-dashoffset="${pathLen*filledFromTop}"/>`;
+            stroke-dashoffset="-${offset}"/>`;
 }
 
 function estimatePathLength(points){
