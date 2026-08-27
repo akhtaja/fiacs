@@ -180,11 +180,6 @@ body.light-theme .lb-row.gold .lb-time{color:#d4a000}
 body.light-theme .lb-row.gold .lb-rank{color:#d4a000}
 body.light-theme .empty-lb{color:#aaa}
 body.light-theme .back-btn{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);color:#4a1a7a;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-body.light-theme .menu-toggle{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);color:#4a1a7a;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-body.light-theme .sidebar{background:rgba(255,255,255,.98);border-right-color:rgba(0,0,0,.06);box-shadow:4px 0 20px rgba(0,0,0,.08)}
-body.light-theme .sidebar a{color:#4a1a7a}
-body.light-theme .sidebar a:hover{background:#f0e6ff}
-body.light-theme .overlay{background:rgba(0,0,0,.2)}
 body.light-theme .theme-toggle{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.1);color:#666}
 body.light-theme .theme-toggle:hover{background:rgba(0,0,0,.08);color:#4a1a7a}
 body.light-theme .player-bar{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);box-shadow:0 2px 10px rgba(0,0,0,.08)}
@@ -202,16 +197,7 @@ body.light-theme .particle{background:#764ba2}
 }
 .back-btn:hover{transform:scale(1.05);background:rgba(255,255,255,.15)}
 
-/* Sidebar */
-.menu-toggle{position:fixed;top:15px;left:15px;z-index:100;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;width:44px;height:44px;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.2);transition:transform .2s,background .2s;backdrop-filter:blur(10px)}
-.menu-toggle:hover{transform:scale(1.1);background:rgba(255,255,255,.15)}
-.sidebar{position:fixed;top:0;left:-260px;width:250px;height:100%;background:rgba(15,12,41,.97);backdrop-filter:blur(20px);z-index:99;padding:70px 20px 20px;box-shadow:4px 0 30px rgba(0,0,0,.4);transition:left .3s ease;border-radius:0 20px 20px 0;border-right:1px solid rgba(255,255,255,.1)}
-.sidebar.open{left:0}
-.sidebar a{display:block;padding:14px 16px;margin:6px 0;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600;color:rgba(255,255,255,.7);transition:background .2s,color .2s}
-.sidebar a:hover{background:rgba(255,255,255,.08);color:#fff}
-.sidebar a.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:98;display:none}
-.overlay.open{display:block}
+
 
 /* Confetti */
 .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
@@ -290,12 +276,6 @@ body.light-theme .odd-cell{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.0
 <a href="/games/" class="back-btn">← Games</a>
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
 
-<button class="menu-toggle" onclick="toggleMenu()">☰</button>
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-<div class="sidebar" id="sidebar">
-    <a href="/games/">🎮 Games</a>
-    <a href="/games/stats.html">🏆 Stats</a>
-</div>
 
 <h1>⚡ Reaction Speed</h1>
 <p class="subtitle">Test your reflexes — how fast can you react?</p>
@@ -397,7 +377,6 @@ body.light-theme .odd-cell{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.0
 <div class="confetti-container" id="confetti"></div>
 
 <script>
-function toggleMenu(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
 
 // Theme
 function toggleTheme(){const l=document.body.classList.toggle('light-theme');localStorage.setItem('games_theme',l?'light':'dark');updThemeBtn()}
