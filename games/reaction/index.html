@@ -1016,7 +1016,7 @@ function showChallengeButton(myTime){
 function startChallenge(score){
     var name=getPlayerName();
     var data={g:'reaction',n:name,s:score,m:currentMode,p:null,ps:null};
-    var url=buildChallengeURL('reaction.html',data);
+    var url=buildChallengeURL('reaction/',data);
     showShareModal(url,name,score+'ms');
 }
 
@@ -1026,7 +1026,7 @@ function shareBack(myScore){
         g:'reaction',n:myName,s:myScore,m:currentMode,
         p:challengeData.n,ps:challengeData.s
     };
-    var url=buildChallengeURL('reaction.html',data);
+    var url=buildChallengeURL('reaction/',data);
     showShareModal(url,myName,myScore+'ms');
 }
 
@@ -1094,7 +1094,7 @@ initChallenge();
     <div class="card" style="text-align:center">
         <div class="recommend-label">🎮 You might also like</div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-            <a href="/games/scramble.html" class="recommend-card">
+            <a href="/games/scramble/" class="recommend-card">
                 <div style="font-size:28px;margin-bottom:4px">🔤</div>
                 <div class="recommend-title">Word Scramble</div>
                 <div class="recommend-desc">Test your vocab</div>

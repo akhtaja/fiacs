@@ -529,14 +529,14 @@ body.light-theme .particle{background:#764ba2}
 <div class="category-section">
     <div class="category-label">⚡ Action & Fun</div>
     <div class="games-grid">
-        <a href="/games/reaction.html" class="game-card">
+        <a href="/games/reaction/" class="game-card">
             <span class="game-icon">⚡</span>
             <div class="game-title">Reaction Speed</div>
             <div class="game-desc">Tap the circle as fast as you can when it turns green!</div>
             <span class="game-badge badge-speed">⏱️ Speed</span>
         </a>
 
-        <a href="/games/mathrace.html" class="game-card">
+        <a href="/games/mathrace/" class="game-card">
             <span class="game-icon">🔢</span>
             <div class="game-title">Math Race</div>
             <div class="game-desc">Solve as many problems as you can in 30 seconds!</div>
@@ -548,42 +548,42 @@ body.light-theme .particle{background:#764ba2}
 <div class="category-section">
     <div class="category-label">🧠 Brain Games</div>
     <div class="games-grid">
-        <a href="/games/puzzle.html" class="game-card">
+        <a href="/games/puzzle/" class="game-card">
             <span class="game-icon">🧩</span>
             <div class="game-title">Sliding Puzzle</div>
             <div class="game-desc">Slide the tiles to put the picture back together!</div>
             <span class="game-badge badge-puzzle">🧠 Brain Teaser</span>
         </a>
 
-        <a href="/games/memory.html" class="game-card">
+        <a href="/games/memory/" class="game-card">
             <span class="game-icon">🃏</span>
             <div class="game-title">Memory Match</div>
             <div class="game-desc">Flip the cards and find all the matching pairs!</div>
             <span class="game-badge badge-memory">🧠 Memory</span>
         </a>
 
-        <a href="/games/sudoku.html" class="game-card">
+        <a href="/games/sudoku/" class="game-card">
             <span class="game-icon">🔢</span>
             <div class="game-title">Sudoku</div>
             <div class="game-desc">Fill the grid so every row, column, and box has 1-9!</div>
             <span class="game-badge badge-puzzle">🧠 Logic</span>
         </a>
 
-        <a href="/games/scramble.html" class="game-card">
+        <a href="/games/scramble/" class="game-card">
             <span class="game-icon">🔤</span>
             <div class="game-title">Word Scramble</div>
             <div class="game-desc">Unscramble letters to reveal good character words!</div>
             <span class="game-badge badge-words">📝 Words</span>
         </a>
 
-        <a href="/games/pattern.html" class="game-card">
+        <a href="/games/pattern/" class="game-card">
             <span class="game-icon">🔴</span>
             <div class="game-title">Pattern Match</div>
             <div class="game-desc">Find what comes next in the sequence!</div>
             <span class="game-badge badge-puzzle">🧠 Logic</span>
         </a>
 
-        <a href="/games/wordsearch.html" class="game-card">
+        <a href="/games/wordsearch/" class="game-card">
             <span class="game-icon">🔤</span>
             <div class="game-title">Word Search</div>
             <div class="game-desc">Find hidden words in the grid!</div>
@@ -822,11 +822,11 @@ function renderDailyChallenge(){
     // Generate deterministic daily challenge from date
     const seed=parseInt(today.replace(/-/g,''));
     const challenges=[
-        {game:'reaction',text:'Get a reaction time under 400ms',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.bestTime&&s.reaction.bestTime<400}},
-        {game:'scramble',text:'Solve 5 words in Word Scramble',link:'scramble.html',check:()=>{const s=getStats();return s.scramble.wordsGuessed>=5}},
-        {game:'reaction',text:'Play 5 rounds of Reaction Speed',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.totalReactions>=5}},
-        {game:'scramble',text:'Guess 3 words without skipping',link:'scramble.html',check:()=>{const s=getStats();return s.scramble.wordsGuessed>=3}},
-        {game:'reaction',text:'Get a reaction time under 300ms',link:'reaction.html',check:()=>{const s=getStats();return s.reaction.bestTime&&s.reaction.bestTime<300}},
+        {game:'reaction',text:'Get a reaction time under 400ms',link:'reaction/',check:()=>{const s=getStats();return s.reaction.bestTime&&s.reaction.bestTime<400}},
+        {game:'scramble',text:'Solve 5 words in Word Scramble',link:'scramble/',check:()=>{const s=getStats();return s.scramble.wordsGuessed>=5}},
+        {game:'reaction',text:'Play 5 rounds of Reaction Speed',link:'reaction/',check:()=>{const s=getStats();return s.reaction.totalReactions>=5}},
+        {game:'scramble',text:'Guess 3 words without skipping',link:'scramble/',check:()=>{const s=getStats();return s.scramble.wordsGuessed>=3}},
+        {game:'reaction',text:'Get a reaction time under 300ms',link:'reaction/',check:()=>{const s=getStats();return s.reaction.bestTime&&s.reaction.bestTime<300}},
     ];
     
     const todayChallenge=challenges[seed%challenges.length];
