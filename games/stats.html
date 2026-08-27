@@ -153,6 +153,8 @@ h1{
 }
 .roadmap-trail{fill:none;stroke:rgba(255,255,255,.08);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .roadmap-trail-fill{fill:none;stroke:url(#goldGrad);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(255,215,0,.3));transition:stroke-dashoffset .8s ease}
+.roadmap-spark{filter:url(#sparkGlow)}
+
 
 /* Each roadmap row holds one level node */
 .roadmap-row{
@@ -711,11 +713,22 @@ function drawRoadmapPath(){
     // At Level 10: offset = 0 (all visible)
     const unfilled=pathLen*(1-filledFromBottom);
 
-    svg.innerHTML=`<defs><linearGradient id="goldGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffaa00"/></linearGradient></defs>
-        <path d="${pathD}" class="roadmap-trail"/>
-        <path d="${pathD}" class="roadmap-trail-fill"
-            stroke-dasharray="${pathLen}"
-            stroke-dashoffset="${unfilled}"/>`;
+    var sparkHTML='';
+    if(filledFromBottom>0){
+        sparkHTML='<g>'
+            +'<circle r="6" fill="rgba(255,215,0,.15)" class="roadmap-spark"><animateMotion dur="3s" repeatCount="indefinite" keyPoints="0;'+filledFromBottom+';0" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"><mpath href="#sparkPath"/></animateMotion></circle>'
+            +'<circle r="3" fill="#fff" class="roadmap-spark"><animateMotion dur="3s" repeatCount="indefinite" keyPoints="0;'+filledFromBottom+';0" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"><mpath href="#sparkPath"/></animateMotion></circle>'
+            +'<circle r="2" fill="#ffd700"><animateMotion dur="3s" repeatCount="indefinite" keyPoints="0;'+filledFromBottom+';0" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"><mpath href="#sparkPath"/></animateMotion></circle>'
+            +'</g><path id="sparkPath" d="'+pathD+'" fill="none" stroke="none"/>';
+    }
+
+    svg.innerHTML='<defs>'
+        +'<linearGradient id="goldGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffaa00"/></linearGradient>'
+        +'<filter id="sparkGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>'
+        +'</defs>'
+        +'<path d="'+pathD+'" class="roadmap-trail"/>'
+        +'<path d="'+pathD+'" class="roadmap-trail-fill" stroke-dasharray="'+pathLen+'" stroke-dashoffset="'+unfilled+'"/>'
+        +sparkHTML;
 }
 
 function toggleCard(id){
