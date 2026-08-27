@@ -68,9 +68,6 @@ body.light-theme .share-modal-url input{background:rgba(0,0,0,.04);border-color:
 body.light-theme .challenge-btn{color:#d4a000;background:linear-gradient(135deg,rgba(212,160,0,.1),rgba(212,160,0,.06));border-color:rgba(212,160,0,.25)}
 
 /* Timer bar */
-.timer-bar{width:100%;height:8px;border-radius:4px;background:rgba(255,255,255,.1);margin-bottom:20px;overflow:hidden}
-.timer-fill{height:100%;border-radius:4px;transition:width .1s linear;background:linear-gradient(90deg,#43e97b,#ffd700)}
-.timer-fill.danger{background:linear-gradient(90deg,#ff5252,#ffd700)}
 
 /* Circular timer */
 .circle-timer{position:relative;width:100px;height:100px;margin:0 auto 15px}
@@ -159,8 +156,6 @@ body.light-theme .answer-input{background:rgba(0,0,0,.03);border-color:rgba(0,0,
 body.light-theme .answer-input:focus{border-color:rgba(102,126,234,.5)}
 body.light-theme .answer-input.correct{border-color:#27ae60;background:rgba(67,233,123,.06)}
 body.light-theme .answer-input.wrong{border-color:#e74c3c;background:rgba(255,82,82,.06)}
-body.light-theme .timer-fill{background:linear-gradient(90deg,#27ae60,#d4a000)}
-body.light-theme .timer-bar{background:rgba(0,0,0,.06)}
 body.light-theme .race-stat-val{color:#4a1a7a}
 body.light-theme .race-stat-val.green{color:#27ae60}
 body.light-theme .race-stat-label{color:#888}
@@ -233,7 +228,6 @@ body.light-theme .recommend-card{background:rgba(118,75,162,.04);border-color:rg
             <div style="margin-top:15px;font-size:13px;color:#888" id="best-display"></div>
         </div>
         <div id="race-screen" style="display:none">
-            <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
             <div class="circle-timer" id="circle-timer">
                 <svg viewBox="0 0 100 100">
                     <defs><linearGradient id="timerGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#43e97b"/><stop offset="100%" stop-color="#ffd700"/></linearGradient></defs>
@@ -374,9 +368,6 @@ function startRace(){
         timeLeft--;
         document.getElementById('r-time').textContent=timeLeft;
         const pct=(timeLeft/DURATION)*100;
-        const fill=document.getElementById('timer-fill');
-        fill.style.width=pct+'%';
-        fill.className='timer-fill'+(pct<30?' danger':'');
         // Circular timer
         const ring=document.getElementById('timer-ring');
         const offset=circumference*(1-timeLeft/DURATION);
