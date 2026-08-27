@@ -707,33 +707,30 @@ function drawRoadmapPath(){
     const xp=getXP();
     const lvlInfo=calcLevel(xp);
     const currentLvl=lvlInfo.level;
-    // Path is drawn top-down: Level 10 (start) → Level 1 (end)
-    // Gold fill should go from Level 1 (bottom) up to current level
-    // Fraction of path to fill from the bottom
+    // Path drawn top-down: Level 10 (start) → Level 1 (end)
+    // Gold fill should appear from Level 1 (end) up to current level
     const filledFromBottom=(currentLvl-1+lvlInfo.progress)/9;
 
-    // Measure approximate path length
-    const pathLen=estimatePathLength(points);
+    // Measure path length using the actual SVG path element for accuracy
+    const tempSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    tempSvg.setAttribute('viewBox',`0 0 ${containerRect.width} ${containerRect.height}`);
+    const tempPath=document.createElementNS('http://www.w3.org/2000/svg','path');
+    tempPath.setAttribute('d',pathD);
+    tempSvg.appendChild(tempPath);
+    document.body.appendChild(tempSvg);
+    const pathLen=tempPath.getTotalLength();
+    document.body.removeChild(tempSvg);
 
-    // Use negative dashoffset to start the visible dash from the END of the path (Level 1)
-    // dashoffset = -(pathLen * (1 - filledFromBottom)) shifts the dash so it only shows at the bottom
-    const offset=pathLen*(1-filledFromBottom);
+    // stroke-dasharray = "pathLen" means: pathLen visible, then pathLen gap
+    // stroke-dashoffset > 0 shifts pattern forward, hiding from the START
+    // We want to hide the top portion (unfilled) and show the bottom portion (filled)
+    const hideFromTop=pathLen*(1-filledFromBottom);
 
     svg.innerHTML=`<defs><linearGradient id="goldGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffaa00"/></linearGradient></defs>
         <path d="${pathD}" class="roadmap-trail"/>
         <path d="${pathD}" class="roadmap-trail-fill"
             stroke-dasharray="${pathLen}"
-            stroke-dashoffset="-${offset}"/>`;
-}
-
-function estimatePathLength(points){
-    let len=0;
-    for(let i=1;i<points.length;i++){
-        const dx=points[i].x-points[i-1].x;
-        const dy=points[i].y-points[i-1].y;
-        len+=Math.sqrt(dx*dx+dy*dy)*1.2; // rough bezier multiplier
-    }
-    return len;
+            stroke-dashoffset="${hideFromTop}"/>`;
 }
 
 function toggleCard(id){
