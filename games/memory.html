@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🧩 Sliding Puzzle</title>
+<title>🃏 Memory Match</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
     font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
-    background:linear-gradient(135deg,#f093fb 0%,#f5576c 50%,#ffd700 100%);
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f5576c 100%);
     background-attachment:fixed;
     margin:0;padding:15px;
     min-height:100vh;
@@ -48,32 +48,74 @@ h1{
     text-shadow:0 1px 4px rgba(0,0,0,.3);
 }
 
-.puzzle-container{
-    position:relative;
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow:0 15px 50px rgba(0,0,0,.25);
-    background:#333;
+.grid{
+    display:grid;
+    gap:10px;
+    max-width:500px;
+    width:100%;
 }
 
-.tile{
-    position:absolute;
-    display:flex;align-items:center;justify-content:center;
-    font-size:28px;font-weight:bold;color:#fff;
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-6{grid-template-columns:repeat(4,1fr)}
+.grid-8{grid-template-columns:repeat(4,1fr)}
+
+.card{
+    aspect-ratio:1;
+    border-radius:14px;
     cursor:pointer;
-    transition:left .2s ease,top .2s ease;
-    border-radius:8px;
-    user-select:none;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform .4s ease;
 }
 
-.tile:hover{filter:brightness(1.1)}
-
-.tile.empty{
-    background:transparent!important;
-    cursor:default;
-    box-shadow:none;
+.card.flipped{
+    transform:rotateY(180deg);
 }
 
+.card.matched{
+    animation:matchPop .4s ease;
+}
+
+.card-face{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    backface-visibility:hidden;
+}
+
+.card-front{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+    font-size:28px;
+    color:rgba(255,255,255,.5);
+}
+
+.card-front::after{
+    content:'?';
+    font-size:32px;
+    font-weight:bold;
+}
+
+.card-back{
+    background:#fff;
+    transform:rotateY(180deg);
+    font-size:clamp(28px,8vw,48px);
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+    border:3px solid #e0d4f5;
+}
+
+.card.matched .card-back{
+    border-color:#43e97b;
+    background:linear-gradient(135deg,#d4edda,#fff);
+}
+
+@keyframes matchPop{
+    0%{transform:rotateY(180deg) scale(1)}
+    50%{transform:rotateY(180deg) scale(1.15)}
+    100%{transform:rotateY(180deg) scale(1)}
+}
+
+/* Win overlay */
 .win-msg{
     position:fixed;top:0;left:0;width:100%;height:100%;
     background:rgba(0,0,0,.7);
@@ -96,7 +138,7 @@ h1{
     background:linear-gradient(135deg,#667eea,#764ba2);
     color:#fff;border:none;border-radius:14px;
     padding:14px 30px;font-size:16px;font-weight:bold;
-    cursor:pointer;transition:transform .2s;
+    cursor:pointer;transition:transform .2s;margin:5px;
 }
 .win-box button:hover{transform:scale(1.05)}
 
@@ -142,6 +184,14 @@ h1{
 }
 .overlay.open{display:block}
 
+/* Confetti */
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease forwards}
+@keyframes confettiFall{
+    0%{transform:translate(0,0) rotate(0deg);opacity:1}
+    100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}
+}
+
 @keyframes fadeInUp{
     from{opacity:0;transform:translateY(20px)}
     to{opacity:1;transform:translateY(0)}
@@ -149,6 +199,7 @@ h1{
 
 @media(max-width:500px){
     h1{font-size:1.4rem;margin-top:50px}
+    .grid{gap:6px}
 }
 
 /* Player bar */
@@ -177,7 +228,7 @@ h1{
 /* Theme toggle */
 .theme-toggle{position:fixed;top:15px;right:120px;z-index:100;padding:8px 14px;background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.08);border-radius:12px;cursor:pointer;font-size:13px;font-weight:600;color:#666;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.08)}
 .theme-toggle:hover{transform:scale(1.05);color:#4a1a7a}
-body.light-theme{background:linear-gradient(135deg,#f5f7fa 0%,#e8edf5 50%,#fff0f0 100%)}
+body.light-theme{background:linear-gradient(135deg,#f5f7fa 0%,#e8edf5 50%,#f0e6ff 100%)}
 body.light-theme h1{color:#4a1a7a;text-shadow:none}
 body.light-theme .info{color:#666}
 body.light-theme .menu-toggle{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);box-shadow:0 2px 10px rgba(0,0,0,.08)}
@@ -193,7 +244,7 @@ body.light-theme .sidebar a:hover{background:#f0e6ff}
     <span class="player-name" id="player-name"></span>
     <span class="xp-badge" id="xp-badge">Lv 1</span>
     <span class="xp-bar-wrap"><span class="xp-bar-fill" id="xp-bar-fill"></span></span>
-    <a href="stats.html" class="stats-link-sm">🏆 Stats</a>
+    <a href="/games/stats.html" class="stats-link-sm">🏆 Stats</a>
 </div>
 
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
@@ -201,39 +252,44 @@ body.light-theme .sidebar a:hover{background:#f0e6ff}
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <div class="sidebar" id="sidebar">
-    <a href="kids.html">🏝️ Adventure Quest</a>
-    <a href="counting.html">🔢 Counting</a>
-    <a href="learning.html">📚 Learning</a>
-    <a href="kindness.html">🫂 Be Kind</a>
-    <a href="games.html" class="active">🎮 Games</a>
-    <a href="sos.html">🚨 SOS Police</a>
+    <a href="/kids/">🏝️ Adventure Quest</a>
+    <a href="/kids/counting.html">🔢 Counting</a>
+    <a href="/kids/learning.html">📚 Learning</a>
+    <a href="/kids/kindness.html">🫂 Be Kind</a>
+    <a href="/games/" class="active">🎮 Games</a>
+    <a href="/sos/">🚨 SOS Police</a>
 </div>
 
-<a href="games.html" class="back-link">← Games</a>
+<a href="/games/" class="back-link">← Games</a>
 
-<h1>🧩 Sliding Puzzle</h1>
-<p class="info">Slide the tiles to put the numbers in order!</p>
+<h1>🃏 Memory Match</h1>
+<p class="info">Flip the cards and find all matching pairs!</p>
 
 <div class="controls">
-    <button class="active" onclick="setSize(3)">3×3</button>
-    <button onclick="setSize(4)">4×4</button>
-    <button onclick="shuffle()">🔀 Shuffle</button>
+    <button class="active" onclick="setLevel(4)">Easy (4 pairs)</button>
+    <button onclick="setLevel(6)">Medium (6 pairs)</button>
+    <button onclick="setLevel(8)">Hard (8 pairs)</button>
+    <button onclick="newGame()">🔄 New Game</button>
 </div>
 
 <div class="stats">
     <span>Moves: <span id="moves">0</span></span>
+    <span>Pairs: <span id="pairs">0</span>/<span id="totalPairs">4</span></span>
     <span>⏱️ <span id="timer">0:00</span></span>
 </div>
 
-<div class="puzzle-container" id="puzzle"></div>
+<div class="grid" id="grid"></div>
 
 <div class="win-msg" id="winMsg">
     <div class="win-box">
-        <h2>🎉 You Did It!</h2>
-        <p id="winText">Completed in 0 moves!</p>
-        <button onclick="shuffle()">Play Again</button>
+        <h2>🎉 All Pairs Found!</h2>
+        <p id="winText"></p>
+        <button onclick="newGame()">Play Again</button>
+        <button onclick="location.href='games.html'" style="background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a5c3a">← Games</button>
     </div>
 </div>
+
+<div class="confetti-container" id="confetti"></div>
 
 <script>
 function toggleMenu(){
@@ -241,145 +297,123 @@ function toggleMenu(){
     document.getElementById('overlay').classList.toggle('open');
 }
 
-let gridSize=3;
-let tiles=[];
+const emojiSets=[
+    '🦁','🐸','🦄','🐱','🐶','🦊','🐼','🐨',
+    '🦋','🐯','🐙','🦀','🐬','🦜','🐢','🦩',
+    '🌸','🌻','🍎','🍕','⭐','🎈','🚀','🎸'
+];
+
+let numPairs=4;
+let cards=[];
+let flipped=[];
+let matched=[];
 let moves=0;
 let timerInterval=null;
 let seconds=0;
-let gameActive=false;
+let gameStarted=false;
+let locked=false;
 
-const tileColors=[
-    '#667eea','#764ba2','#f093fb','#43e97b','#38f9d7',
-    '#f5576c','#ffd700','#ff6b6b','#4ecdc4','#45b7d1',
-    '#96e6a1','#dfe6e9','#fd79a8','#e17055','#00cec9','#a29bfe'
-];
-
-function setSize(s){
-    gridSize=s;
+function setLevel(pairs){
+    numPairs=pairs;
     document.querySelectorAll('.controls button').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('.controls button').forEach(b=>{
-        if(b.textContent.includes(s+'×'+s)) b.classList.add('active');
+        if(b.textContent.includes(pairs+' pairs')) b.classList.add('active');
     });
-    initPuzzle();
+    newGame();
 }
 
-function initPuzzle(){
-    stopTimer();
-    moves=0;seconds=0;gameActive=false;
+function newGame(){
+    clearInterval(timerInterval);
+    timerInterval=null;
+    seconds=0;moves=0;
+    flipped=[];matched=[];
+    gameStarted=false;locked=false;
+
     document.getElementById('moves').textContent='0';
+    document.getElementById('pairs').textContent='0';
+    document.getElementById('totalPairs').textContent=numPairs;
     document.getElementById('timer').textContent='0:00';
     document.getElementById('winMsg').classList.remove('show');
 
-    const total=gridSize*gridSize;
-    tiles=[];
-    for(let i=1;i<total;i++) tiles.push(i);
-    tiles.push(0); // empty
+    // Pick random emojis
+    const shuffledEmojis=shuffleArray([...emojiSets]).slice(0,numPairs);
+    cards=shuffleArray([...shuffledEmojis,...shuffledEmojis]);
 
-    renderPuzzle();
-    // Auto shuffle
-    setTimeout(()=>shuffle(),300);
+    renderGrid();
 }
 
-function renderPuzzle(){
-    const container=document.getElementById('puzzle');
-    const tileSize=Math.min(70, (window.innerWidth-60)/gridSize);
-    const gap=4;
-    const containerSize=gridSize*tileSize+(gridSize-1)*gap;
+function renderGrid(){
+    const grid=document.getElementById('grid');
+    grid.className='grid';
 
-    container.style.width=containerSize+'px';
-    container.style.height=containerSize+'px';
-    container.innerHTML='';
+    if(numPairs<=4) grid.classList.add('grid-4');
+    else if(numPairs<=6) grid.classList.add('grid-6');
+    else grid.classList.add('grid-8');
 
-    tiles.forEach((val,idx)=>{
-        const row=Math.floor(idx/gridSize);
-        const col=idx%gridSize;
-
-        const tile=document.createElement('div');
-        tile.className='tile'+(val===0?' empty':'');
-        tile.style.width=tileSize+'px';
-        tile.style.height=tileSize+'px';
-        tile.style.left=(col*(tileSize+gap))+'px';
-        tile.style.top=(row*(tileSize+gap))+'px';
-
-        if(val!==0){
-            tile.textContent=val;
-            tile.style.background=tileColors[(val-1)%tileColors.length];
-            tile.style.boxShadow='0 3px 10px rgba(0,0,0,.2)';
-            tile.onclick=()=>moveTile(idx);
-        }
-
-        container.appendChild(tile);
-    });
+    grid.innerHTML=cards.map((emoji,i)=>`
+        <div class="card" onclick="flipCard(${i})" id="card-${i}">
+            <div class="card-face card-front"></div>
+            <div class="card-face card-back">${emoji}</div>
+        </div>
+    `).join('');
 }
 
-function shuffle(){
-    document.getElementById('winMsg').classList.remove('show');
-    stopTimer();
-    moves=0;seconds=0;gameActive=false;
-    document.getElementById('moves').textContent='0';
-    document.getElementById('timer').textContent='0:00';
+function flipCard(idx){
+    if(locked) return;
+    if(flipped.includes(idx)) return;
+    if(matched.includes(idx)) return;
 
-    // Do random valid moves to ensure solvability
-    const total=gridSize*gridSize;
-    for(let i=0;i<(gridSize===3?100:200);i++){
-        const emptyIdx=tiles.indexOf(0);
-        const neighbors=getNeighbors(emptyIdx);
-        const pick=neighbors[Math.floor(Math.random()*neighbors.length)];
-        [tiles[emptyIdx],tiles[pick]]=[tiles[pick],tiles[emptyIdx]];
+    if(!gameStarted){
+        gameStarted=true;
+        startTimer();
     }
 
-    renderPuzzle();
-}
+    flipped.push(idx);
+    document.getElementById('card-'+idx).classList.add('flipped');
 
-function getNeighbors(idx){
-    const row=Math.floor(idx/gridSize);
-    const col=idx%gridSize;
-    const neighbors=[];
-    if(row>0) neighbors.push(idx-gridSize);
-    if(row<gridSize-1) neighbors.push(idx+gridSize);
-    if(col>0) neighbors.push(idx-1);
-    if(col<gridSize-1) neighbors.push(idx+1);
-    return neighbors;
-}
-
-function moveTile(idx){
-    const emptyIdx=tiles.indexOf(0);
-    const neighbors=getNeighbors(emptyIdx);
-
-    if(neighbors.includes(idx)){
-        [tiles[emptyIdx],tiles[idx]]=[tiles[idx],tiles[emptyIdx]];
-
-        if(!gameActive){
-            gameActive=true;
-            startTimer();
-        }
-
+    if(flipped.length===2){
         moves++;
         document.getElementById('moves').textContent=moves;
-        renderPuzzle();
-        checkWin();
-    }
-}
+        locked=true;
 
-function checkWin(){
-    const total=gridSize*gridSize;
-    for(let i=0;i<total-1;i++){
-        if(tiles[i]!==i+1) return;
-    }
-    // Won!
-    gameActive=false;
-    stopTimer();
-    // Track stats
-    const ps=JSON.parse(localStorage.getItem('puzzle_stats')||'{"gamesWon":0,"bestMoves":null,"bestTime":null}');
-    ps.gamesWon++;
-    if(!ps.bestMoves||moves<ps.bestMoves)ps.bestMoves=moves;
-    if(!ps.bestTime||seconds<ps.bestTime)ps.bestTime=seconds;
-    localStorage.setItem('puzzle_stats',JSON.stringify(ps));
-    earnXP(25);
+        const [a,b]=flipped;
+        if(cards[a]===cards[b]){
+            // Match!
+            matched.push(a,b);
+            document.getElementById('card-'+a).classList.add('matched');
+            document.getElementById('card-'+b).classList.add('matched');
+            document.getElementById('pairs').textContent=matched.length/2;
+            flipped=[];
+            locked=false;
 
-    document.getElementById('winText').textContent=
-        `Completed in ${moves} moves and ${formatTime(seconds)}!`;
-    document.getElementById('winMsg').classList.add('show');
+            if(matched.length===cards.length){
+                // Win!
+                clearInterval(timerInterval);
+                // Track stats
+                const ms=JSON.parse(localStorage.getItem('memory_stats')||'{"gamesWon":0,"bestMoves":null,"bestTime":null}');
+                ms.gamesWon++;
+                if(!ms.bestMoves||moves<ms.bestMoves)ms.bestMoves=moves;
+                if(!ms.bestTime||seconds<ms.bestTime)ms.bestTime=seconds;
+                localStorage.setItem('memory_stats',JSON.stringify(ms));
+                earnXP(20);
+
+                setTimeout(()=>{
+                    fireConfetti();
+                    document.getElementById('winText').textContent=
+                        `Completed in ${moves} moves and ${formatTime(seconds)}! 🌟`;
+                    document.getElementById('winMsg').classList.add('show');
+                },500);
+            }
+        } else {
+            // No match - flip back
+            setTimeout(()=>{
+                document.getElementById('card-'+a).classList.remove('flipped');
+                document.getElementById('card-'+b).classList.remove('flipped');
+                flipped=[];
+                locked=false;
+            },800);
+        }
+    }
 }
 
 function startTimer(){
@@ -389,18 +423,39 @@ function startTimer(){
     },1000);
 }
 
-function stopTimer(){
-    if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
-}
-
 function formatTime(s){
     const m=Math.floor(s/60);
     const sec=s%60;
     return m+':'+(sec<10?'0':'')+sec;
 }
 
-// Init
-initPuzzle();
+function shuffleArray(arr){
+    for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+}
+
+function fireConfetti(){
+    const container=document.getElementById('confetti');
+    const colors=['#667eea','#764ba2','#f093fb','#43e97b','#ffd700','#ff5252'];
+    for(let i=0;i<30;i++){
+        const piece=document.createElement('div');
+        piece.className='confetti-piece';
+        piece.style.left=(20+Math.random()*60)+'%';
+        piece.style.top=(10+Math.random()*30)+'%';
+        piece.style.background=colors[Math.floor(Math.random()*colors.length)];
+        piece.style.setProperty('--dx',(Math.random()*300-150)+'px');
+        piece.style.setProperty('--dy',(Math.random()*400+100)+'px');
+        piece.style.borderRadius=Math.random()>.5?'50%':'2px';
+        container.appendChild(piece);
+    }
+    setTimeout(()=>{container.innerHTML='';},1600);
+}
+
+// Start
+newGame();
 document.getElementById('player-name').textContent=localStorage.getItem('games_player_name')||'Player';
 (function(){const av=localStorage.getItem('games_avatar');document.getElementById('player-avatar').innerHTML=av?'<img src="'+av+'">':'👋'})();
 
@@ -423,9 +478,9 @@ function updThemeBtn(){document.getElementById('theme-toggle').textContent=docum
     <div style="background:rgba(255,255,255,.92);border-radius:20px;padding:20px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.1)">
         <div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🎮 You might also like</div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-            <a href="memory.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🃏</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Memory Match</div></a>
-            <a href="sudoku.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🔢</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Sudoku</div></a>
-            <a href="pattern.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🔴</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Pattern Match</div></a>
+            <a href="/games/puzzle.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🧩</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Sliding Puzzle</div></a>
+            <a href="/games/wordsearch.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">🔤</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Word Search</div></a>
+            <a href="/games/reaction.html" style="flex:1;min-width:100px;padding:14px;border-radius:14px;background:#f5f0ff;border:1px solid #e0d4f5;text-decoration:none;display:block"><div style="font-size:28px;margin-bottom:4px">⚡</div><div style="font-size:12px;font-weight:700;color:#4a1a7a">Reaction Speed</div></a>
         </div>
     </div>
 </div>
