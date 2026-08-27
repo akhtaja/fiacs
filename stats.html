@@ -156,54 +156,65 @@ h1{
 @keyframes particleFloat{0%{opacity:0;transform:translateY(100vh)}10%{opacity:.3}90%{opacity:.3}100%{opacity:0;transform:translateY(-20px)}}
 
 /* Level Roadmap — Winding Path */
-.roadmap{position:relative;padding:10px 0 10px;overflow:hidden}
-.roadmap svg.roadmap-svg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.roadmap-trail{fill:none;stroke:rgba(255,255,255,.08);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
-.roadmap-trail-fill{fill:none;stroke:url(#goldGrad);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(255,215,0,.3));transition:stroke-dashoffset .8s ease}
+.roadmap-container{position:relative;padding:10px 0 10px}
 
-.roadmap-node{
-    position:absolute;z-index:2;display:flex;align-items:center;gap:10px;
-    transform:translate(-50%,-50%);
+/* SVG winding path behind nodes */
+.roadmap-svg{
+    position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
 }
-.roadmap-node.align-right{flex-direction:row}
-.roadmap-node.align-left{flex-direction:row-reverse}
+.roadmap-trail{fill:none;stroke:rgba(255,255,255,.08);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.roadmap-trail-fill{fill:none;stroke:url(#goldGrad);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(255,215,0,.3));transition:stroke-dashoffset .8s ease}
+
+/* Each roadmap row holds one level node */
+.roadmap-row{
+    position:relative;z-index:2;display:flex;align-items:center;gap:12px;
+    padding:8px 0;
+}
+.roadmap-row.align-right{justify-content:flex-start;padding-left:12%}
+.roadmap-row.align-left{flex-direction:row-reverse;justify-content:flex-start;padding-right:12%}
+.roadmap-row.align-center{justify-content:center}
 
 .roadmap-marker{
-    width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
     flex-shrink:0;padding:8px;
     background:rgba(255,255,255,.06);border:3px solid rgba(255,255,255,.12);
-    transition:all .4s ease;z-index:2;position:relative;overflow:hidden;
+    transition:all .4s ease;position:relative;overflow:hidden;
 }
-.roadmap-node.reached .roadmap-marker{
+.roadmap-row.reached .roadmap-marker{
     border-color:rgba(255,215,0,.6);background:rgba(255,215,0,.12);
     box-shadow:0 0 16px rgba(255,215,0,.2);
 }
-.roadmap-node.current .roadmap-marker{
+.roadmap-row.current .roadmap-marker{
     border-color:#ffd700;background:rgba(255,215,0,.2);
     box-shadow:0 0 24px rgba(255,215,0,.4),0 0 48px rgba(255,215,0,.15);
     animation:currentPulse 2s ease-in-out infinite;
     transform:scale(1.15);
 }
-.roadmap-node.locked .roadmap-marker{opacity:.35}
+.roadmap-row.locked .roadmap-marker{opacity:.35}
 @keyframes currentPulse{0%,100%{box-shadow:0 0 20px rgba(255,215,0,.4),0 0 40px rgba(255,215,0,.1)}50%{box-shadow:0 0 30px rgba(255,215,0,.6),0 0 60px rgba(255,215,0,.2)}}
 
-.roadmap-info{white-space:nowrap}
-.roadmap-node.align-right .roadmap-info{text-align:left}
-.roadmap-node.align-left .roadmap-info{text-align:right}
+.roadmap-info{
+    background:rgba(0,0,0,.35);backdrop-filter:blur(8px);
+    padding:6px 12px;border-radius:10px;
+    border:1px solid rgba(255,255,255,.06);
+}
+.roadmap-row.align-right .roadmap-info{text-align:left}
+.roadmap-row.align-left .roadmap-info{text-align:right}
+.roadmap-row.align-center .roadmap-info{text-align:center}
 
 .roadmap-level-tag{
     display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;
     padding:2px 8px;border-radius:5px;margin-bottom:2px;
     background:rgba(255,255,255,.06);color:rgba(255,255,255,.35);
 }
-.roadmap-node.reached .roadmap-level-tag{background:rgba(255,215,0,.1);color:rgba(255,215,0,.7)}
-.roadmap-node.current .roadmap-level-tag{background:rgba(255,215,0,.2);color:#ffd700}
+.roadmap-row.reached .roadmap-level-tag{background:rgba(255,215,0,.1);color:rgba(255,215,0,.7)}
+.roadmap-row.current .roadmap-level-tag{background:rgba(255,215,0,.2);color:#ffd700}
 .roadmap-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.3);margin-bottom:1px}
-.roadmap-node.reached .roadmap-title{color:rgba(255,255,255,.7)}
-.roadmap-node.current .roadmap-title{color:#fff}
+.roadmap-row.reached .roadmap-title{color:rgba(255,255,255,.7)}
+.roadmap-row.current .roadmap-title{color:#fff}
 .roadmap-xp{font-size:10px;color:rgba(255,255,255,.2)}
-.roadmap-node.reached .roadmap-xp{color:rgba(255,255,255,.4)}
-.roadmap-node.current .roadmap-xp{color:rgba(255,215,0,.6)}
+.roadmap-row.reached .roadmap-xp{color:rgba(255,255,255,.4)}
+.roadmap-row.current .roadmap-xp{color:rgba(255,215,0,.6)}
 .roadmap-status{font-size:10px;margin-top:1px}
 
 .roadmap-check{
@@ -213,12 +224,10 @@ h1{
     box-shadow:0 2px 8px rgba(67,233,123,.4);
 }
 
-/* Decorative dots along the path */
-.path-dot{
-    position:absolute;width:6px;height:6px;border-radius:50%;
-    background:rgba(255,255,255,.06);transform:translate(-50%,-50%);z-index:1;
+/* Decorative scenery */
+.roadmap-scenery{
+    position:absolute;pointer-events:none;z-index:0;
 }
-.path-dot.lit{background:rgba(255,215,0,.25);box-shadow:0 0 6px rgba(255,215,0,.15)}
 
 /* Current level hero banner */
 .level-hero{
@@ -242,14 +251,6 @@ h1{
 }
 .level-progress-text{font-size:10px;color:rgba(255,255,255,.35);margin-top:4px;text-align:right}
 
-/* Stars decoration for reached nodes */
-.roadmap-check{
-    position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;
-    background:#43e97b;color:#fff;font-size:10px;font-weight:bold;
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 2px 8px rgba(67,233,123,.4);
-}
-
 @media(max-width:500px){
     h1{font-size:2rem;margin-top:50px}
     .card-body{padding:0 15px}
@@ -258,11 +259,15 @@ h1{
     .achievements-grid{grid-template-columns:repeat(2,1fr)}
     .streak-number{font-size:3rem}
     .level-hero{flex-direction:column;text-align:center;gap:10px}
-    .roadmap-marker{width:40px;height:40px;padding:6px}
+    .roadmap-marker{width:36px;height:36px;padding:5px}
     .roadmap-title{font-size:11px}
     .roadmap-level-tag{font-size:8px;padding:2px 6px}
     .roadmap-xp{font-size:9px}
     .roadmap-status{font-size:9px}
+    .roadmap-row.align-right{padding-left:5%}
+    .roadmap-row.align-left{padding-right:5%}
+    .roadmap-info{padding:4px 8px}
+    .roadmap-row{gap:8px;padding:6px 0}
 }
 </style>
 </head>
@@ -621,105 +626,32 @@ function renderStreakCalendar(streak){
 }
 
 function buildRoadmap(currentLvl, xp, progress){
-    // 10 nodes on a winding S-curve path, bottom (level 1) to top (level 10)
-    const W=650, H=720;
-    const padX=80, padY=50;
-    const usableW=W-padX*2;
+    // Build a vertical flow-based roadmap (level 10 at top, level 1 at bottom)
+    // Nodes alternate left/right in a snake pattern for visual interest.
+    const alignments=['center','right','left','right','left','right','left','right','left','center'];
 
-    // Node positions snake: row 0 at bottom, row 9 at top
-    // Even rows go left→right, odd rows go right→left
-    const nodes=[];
-    const rowH=(H-padY*2)/9;
-    for(let i=0;i<10;i++){
-        const row=i; // 0=bottom level 1, 9=top level 10
-        const y=H-padY-(row*rowH);
-        // Snake: even rows left, odd rows right
-        const cols=[0.2, 0.5, 0.8]; // 3 columns
-        let xPct;
-        if(row%2===0) xPct=0.2;   // left side
-        else xPct=0.8;             // right side
-        // Add slight variation for visual interest
-        if(row===0) xPct=0.5;     // start centered
-        if(row===9) xPct=0.5;     // end centered
-        if(row===1) xPct=0.75;
-        if(row===2) xPct=0.25;
-        if(row===3) xPct=0.78;
-        if(row===4) xPct=0.22;
-        if(row===5) xPct=0.75;
-        if(row===6) xPct=0.28;
-        if(row===7) xPct=0.72;
-        if(row===8) xPct=0.35;
+    // Build from level 10 (top) down to level 1 (bottom)
+    const levelsTopDown=[...LEVEL_CONFIG].reverse(); // [10, 9, 8, ... 1]
 
-        const x=padX+(usableW*xPct);
-        nodes.push({x,y,level:i+1});
-    }
+    let html='<div class="roadmap-container" id="roadmap-container">';
+    // SVG will be injected here after render
+    html+='<svg class="roadmap-svg" id="roadmap-svg"><defs><linearGradient id="goldGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffaa00"/></linearGradient></defs></svg>';
 
-    // Build SVG path through all nodes using smooth curves
-    let pathD=`M ${nodes[0].x} ${nodes[0].y}`;
-    for(let i=1;i<nodes.length;i++){
-        const prev=nodes[i-1];
-        const curr=nodes[i];
-        const cpY=(prev.y+curr.y)/2;
-        pathD+=` C ${prev.x} ${cpY}, ${curr.x} ${cpY}, ${curr.x} ${curr.y}`;
-    }
-
-    // Calculate filled portion of path
-    const filledLevels=currentLvl-1+progress;
-    const fillFraction=Math.min(1,filledLevels/9);
-
-    // Build decorative dots between nodes
-    let dotsHTML='';
-    for(let i=0;i<nodes.length-1;i++){
-        const a=nodes[i], b=nodes[i+1];
-        for(let t=0.25;t<=0.75;t+=0.25){
-            // Approximate point on the curve
-            const dotX=a.x+(b.x-a.x)*t;
-            const dotY=a.y+(b.y-a.y)*t;
-            const lit=i<currentLvl-1||(i===currentLvl-1&&t<=progress);
-            dotsHTML+=`<div class="path-dot${lit?' lit':''}" style="left:${(dotX/W)*100}%;top:${(dotY/H)*100}%"></div>`;
-        }
-    }
-
-    // Scenic decorations along the path
-    const scenery=[
-        {x:8,  y:88, icon:'🌲', size:16, op:.25},
-        {x:90, y:82, icon:'🌳', size:14, op:.2},
-        {x:6,  y:70, icon:'🌿', size:12, op:.15},
-        {x:92, y:58, icon:'🌲', size:15, op:.2},
-        {x:10, y:48, icon:'🏔️', size:18, op:.15},
-        {x:88, y:38, icon:'☁️', size:14, op:.2},
-        {x:5,  y:28, icon:'🌲', size:13, op:.2},
-        {x:93, y:18, icon:'☁️', size:16, op:.15},
-        {x:50, y:5,  icon:'⭐', size:18, op:.25},
-        {x:15, y:55, icon:'🍃', size:10, op:.12},
-        {x:85, y:72, icon:'🍃', size:11, op:.12},
-        {x:48, y:92, icon:'🚩', size:13, op:.3},
-        {x:52, y:2,  icon:'🏁', size:15, op:.3},
-    ];
-    let sceneryHTML='';
-    scenery.forEach(s=>{
-        sceneryHTML+=`<div style="position:absolute;left:${s.x}%;top:${s.y}%;font-size:${s.size}px;opacity:${s.op};pointer-events:none;transform:translate(-50%,-50%);z-index:0">${s.icon}</div>`;
-    });
-
-    // Build node HTML
-    let nodesHTML='';
-    const reversed=[...LEVEL_CONFIG].slice(); // level 1..10
-    reversed.forEach((cfg,i)=>{
-        const n=nodes[i];
+    levelsTopDown.forEach((cfg, i)=>{
+        const levelIdx=cfg.level-1; // 0-based
         let state='locked';
         if(cfg.level<currentLvl) state='reached';
         else if(cfg.level===currentLvl) state='current';
 
-        const alignRight=n.x<W/2;
-        const align=alignRight?'align-right':'align-left';
+        const align=alignments[levelIdx];
 
         let statusHTML='';
         if(state==='current') statusHTML=`<div class="roadmap-status" style="color:rgba(255,215,0,.7);font-weight:700">⭐ YOU ARE HERE</div>`;
         else if(state==='locked') statusHTML=`<div class="roadmap-status" style="color:rgba(255,255,255,.2)">${(cfg.xp-xp).toLocaleString()} XP to go</div>`;
         else statusHTML=`<div class="roadmap-status" style="color:rgba(67,233,123,.6)">✅ Done</div>`;
 
-        nodesHTML+=`<div class="roadmap-node ${state} ${align}" style="left:${(n.x/W)*100}%;top:${(n.y/H)*100}%">
-            <div style="position:relative">
+        html+=`<div class="roadmap-row ${state} align-${align}" data-level="${cfg.level}">
+            <div style="position:relative" class="roadmap-marker-wrap">
                 <div class="roadmap-marker">${cfg.icon}</div>
                 ${state==='reached'?'<div class="roadmap-check">✓</div>':''}
             </div>
@@ -732,34 +664,97 @@ function buildRoadmap(currentLvl, xp, progress){
         </div>`;
     });
 
-    return `<div class="roadmap" style="position:relative;width:100%;padding-top:${(H/W)*100}%">
-        <div style="position:absolute;top:0;left:0;width:100%;height:100%">
-            <svg class="roadmap-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-                <defs>
-                    <linearGradient id="goldGrad" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stop-color="#ffd700"/>
-                        <stop offset="100%" stop-color="#ffaa00"/>
-                    </linearGradient>
-                </defs>
-                <path class="roadmap-trail" d="${pathD}"/>
-                <path class="roadmap-trail-fill" d="${pathD}"
-                    stroke-dasharray="2000"
-                    stroke-dashoffset="${2000-(2000*fillFraction)}"/>
-            </svg>
-            ${sceneryHTML}
-            ${dotsHTML}
-            ${nodesHTML}
-        </div>
-    </div>`;
+    html+='</div>';
+    return html;
+}
+
+// Draw the winding SVG path through marker centers after DOM is ready
+function drawRoadmapPath(){
+    const container=document.getElementById('roadmap-container');
+    const svg=document.getElementById('roadmap-svg');
+    if(!container||!svg) return;
+
+    const rows=container.querySelectorAll('.roadmap-row');
+    if(rows.length===0) return;
+
+    const containerRect=container.getBoundingClientRect();
+    const points=[];
+
+    rows.forEach(row=>{
+        const marker=row.querySelector('.roadmap-marker');
+        if(!marker) return;
+        const mRect=marker.getBoundingClientRect();
+        points.push({
+            x: mRect.left + mRect.width/2 - containerRect.left,
+            y: mRect.top + mRect.height/2 - containerRect.top
+        });
+    });
+
+    if(points.length<2) return;
+
+    // Build smooth cubic bezier path through all points
+    let pathD=`M ${points[0].x} ${points[0].y}`;
+    for(let i=1;i<points.length;i++){
+        const prev=points[i-1];
+        const curr=points[i];
+        // Control points: keep X of respective point, Y at midpoint
+        const cpY=(prev.y+curr.y)/2;
+        pathD+=` C ${prev.x} ${cpY}, ${curr.x} ${cpY}, ${curr.x} ${curr.y}`;
+    }
+
+    // Set SVG viewBox to match container size
+    svg.setAttribute('viewBox',`0 0 ${containerRect.width} ${containerRect.height}`);
+    svg.setAttribute('width',containerRect.width);
+    svg.setAttribute('height',containerRect.height);
+
+    // Calculate fill progress
+    const xp=getXP();
+    const lvlInfo=calcLevel(xp);
+    const currentLvl=lvlInfo.level;
+    // Rows are top-down (10→1), path goes from level 10 to level 1
+    // We need to fill from bottom (level 1) up to current level
+    // Since path is drawn top-down, filled portion is from end backwards
+    const filledFromBottom=(currentLvl-1+lvlInfo.progress)/9;
+    const filledFromTop=1-filledFromBottom;
+
+    // Measure approximate path length
+    const pathLen=estimatePathLength(points);
+
+    svg.innerHTML=`<defs><linearGradient id="goldGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ffaa00"/></linearGradient></defs>
+        <path d="${pathD}" class="roadmap-trail"/>
+        <path d="${pathD}" class="roadmap-trail-fill"
+            stroke-dasharray="${pathLen}"
+            stroke-dashoffset="${pathLen*filledFromTop}"/>`;
+}
+
+function estimatePathLength(points){
+    let len=0;
+    for(let i=1;i<points.length;i++){
+        const dx=points[i].x-points[i-1].x;
+        const dy=points[i].y-points[i-1].y;
+        len+=Math.sqrt(dx*dx+dy*dy)*1.2; // rough bezier multiplier
+    }
+    return len;
 }
 
 function toggleCard(id){
     const card=document.getElementById(id);
     if(!card) return;
     card.classList.toggle('expanded');
+    // Redraw path after expand/collapse animation
+    if(id==='card-level' && card.classList.contains('expanded')){
+        setTimeout(drawRoadmapPath, 450);
+    }
 }
 
 render();
+// Auto-expand the level card and draw path
+const levelCard=document.getElementById('card-level');
+if(levelCard){
+    levelCard.classList.add('expanded');
+    requestAnimationFrame(()=>setTimeout(drawRoadmapPath,100));
+}
+window.addEventListener('resize',drawRoadmapPath);
 </script>
 </body>
 </html>
