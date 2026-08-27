@@ -639,7 +639,7 @@ function showResult(time){
     st.reaction.totalReactions++;st.reaction.gamesPlayed++;
     if(!st.reaction.bestTime||time<st.reaction.bestTime)st.reaction.bestTime=time;
     saveStats(st);
-    earnXP(10);
+    earnXP(5);
 
     // Achievements
     unlockAchievement('first_game');

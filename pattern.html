@@ -316,7 +316,7 @@ function checkAnswer(btn,chosen,correct){
         document.getElementById('feedback').textContent=['✨ Correct!','🎉 Nice!','⭐ Great!','🚀 Amazing!'][rand(0,3)];
         document.getElementById('feedback').className='feedback correct';
         if(streak%3===0)fireConfetti();
-        earnXP(10);
+        earnXP(5);
     } else {
         btn.classList.add('wrong');
         streak=0;
