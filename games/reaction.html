@@ -1031,18 +1031,19 @@ function shareBack(myScore){
 }
 
 function showShareModal(url,name,scoreText){
+    var shareMsg='⚡ I scored '+scoreText+' in Reaction Speed! Think you can beat me? 👀\n\n'+url;
     var overlay=document.createElement('div');
     overlay.className='share-overlay';
     overlay.onclick=function(e){if(e.target===overlay)overlay.remove();};
 
     var nativeBtn='';
     if(navigator.share){
-        nativeBtn='<button class="share-btn share-btn-native" id="share-native-btn">📱 Share</button>';
+        nativeBtn='<button class="share-btn share-btn-native" id="share-native-btn">📱 Share via WhatsApp & more</button>';
     }
 
     overlay.innerHTML='<div class="share-modal">'
         +'<div class="share-modal-title">⚔️ Challenge a Friend</div>'
-        +'<div class="share-modal-subtitle">'+name+' scored '+scoreText+' — can they beat it?</div>'
+        +'<div class="share-modal-subtitle">Share your score and see if they can beat it!</div>'
         +'<div class="share-modal-qr"><canvas id="share-qr-canvas"></canvas></div>'
         +'<div class="share-modal-url">'
         +'<input type="text" value="'+url+'" readonly id="share-url-input" onclick="this.select()">'
@@ -1058,19 +1059,23 @@ function showShareModal(url,name,scoreText){
     var canvas=document.getElementById('share-qr-canvas');
     try{generateQR(url,canvas,200);}catch(e){canvas.parentElement.style.display='none';}
 
-    // Copy button
+    // Copy button — copies message + link
     document.getElementById('share-copy-btn').onclick=function(){
-        navigator.clipboard.writeText(url).then(function(){
+        navigator.clipboard.writeText(shareMsg).then(function(){
             var btn=document.getElementById('share-copy-btn');
             btn.textContent='✅ Copied!';btn.classList.add('copied');
             setTimeout(function(){btn.textContent='📋 Copy';btn.classList.remove('copied');},2000);
         });
     };
 
-    // Native share
+    // Native share — rich text with emoji
     if(navigator.share){
         document.getElementById('share-native-btn').onclick=function(){
-            navigator.share({title:'⚡ Reaction Speed Challenge',text:name+' scored '+scoreText+' — can you beat it?',url:url}).catch(function(){});
+            navigator.share({
+                title:'⚡ Reaction Speed Challenge',
+                text:'⚡ I scored '+scoreText+' in Reaction Speed! Think you can beat me? 👀',
+                url:url
+            }).catch(function(){});
         };
     }
 }
