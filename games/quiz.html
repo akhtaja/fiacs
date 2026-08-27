@@ -458,11 +458,11 @@ document.getElementById('player-name').textContent=localStorage.getItem('games_p
 (function(){const av=localStorage.getItem('games_avatar');document.getElementById('player-avatar').innerHTML=av?'<img src="'+av+'">':'👋'})();
 
 // --- XP SYSTEM ---
-const XP_THRESHOLDS=[0,50,120,200,300,420,560,720,900,1100];
+const XP_THRESHOLDS=[0,250,600,1000,1500,2100,2800,3600,4500,5500];
 function getXP(){return parseInt(localStorage.getItem('games_xp')||'0')}
 function saveXP(xp){localStorage.setItem('games_xp',String(xp))}
 function earnXP(amount){const xp=getXP()+amount;saveXP(xp);renderXPBar();return xp;}
-function calcLevel(xp){let level=1;for(let i=1;i<=100;i++){const thresh=i<=10?XP_THRESHOLDS[i-1]:(XP_THRESHOLDS[9]+((i-10)*(220+(i-10)*20)));if(xp>=thresh)level=i;else break;}const currentThresh=level<=10?XP_THRESHOLDS[level-1]:(XP_THRESHOLDS[9]+((level-10)*(220+(level-10)*20)));const nextThresh=(level+1)<=10?XP_THRESHOLDS[level]:(XP_THRESHOLDS[9]+((level-1+1-10)*(220+(level-1+1-10)*20)));const progress=(xp-currentThresh)/(nextThresh-currentThresh);return{level,xp,currentThresh,nextThresh,progress:Math.min(1,Math.max(0,progress))};}
+function calcLevel(xp){let level=1;for(let i=1;i<=100;i++){const thresh=i<=10?XP_THRESHOLDS[i-1]:(XP_THRESHOLDS[9]+((i-10)*(1100+(i-10)*100)));if(xp>=thresh)level=i;else break;}const currentThresh=level<=10?XP_THRESHOLDS[level-1]:(XP_THRESHOLDS[9]+((level-10)*(1100+(level-10)*100)));const nextThresh=(level+1)<=10?XP_THRESHOLDS[level]:(XP_THRESHOLDS[9]+((level-1+1-10)*(1100+(level-1+1-10)*100)));const progress=(xp-currentThresh)/(nextThresh-currentThresh);return{level,xp,currentThresh,nextThresh,progress:Math.min(1,Math.max(0,progress))};}
 function renderXPBar(){const info=calcLevel(getXP());document.getElementById('xp-badge').textContent='Lv '+info.level;document.getElementById('xp-bar-fill').style.width=(info.progress*100)+'%';}
 renderXPBar();
 
